@@ -1,0 +1,107 @@
+{
+    "Baksan": [
+        "Baksan",
+        12,
+        "loc Baksan"
+    ],
+    "Borexino": [
+        "Borexino",
+        7,
+        "loc Borexino"
+    ],
+    "DS-20K": [
+        "DS-20K",
+        18,
+        "loc DS-20K"
+    ],
+    "DUNE": [
+        "DUNE",
+        15,
+        "loc DUNE"
+    ],
+    "HALO": [
+        "HALO",
+        9,
+        "loc HALO"
+    ],
+    "HALO-1kT": [
+        "HALO-1kT",
+        8,
+        "loc HALO-1kT"
+    ],
+    "Hyper-K": [
+        "Hyper-K",
+        2,
+        "loc Hyper-K"
+    ],
+    "ICE": [
+        "ICE",
+        6,
+        "loc ICE"
+    ],
+    "JUNO": [
+        "JUNO",
+        13,
+        "loc JUNO"
+    ],
+    "KM3NeT": [
+        "KM3NeT",
+        11,
+        "loc KM3NeT"
+    ],
+    "KamLAND": [
+        "KamLAND",
+        4,
+        "loc KamLAND"
+    ],
+    "LVD": [
+        "LVD",
+        5,
+        "loc LVD"
+    ],
+    "LZ": [
+        "LZ",
+        14,
+        "loc LZ"
+    ],
+    "MicroBooNe": [
+        "MicroBooNe",
+        16,
+        "loc MicroBooNe"
+    ],
+    "NOvA": [
+        "NOvA",
+        10,
+        "loc NOvA"
+    ],
+    "PandaX-4T": [
+        "PandaX-4T",
+        20,
+        "loc PandaX-4T"
+    ],
+    "SBND": [
+        "SBND",
+        17,
+        "loc SBND"
+    ],
+    "SNO+": [
+        "SNO+",
+        3,
+        "loc SNO+"
+    ],
+    "Super-K": [
+        "Super-K",
+        1,
+        "loc Super-K"
+    ],
+    "TEST": [
+        "TEST",
+        0,
+        "TESTloc"
+    ],
+    "XENONnT": [
+        "XENONnT",
+        19,
+        "loc XENONnT"
+    ]
+}
