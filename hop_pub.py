@@ -10,8 +10,8 @@ Sebastian Torres-Lara
 """
 import hop, sys, time, os, json, click
 from hop import Stream
-from . import snews_utils
-from .hop_mgs_schema import Message_Schema
+from . import snews_pt_utils
+from .message_schema import Message_Schema
 
 
 
@@ -29,8 +29,8 @@ class Publish_Tier_Obs:
     """
 
     def __init__(self, env_path=None):
-        snews_utils.set_env(env_path)
-        self.times = snews_utils.TimeStuff()
+        snews_pt_utils.set_env(env_path)
+        self.times = snews_pt_utils.TimeStuff()
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
 
     def publish(self, detector, msg_type, data):
@@ -50,7 +50,6 @@ class Publish_Tier_Obs:
         schema = Message_Schema(detector_key=detector)
         sent_time = self.times.get_snews_time()
         obs_schema = schema.get_obs_schema(msg_type, data, sent_time)
-
         stream = Stream(persist=False)
         with stream.open(self.obs_broker, 'w') as s:
             s.write(obs_schema)

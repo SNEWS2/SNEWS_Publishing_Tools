@@ -9,7 +9,6 @@ from pathlib import Path
 import sys
 
 
-
 def set_env(env_path=None):
     """ Set environment parameters
 
@@ -24,14 +23,6 @@ def set_env(env_path=None):
     default_env_path = os.path.dirname(__file__) + '/auxiliary/test-config.env'
     env = env_path or default_env_path
     load_dotenv(env)
-
-
-def make_dir(path):
-    """ make a directory in a given path """
-    if Path(path).is_dir():
-        pass
-    else:
-        os.makedirs(path)
 
 
 class TimeStuff:
@@ -169,52 +160,6 @@ def summarize(detector, topic_type_, env_path=None):
         f'Heartbeat Topic:\n==> {heartbeat_topic}\n\n')
 
 
-def isnotebook():
-    """ Tell if the script is running on a notebook
-
-    """
-    try:
-        shell = get_ipython().__class__.__name__
-        if shell == 'ZMQInteractiveShell':
-            return True  # Jupyter notebook or qtconsole
-        elif shell == 'TerminalInteractiveShell':
-            return False  # Terminal running IPython
-        else:
-            return False  # Other type (?)
-    except NameError:
-        return False  # Probably standard Python interpreter
-
-
-def get_logger(scriptname, logfile_name):
-    """ Logger
-
-    .. note:: Deprecated
-
-    """
-    import logging
-    # Gets or creates a logger
-    logger = logging.getLogger(scriptname)
-
-    # set log level
-    logger.setLevel(logging.INFO)
-    # define file handler and set formatter
-    file_handler = logging.FileHandler(logfile_name)
-    formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(name)s : %(message)s')
-    file_handler.setFormatter(formatter)
-    # add file handler to logger
-    logger.addHandler(file_handler)
-    return logger
-
-
-def display_gif():
-    """ Some fun method to display an alert gif
-        If running on notebook
-
-    """
-    if isnotebook():
-        from IPython.display import HTML, display
-        giphy_snews = "https://raw.githubusercontent.com/SNEWS2/hop-SNalert-app/snews2_dev/hop_comms/auxiliary/snalert.gif"
-        display(HTML(f'<img src={giphy_snews}>'))
 
 
 def data_obs(machine_time=None, nu_time=None, p_value=None, timing_series=None,
@@ -232,8 +177,6 @@ def data_obs(machine_time=None, nu_time=None, p_value=None, timing_series=None,
             If determined, the p value of the observation
         timing_series : `array-like`
             Time series of the detected signal
-        detector_status : `str`
-            ON/OFF depending on the detector status
         false_mgs_id : `str`
             The id of the message that is falsely published
         which_tier : 'str'
@@ -253,9 +196,9 @@ def data_obs(machine_time=None, nu_time=None, p_value=None, timing_series=None,
                 dictionary of the complete observation data
 
     """
-    keys = ['machine_time', 'neutrino_time', 'p_value', 'timing_series', 'detector_status', 'false_id',
+    keys = ['machine_time', 'neutrino_time', 'p_value', 'timing_series', 'false_id',
             'N_retract_latest', 'which_tier', 'retraction_reason']
-    values = [machine_time, nu_time, p_value, timing_series, detector_status, false_mgs_id, N_retract_latest,
+    values = [machine_time, nu_time, p_value, timing_series,  false_mgs_id, N_retract_latest,
               which_tier, retraction_reason]
     # allow for keyword-args
     for k, v in kwargs.items():
@@ -265,57 +208,3 @@ def data_obs(machine_time=None, nu_time=None, p_value=None, timing_series=None,
     data_dict = dict(zip_iterator)
     return data_dict
 
-
-def data_alert(p_vals=None, detector_events=None, t_series=None, nu_times=None,
-               ids=None, locs=None, status=None, machine_times=None):
-    """ Default alert message data
-        
-        Parameters
-        ----------
-        p_vals : `list`
-            list with p-values of the observations involved in the alert
-        detectors_events : `dict`
-            dict of detectors and their number of events involved in the alert
-        t_series : `list`
-            list of timeseries (if applicable)
-        nu_time : `list`
-            list of neutrino arrival times
-        ids : `list`
-            list of ids of the detectors involved in the alert
-        locs : `list`
-            list of locations of the experiments involved in the alert
-        status : `list`
-            Depracted?              
-        machine_times : `list`
-            The machine times of the experiments involved in the alert
-
-        Returns        
-        -------
-            `dict`
-                dictionary of the complete alert data
-
-    """
-    keys = ['p_vals', 'detector_events', 't_series', 'neutrino_times', 'ids', 'locs', 'status', 'machine_times']
-    values = [p_vals, detector_events, t_series, nu_times, ids, locs, status, machine_times]
-    return dict(zip(keys, values))
-
-# Note from from Seb: :(
-## Not working properly
-# def run_parallel(nparallel=2):
-#     """ Run publish & subscribe methods in parallel
-#         Only works for notebooks. Requires ipyparallel
-#         Arguments
-#         ---------
-#         nparallel : int
-#             number of cells to run in parallel
-#     """
-#     if not isnotebook():
-#         import sys
-#         sys.exit('Cannot run processes in parallel')
-#     # enable the extension in the current environment
-#     os.system('ipcluster nbextension enable --user')
-#     os.system(f'ipcluster start -n {nparallel}')
-#     from ipyparallel import Client
-#     rc = Client()
-#     print("Run `%%px -a -t 0` magic command on the notebook!")
-#     return None

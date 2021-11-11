@@ -1,5 +1,5 @@
-from . import snews_utils
-from .snews_utils import TimeStuff
+from . import snews_pt_utils
+from .snews_pt_utils import TimeStuff
 import sys
 
 
@@ -21,7 +21,7 @@ class Message_Schema:
     def __init__(self, env_path=None, detector_key='TEST', alert=False):
         self.times = TimeStuff(env_path)
         if not alert:
-            self.detector = snews_utils.get_detector(detector_key)
+            self.detector = snews_pt_utils.get_detector(detector_key)
             self.detector_name = self.detector.name
             self.detector_loc = self.detector.location
 
