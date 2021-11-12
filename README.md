@@ -11,7 +11,7 @@ This packages provides users with a Python API and CLI to publish observation me
 First you need to clone this repo. In your terminal run the following: 
 
 ````bash 
-git clone https://github.com/SNEWS2/SNEWS_PT.git
+git clone https://github.com/SNEWS2/SNEWS_Publishing_Tools.git
 ````
 
 Once cloned, install the package using pip (make sure you're in the cloned dir)
@@ -64,32 +64,39 @@ sent_time
 ## How to Publish
 Before we get started, right now the publishing method will send your message to the test kafka server.
 
-First you need to import the Publish_Tier_Obs class and the data_obs method:
-````Python
-from SNEWS_PT.hop_pub import Publish_Tier_Obs
-from SNEWS_PT.snews_pt_utils import data_obs
-from datetime import datetime
-````
-    Note: datetime object will be used to create a dummy nu times
+First you need to import your desired Publisher class:
 
-Initialize Publish_Tier_Obs
 ````Python
-pub = Publish_Tier_Obs()
+# For Coincidence Tier
+from SNEWS_PT.hop_pub import Publisher_Coincidence_Tier
+# For Significance Tier
+from SNEWS_PT.hop_pub import Publisher_Significance_Tier
+# For Timing Tier
+from SNEWS_PT.hop_pub import Publisher_Significance_Tier
+
+````
+
+
+Initialize the Publisher, **make sure you pass it a detector name**! 
+    
+    Note: For this example I'm publishing to Coincidence Tier.
+````Python
+my_detector = 'DS-20K'
+pub = Publisher_Coincidence_Tier(detector=my_detector)
 ````
 
 Make your dummy nu time method (optional)
+
+    Note: datetime object will be used to create a dummy nu times
 ```Python
+from datetime import datetime
 def nu_t():
     return datetime.utcnow().strftime("%H:%M:%S:%f")
 ```
 
-Set detector name
-````Python
-my_detector = 'DS-20K'
-````
-
-Now set fill data_obs with your data and publish it !!
+Now pass your tier specific data !!
 ```Python
-data = data_obs(p_value=0.6,nu_time=nu_t())
-pub.publish(my_detector, 'CoincidenceTier', data)
+pub.send_coincidence_tier_message(nu_time=nu_t(), p_value =  0.67)
 ```
+
+See example for more tutorial scripts 

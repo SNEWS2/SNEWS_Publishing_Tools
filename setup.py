@@ -8,7 +8,7 @@ with open(os.path.join(this_dir, 'README.md'), 'rb') as f:
     long_description = f.read().decode().strip()
 
 # load version
-with open("_version.py", "r") as f:
+with open("SNEWS_PT/_version.py", "r") as f:
     version_file = f.read()
 version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", version_file, re.M)
 version = version_match.group(1)
@@ -19,6 +19,7 @@ install_requires = [
     "hop-plugin-snews",
     "jsonschema",
     "python-dotenv",
+    "schedule",
 ]
 
 
