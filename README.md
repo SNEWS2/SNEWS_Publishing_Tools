@@ -68,11 +68,11 @@ First you need to import your desired Publisher class:
 
 ````Python
 # For Coincidence Tier
-from SNEWS_PT.hop_pub import Publisher_Coincidence_Tier
+from SNEWS_PT.snews_pub import Publisher_Coincidence_Tier
 # For Significance Tier
-from SNEWS_PT.hop_pub import Publisher_Significance_Tier
+from SNEWS_PT.snews_pub import Publisher_Significance_Tier
 # For Timing Tier
-from SNEWS_PT.hop_pub import Publisher_Significance_Tier
+from SNEWS_PT.snews_pub import Publisher_Significance_Tier
 
 ````
 
