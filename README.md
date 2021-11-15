@@ -87,12 +87,11 @@ from SNEWS_PT.snews_pub import TimingTier
 
 ````
 
-Initialize the Publisher, **make sure you pass it a detector name**!
+Initialize the Publisher.
 
     Note: For this example I'm publishing to Coincidence Tier.
 
 ````Python
-my_detector = 'DS-20K'
 pub = Publisher()
 ````
 
@@ -109,9 +108,10 @@ def nu_t():
 ```
 
 Construct your message, don't forget the `.message()` at the end this returns the dict object with all your message
-data.
+data. **Make sure you pass it a detector name**!
 
 ```Python
+my_detector = 'DS-20K'
 message = CoincidenceTier(detector_name=my_detector, nu_time=nu_t(), p_val = 0.98).message()
 ```
 
