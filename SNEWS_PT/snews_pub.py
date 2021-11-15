@@ -27,8 +27,9 @@ class Publisher:
         message['sent_time'] = self.times.get_snews_time()
         with stream.open(self.obs_broker, 'w') as s:
             s.write(message)
+            s.close()
         click.secho(f'{"-" * 57}', fg='bright_blue')
-        if message['_id'].split('_') == 'FalseOBS':
+        if message['_id'].split('_')[1] == 'FalseOBS':
             click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
         for k, v in message.items():
             print(f'{k:<20s}:{v}')
