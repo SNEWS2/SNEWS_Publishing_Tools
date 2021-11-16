@@ -160,51 +160,6 @@ def summarize(detector, topic_type_, env_path=None):
         f'Heartbeat Topic:\n==> {heartbeat_topic}\n\n')
 
 
-def data_obs(machine_time=None, nu_time=None, p_value=None, timing_series=None,
-             detector_status=None, false_mgs_id=None, which_tier=None,
-             N_retract_latest=0, retraction_reason=None, **kwargs):
-    """ Default observation message data
-        
-        Parameters
-        ----------
-        machine_time : `datetime`
-            The machine time at the time of execution of command
-        nu_time : `datetime`
-            The neutrino arrival time
-        p_value : `float`
-            If determined, the p value of the observation
-        timing_series : `array-like`
-            Time series of the detected signal
-        false_mgs_id : `str`
-            The id of the message that is falsely published
-        which_tier : 'str'
-            OBS type of false message ['CoincidenceTier', 'SigTier', 'TimeTier, 'ALL']
-        N_retract_latest: 'int' or 'str'
-            Tells retraction methods to look for N  latest message sent by a detector. can also pass 'ALL'
-            to retract all messages in a OBS tier.
-        retraction_reason: 'str"
-            Reason for message(s) retraction
-        **kwargs 
-            Any other key-value pair desired to be published. Notice,
-            these additional arguments will be prepended with ^.
-
-        Returns
-        -------
-            data_dict : `dict`
-                dictionary of the complete observation data
-
-    """
-    keys = ['machine_time', 'neutrino_time', 'p_value', 'timing_series', 'false_id',
-            'N_retract_latest', 'which_tier', 'retraction_reason']
-    values = [machine_time, nu_time, p_value, timing_series, false_mgs_id, N_retract_latest,
-              which_tier, retraction_reason]
-    # allow for keyword-args
-    for k, v in kwargs.items():
-        keys.append(k)
-        values.append(v)
-    zip_iterator = zip(keys, values)
-    data_dict = dict(zip_iterator)
-    return data_dict
 
 
 def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwargs):
@@ -212,9 +167,9 @@ def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwarg
 
         Parameters
         ----------
-        machine_time : `datetime`
+        machine_time : `str`
             The machine time at the time of execution of command
-        nu_time : `datetime`
+        nu_time : `str`
             The neutrino arrival time
         p_value : `float`
             If determined, the p value of the observation
@@ -244,12 +199,12 @@ def sig_tier_data(machine_time=None, nu_time=None, p_values=None, **kwargs):
 
         Parameters
         ----------
-        machine_time : `datetime`
+        machine_time : `str`
             The machine time at the time of execution of command
-        nu_time : `datetime`
+        nu_time : `str`
             The neutrino arrival time
-        p_values : `arr`
-            If determined, the p value of the observation
+        p_values : `list`
+            If determined, the p values of the observation
         **kwargs
             Any other key-value pair desired to be published. Notice,
             these additional arguments will be prepended with ^.
@@ -277,9 +232,9 @@ def time_tier_data(machine_time=None, nu_time=None, timing_series=None,
 
         Parameters
         ----------
-        machine_time : `datetime`
+        machine_time : `str`
             The machine time at the time of execution of command
-        nu_time : `datetime`
+        nu_time : `str`
             The neutrino arrival time
         timing_series : `array-like`
             Time series of the detected signal
@@ -310,7 +265,7 @@ def retraction_data(machine_time=None, false_mgs_id=None, which_tier=None,
 
         Parameters
         ----------
-        machine_time : `datetime`
+        machine_time : `str`
             The machine time at the time of execution of command
         false_mgs_id : `str`
             The id of the message that is falsely published
@@ -350,7 +305,7 @@ def heartbeat_data(machine_time=None,
 
         Parameters
         ----------
-        machine_time : `datetime`
+        machine_time : `str`
             The machine time at the time of execution of command
         detector_status : 'str'
             ON or OFF

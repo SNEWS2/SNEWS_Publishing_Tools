@@ -20,7 +20,6 @@ class Message_Schema:
         self.times = TimeStuff(env_path)
         self.detector = get_detector(detector_key)
         self.detector_name = self.detector.name
-        self.detector_loc = self.detector.location
 
     def id_format(self, topic_type):
         """ Returns formatted message ID
@@ -59,8 +58,8 @@ class Message_Schema:
                 'TimeTier', 'SigTier', 'CoincidenceTier' for
                 observation messages and, 'HeartBeat' for 
                 heartbeat messages
-            data      : `named tuple`
-                snews_utils data tuple with predefined field.
+            data      : dict
+                dict object that contains message information.
             sent_time : `str`
                 time as a string
             
