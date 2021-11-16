@@ -11,7 +11,7 @@ from datetime import datetime
     show_default='auxiliary/test-config.env',
     help='environment file containing the configurations')
 def main(env):
-    """ User interface for hop_comm tools
+    """ User interface for snews_pt tools
     """
     snews_pt_utils.set_env(env)
 
@@ -22,7 +22,7 @@ def main(env):
 # @click.option('--bypass/--no-bypass', default=True, show_default='True', help='if False, asks user to modify the content of a message')
 @click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
 def publish(tiers, experiment, file, env):
-    """ Publish a message using hop_pub
+    """ Publish a message using snews_pub
 
     Notes
     -----

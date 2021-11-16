@@ -382,8 +382,7 @@ def _check_cli_request(requested, experiment, env):
             The list of requested tiers
         experiment : `str`
     """
-    from . import hop_pub
-    import numpy as np
+    from . import snews_pub
     click.secho('\nRequested tiers are; ', bold=True)
     valid_tiers = ['coincidence','significance','timing']
     confused_ones = ['retraction', 'heartbeat', 'hb']
@@ -405,13 +404,13 @@ def _check_cli_request(requested, experiment, env):
             click.secho(f'\t\t{tier}', fg='blue')
 
         if tier == 'coincidence':
-            pub = hop_pub.Publisher_Coincidence_Tier(experiment, env).send_coincidence_tier_message
+            pub = snews_pub.Publisher_Coincidence_Tier(experiment, env).send_coincidence_tier_message
             name = tier
         if tier == 'significance':
-            pub = hop_pub.Publisher_Significance_Tier(experiment, env).send_sig_tier_message
+            pub = snews_pub.Publisher_Significance_Tier(experiment, env).send_sig_tier_message
             name = tier
         if tier == 'timing':
-            pub = hop_pub.Publisher_Timing_Tier(experiment, env).send_t_tier
+            pub = snews_pub.Publisher_Timing_Tier(experiment, env).send_t_tier
             name = tier
 
         if tier in valid_tiers and name not in names:
