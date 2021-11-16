@@ -28,7 +28,6 @@ class Publisher_Coincidence_Tier:
         Use default settings if not given
 
     """
-
     def __init__(self, detector, env_path=None):
         snews_pt_utils.set_env(env_path)
         self.times = snews_pt_utils.TimeStuff()
@@ -70,7 +69,6 @@ class Publisher_Significance_Tier:
         Use default settings if not given
 
     """
-
     def __init__(self, detector, env_path=None):
         snews_pt_utils.set_env(env_path)
         self.times = snews_pt_utils.TimeStuff()
@@ -112,7 +110,6 @@ class Publisher_Timing_Tier:
         Use default settings if not given
 
     """
-
     def __init__(self, detector, env_path=None):
         snews_pt_utils.set_env(env_path)
         self.times = snews_pt_utils.TimeStuff()
@@ -155,7 +152,6 @@ class Publisher_Rectraction:
         Use default settings if not given
 
     """
-
     def __init__(self, detector, env_path=None):
         snews_pt_utils.set_env(env_path)
         self.times = snews_pt_utils.TimeStuff()

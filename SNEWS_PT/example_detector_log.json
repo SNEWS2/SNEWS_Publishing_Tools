@@ -1,5 +1,7 @@
 {
   "detector": "DS-20K",
   "status": "ON",
-  "machine_time" : " "
+  "machine_time" : " ",
+  "p_value" : 1,
+  "timing_series": ["16:23:24\"4546","16:23:24\"4666","16:23:24\"4756"]
 }

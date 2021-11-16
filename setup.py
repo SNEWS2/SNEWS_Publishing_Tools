@@ -20,6 +20,7 @@ install_requires = [
     "jsonschema",
     "python-dotenv",
     "schedule",
+    "click"
 ]
 
 
@@ -65,11 +66,11 @@ setup(
     packages=find_packages(),
     include_package_data=True,
 
-    # entry_points={
-    #     'console_scripts': [
-    #         'hop_comms = hop_comms.__main__:main',
-    #     ],
-    # },
+    entry_points={
+        'console_scripts': [
+            'snews_pt = SNEWS_PT.__main__:main',
+        ],
+    },
 
     python_requires='>=3.6.*',
     install_requires=read_requirements(),

@@ -4,9 +4,9 @@ Example initial dosctring
 from dotenv import load_dotenv
 from datetime import datetime
 from collections import namedtuple
-import os, json
-from pathlib import Path
-import sys
+import os, json, click
+# from pathlib import Path
+# import sys
 
 
 def set_env(env_path=None):
@@ -20,7 +20,7 @@ def set_env(env_path=None):
 
     """
     dirname = os.path.dirname(__file__)
-    default_env_path = os.path.dirname(__file__) + '/auxiliary/test-config.env'
+    default_env_path = dirname + '/auxiliary/test-config.env'
     env = env_path or default_env_path
     load_dotenv(env)
 
@@ -373,3 +373,61 @@ def heartbeat_data(machine_time=None,
     zip_iterator = zip(keys, values)
     heartbeat_dict = dict(zip_iterator)
     return heartbeat_dict
+
+def _check_cli_request(requested, experiment, env):
+    """ check the requested tier in the CLI
+        Parameters
+        ----------
+        requested : `list`
+            The list of requested tiers
+        experiment : `str`
+    """
+    from . import hop_pub
+    import numpy as np
+    click.secho('\nRequested tiers are; ', bold=True)
+    valid_tiers = ['coincidence','significance','timing']
+    confused_ones = ['retraction', 'heartbeat', 'hb']
+    publishers, names = [], []
+    for i, tier in enumerate(requested):
+        tier = tier.lower()
+        if len(tier) == 1:
+            if tier == 'c': tier = 'coincidence'
+            if tier == 's': tier = 'significance'
+            if tier == 't': tier = 'timing'
+        if tier not in valid_tiers:
+            if tier in confused_ones:
+                click.secho(f'\t\t{tier} has its own separate function ! ', fg='yellow', bold=True)
+                if i == len(requested): return None
+            else:
+                click.secho(f'\t\t{tier} << Not a valid tier! ' , fg='red', bold=True)
+                if i == len(requested): return None
+        else:
+            click.secho(f'\t\t{tier}', fg='blue')
+
+        if tier == 'coincidence':
+            pub = hop_pub.Publisher_Coincidence_Tier(experiment, env).send_coincidence_tier_message
+            name = tier
+        if tier == 'significance':
+            pub = hop_pub.Publisher_Significance_Tier(experiment, env).send_sig_tier_message
+            name = tier
+        if tier == 'timing':
+            pub = hop_pub.Publisher_Timing_Tier(experiment, env).send_t_tier
+            name = tier
+
+        if tier in valid_tiers and name not in names:
+            publishers.append(pub)
+            names.append(name)
+    return publishers, names
+
+def _parse_file(filename):
+    """ Parse the file to fetch the json data
+
+    """
+    with open(filename) as json_file:
+        data = json.load(json_file)
+    return data
+
+
+
+
+

@@ -1,7 +1,6 @@
 from .snews_pt_utils import TimeStuff, get_detector
 import sys
 
-
 class Message_Schema:
     """ The Message scheme for the alert and observations
 
@@ -17,12 +16,11 @@ class Message_Schema:
 
     """
 
-    def __init__(self, env_path=None, detector_key='TEST', alert=False):
+    def __init__(self, env_path=None, detector_key='TEST'):
         self.times = TimeStuff(env_path)
-        if not alert:
-            self.detector = get_detector(detector_key)
-            self.detector_name = self.detector.name
-            self.detector_loc = self.detector.location
+        self.detector = get_detector(detector_key)
+        self.detector_name = self.detector.name
+        self.detector_loc = self.detector.location
 
     def id_format(self, topic_type):
         """ Returns formatted message ID
