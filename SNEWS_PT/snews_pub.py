@@ -15,7 +15,6 @@ from .message_schema import Message_Schema
 import schedule
 from dataclasses import dataclass
 
-
 class Publisher:
     def __init__(self, env_path=None):
         snews_pt_utils.set_env(env_path)
@@ -264,6 +263,7 @@ class Publisher_Heartbeat:
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         self.msg_type = 'Heartbeat'
         self.schema = Message_Schema(detector_key=detector)
+
 
     def send_HBs(self, path_to_log=None):
         """ Publish  Heartbeat message to stream every 10 mins

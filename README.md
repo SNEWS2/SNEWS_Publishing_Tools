@@ -84,7 +84,6 @@ from SNEWS_PT.snews_pub import CoincidenceTier
 from SNEWS_PT.snews_pub import SignificanceTier
 # Import the constructor for Timing Tier
 from SNEWS_PT.snews_pub import TimingTier
-
 ````
 
 Initialize the Publisher.
