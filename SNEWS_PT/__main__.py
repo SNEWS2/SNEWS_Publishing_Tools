@@ -60,6 +60,16 @@ def publish(tiers, experiment, file, env):
 
 @main.command()
 @click.argument('tier', nargs=1)
+def hearbeat():
+    pass
+
+@main.command()
+@click.argument('tier', nargs=1)
+def retract():
+    pass
+
+@main.command()
+@click.argument('tier', nargs=1)
 def message_schema(tier):
     tier = snews_pt_utils.check_aliases(tier)
     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
@@ -77,7 +87,6 @@ def message_schema(tier):
             click.secho(f'{k:<20s}:(SNEWS SETS)', fg='red')
         else:
             click.secho(f'{k:<20s}:(User Input)', fg='blue')
-
 
 if __name__ == "__main__":
     main()
