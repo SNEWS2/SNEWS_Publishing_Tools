@@ -1,5 +1,15 @@
+""" CLI for snews_pt
+    Right now publish method does not allow extra arguments.
+    While this might be the desired use. I think it should not fail to publish, rather
+    - either mark the extra columns and publish, or
+    - split these columns, publish the fixed template, and report back to user.
+    Manipulations in the publish class can be made see
+    https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
+"""
+
 from . import __version__
 from . import snews_pt_utils
+from .snews_pub import Publisher
 from .message_schema import Message_Schema as msg_schema
 import click
 from datetime import datetime
@@ -36,45 +46,32 @@ def publish(tiers, experiment, file, env):
     click.clear()
     if file != "":
         data = snews_pt_utils._parse_file(file)
-        if 'detector' in data:
-            experiment = data['detector']
-    else: data = {'detector':experiment}
-    pubs, names = snews_pt_utils._check_cli_request(tiers, experiment, env)
-    for pub, name in zip(pubs, names):
-        click.secho(f'\n > Publishing to {name}', fg='blue')
-        pub(**data)
+        if 'detector_name' in data:
+            experiment = data['detector_name']
+    else: data = {'detector_name':experiment}
+
+    tiers_list, names_list = snews_pt_utils._check_cli_request(tiers)
+    pub = Publisher(env_path=env)
+    for tier, name in zip(tiers_list, names_list):
+        click.secho(f'\nPublishing to {name}; ', bold=True, fg='blue')
+        message = tier(**data).message()
+        pub.send(message)
 
 
 @main.command()
 @click.argument('tier', nargs=1)
 def message_schema(tier):
-    tier = tier.lower()
-    msg = msg_schema()
-    if tier in ['coincidence', 'c', 'coincidencetier']:
-        data = snews_pt_utils.coincidence_tier_data()
-        tiername = 'CoincidenceTier'
-        all_data = msg.get_schema(tiername,data, 'foo')
-    elif tier in ['significance','s', 'significancetier']:
-        data = snews_pt_utils.sig_tier_data()
-        tiername = 'SignificanceTier'
-        all_data = msg.get_schema(tiername, data, 'foo')
-    elif tier in ['timing','t', 'timingtier']:
-        data = snews_pt_utils.time_tier_data()
-        tiername = 'TimingTier'
-        all_data = msg.get_schema(tiername, data, 'foo')
-    elif tier in ['heartbeat', 'hb']:
-        data = snews_pt_utils.heartbeat_data()
-        tiername = 'Heartbeat'
-        all_data = msg.get_schema(tiername, data, 'foo')
-    elif tier in ['falseobs', 'false']:
-        data = snews_pt_utils.retraction_data()
-        tiername = 'FalseOBS'
-        all_data = msg.get_schema(tiername, data, 'foo')
-    else:
-        click.secho(f'{tier} is not valid! ')
-        return None
+    tier = snews_pt_utils.check_aliases(tier)
+    tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
+                       'SignificanceTier':snews_pt_utils.sig_tier_data(),
+                       'TimingTier':snews_pt_utils.time_tier_data(),
+                       'FalseOBS':snews_pt_utils.retraction_data(),
+                       'Heartbeat':snews_pt_utils.heartbeat_data()}
 
-    click.secho(f'\t >The Message Schema for {tiername}', bg='white', fg='blue')
+    data = tier_data_pairs[tier]
+    msg = msg_schema()
+    all_data = msg.get_schema(tier, data, 'foo')
+    click.secho(f'\t >The Message Schema for {tier}', bg='white', fg='blue')
     for k, v in all_data.items():
         if k not in data.keys():
             click.secho(f'{k:<20s}:(SNEWS SETS)', fg='red')

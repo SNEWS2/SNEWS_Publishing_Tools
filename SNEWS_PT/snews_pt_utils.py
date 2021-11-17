@@ -329,49 +329,60 @@ def heartbeat_data(machine_time=None,
     heartbeat_dict = dict(zip_iterator)
     return heartbeat_dict
 
-def _check_cli_request(requested, experiment, env):
+def check_aliases(tier):
+    tier  = tier.lower()
+    coincidence_aliases = ['coincidence','c','coincidencetier','coinc']
+    significance_aliases = ['significance','s','significancetier', 'sigtier']
+    timing_aliases = ['timing','time','timeingtier','timetier','t']
+    false_aliases = ['false', 'falseobs','reatraction','retract','r','f']
+    heartbeat_aliases = ['heartbeat', 'hb']
+
+    if tier in coincidence_aliases:  tier = 'CoincidenceTier'
+    elif tier in significance_aliases: tier = 'SignificanceTier'
+    elif tier in timing_aliases:    tier = 'TimingTier'
+    elif tier in false_aliases:     tier = 'FalseOBS'
+    elif tier in heartbeat_aliases: tier = 'Heartbeat'
+    else:
+        click.secho(f'{tier} < not a valid argument!', fg='red')
+        return None
+    return tier
+
+def _check_cli_request(requested):
     """ check the requested tier in the CLI
+
         Parameters
         ----------
         requested : `list`
             The list of requested tiers
-        experiment : `str`
+
     """
-    from . import snews_pub
+    from .snews_pub import CoincidenceTier, SignificanceTier, TimingTier, Retraction, Publisher_Heartbeat
+
+    valid_tiers_names = ['CoincidenceTier','SignificanceTier', 'TimingTier']
+    valid_tiers = [CoincidenceTier, SignificanceTier, TimingTier]
+    tier_pairs = dict(zip(valid_tiers_names, valid_tiers))
+    other_tiers_names = ['Heartbeat', 'FalseOBS']
+    other_tiers = [Publisher_Heartbeat, Retraction]
+    other_pairs = dict(zip(other_tiers_names, other_tiers))
+
+    tiers_list = []
+    name_list = []
     click.secho('\nRequested tiers are; ', bold=True)
-    valid_tiers = ['coincidence','significance','timing']
-    confused_ones = ['retraction', 'heartbeat', 'hb']
-    publishers, names = [], []
     for i, tier in enumerate(requested):
         tier = tier.lower()
-        if len(tier) == 1:
-            if tier == 'c': tier = 'coincidence'
-            if tier == 's': tier = 'significance'
-            if tier == 't': tier = 'timing'
-        if tier not in valid_tiers:
-            if tier in confused_ones:
-                click.secho(f'\t\t{tier} has its own separate function ! ', fg='yellow', bold=True)
-                if i == len(requested): return None
-            else:
-                click.secho(f'\t\t{tier} << Not a valid tier! ' , fg='red', bold=True)
-                if i == len(requested): return None
-        else:
+        tiername = check_aliases(tier)
+        if tiername in valid_tiers_names:
+            tiers_list.append(tier_pairs[tiername])
+            name_list.append(tiername)
             click.secho(f'\t\t{tier}', fg='blue')
+        elif tiername in other_tiers_names:
+            click.secho(f'\t\t{tiername} has its own separate function ! ', fg='yellow', bold=True)
+            if i == len(requested): return None
+        else: return None
+    tiers_list = set(tiers_list)
+    name_list = set(name_list)
+    return tiers_list, name_list
 
-        if tier == 'coincidence':
-            pub = snews_pub.Publisher_Coincidence_Tier(experiment, env).send_coincidence_tier_message
-            name = tier
-        if tier == 'significance':
-            pub = snews_pub.Publisher_Significance_Tier(experiment, env).send_sig_tier_message
-            name = tier
-        if tier == 'timing':
-            pub = snews_pub.Publisher_Timing_Tier(experiment, env).send_t_tier
-            name = tier
-
-        if tier in valid_tiers and name not in names:
-            publishers.append(pub)
-            names.append(name)
-    return publishers, names
 
 def _parse_file(filename):
     """ Parse the file to fetch the json data
