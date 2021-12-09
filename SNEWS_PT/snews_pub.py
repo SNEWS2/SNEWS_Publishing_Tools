@@ -17,17 +17,27 @@ from dataclasses import dataclass
 
 
 class Publisher:
-    def __init__(self, env_path=None):
+    def __init__(self, env_path=None, verbose=False):
         snews_pt_utils.set_env(env_path)
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         self.times = snews_pt_utils.TimeStuff()
+        self.verbose = verbose
+
+    def __enter__(self):
+        self.stream = Stream(persist=False).open(self.obs_broker, 'w')
+        return self
+
+    def __exit__(self, *args):
+        self.stream.close()
 
     def send(self, message):
-        stream = Stream(persist=False)
         message['sent_time'] = self.times.get_snews_time()
-        with stream.open(self.obs_broker, 'w') as s:
-            s.write(message)
-            s.close()
+        self.stream.write(message)
+
+
+    def display_message(self, message):
+        if not self.verbose:
+            pass
         click.secho(f'{"-" * 57}', fg='bright_blue')
         if message['_id'].split('_')[1] == 'FalseOBS':
             click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
@@ -224,6 +234,7 @@ class Retraction:
     false_mgs_id: str = None
     retraction_reason: str = None
     extra: dict = None
+
     def message(self):
         """
            Formats message structure
