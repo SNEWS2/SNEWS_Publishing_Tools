@@ -16,32 +16,21 @@ import schedule
 from dataclasses import dataclass
 
 
-# TODO: Context manager
 class Publisher:
-    def __init__(self, env_path=None, verbose=False):
+    def __init__(self, env_path=None):
         snews_pt_utils.set_env(env_path)
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         self.times = snews_pt_utils.TimeStuff()
-        self.verbose = verbose
-
-    def __enter__(self):
-        self.stream = Stream(persist=False).open(self.obs_broker, 'w')
-        return self
-
-    def __exit__(self, *args):
-        self.stream.close()
 
     def send(self, message):
+        stream = Stream(persist=False)
         message['sent_time'] = self.times.get_snews_time()
-        self.stream.write(message)
-        self.display_message(message)
-
-    def display_message(self, message):
-        if not self.verbose:
-            pass
+        with stream.open(self.obs_broker, 'w') as s:
+            s.write(message)
+            s.close()
+        click.secho(f'{"-" * 57}', fg='bright_blue')
         if message['_id'].split('_')[1] == 'FalseOBS':
             click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
-        click.secho(f'{"-" * 57}', fg='bright_blue')
         for k, v in message.items():
             print(f'{k:<20s}:{v}')
 
@@ -235,7 +224,6 @@ class Retraction:
     false_mgs_id: str = None
     retraction_reason: str = None
     extra: dict = None
-
     def message(self):
         """
            Formats message structure

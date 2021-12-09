@@ -4,9 +4,9 @@ Example initial dosctring
 from dotenv import load_dotenv
 from datetime import datetime
 from collections import namedtuple
-import os, json
-from pathlib import Path
-import sys
+import os, json, click
+# from pathlib import Path
+# import sys
 
 
 def set_env(env_path=None):
@@ -20,7 +20,7 @@ def set_env(env_path=None):
 
     """
     dirname = os.path.dirname(__file__)
-    default_env_path = os.path.dirname(__file__) + '/auxiliary/test-config.env'
+    default_env_path = dirname + '/auxiliary/test-config.env'
     env = env_path or default_env_path
     load_dotenv(env)
 
@@ -328,3 +328,71 @@ def heartbeat_data(machine_time=None,
     zip_iterator = zip(keys, values)
     heartbeat_dict = dict(zip_iterator)
     return heartbeat_dict
+
+def check_aliases(tier):
+    tier  = tier.lower()
+    coincidence_aliases = ['coincidence','c','coincidencetier','coinc']
+    significance_aliases = ['significance','s','significancetier', 'sigtier']
+    timing_aliases = ['timing','time','timeingtier','timetier','t']
+    false_aliases = ['false', 'falseobs','reatraction','retract','r','f']
+    heartbeat_aliases = ['heartbeat', 'hb']
+
+    if tier in coincidence_aliases:  tier = 'CoincidenceTier'
+    elif tier in significance_aliases: tier = 'SignificanceTier'
+    elif tier in timing_aliases:    tier = 'TimingTier'
+    elif tier in false_aliases:     tier = 'FalseOBS'
+    elif tier in heartbeat_aliases: tier = 'Heartbeat'
+    else:
+        click.secho(f'{tier} < not a valid argument!', fg='red')
+        return None
+    return tier
+
+def _check_cli_request(requested):
+    """ check the requested tier in the CLI
+
+        Parameters
+        ----------
+        requested : `list`
+            The list of requested tiers
+
+    """
+    from .snews_pub import CoincidenceTier, SignificanceTier, TimingTier, Retraction, Publisher_Heartbeat
+
+    valid_tiers_names = ['CoincidenceTier','SignificanceTier', 'TimingTier']
+    valid_tiers = [CoincidenceTier, SignificanceTier, TimingTier]
+    tier_pairs = dict(zip(valid_tiers_names, valid_tiers))
+    other_tiers_names = ['Heartbeat', 'FalseOBS']
+    other_tiers = [Publisher_Heartbeat, Retraction]
+    other_pairs = dict(zip(other_tiers_names, other_tiers))
+
+    tiers_list = []
+    name_list = []
+    click.secho('\nRequested tiers are; ', bold=True)
+    for i, tier in enumerate(requested):
+        tier = tier.lower()
+        tiername = check_aliases(tier)
+        if tiername in valid_tiers_names:
+            tiers_list.append(tier_pairs[tiername])
+            name_list.append(tiername)
+            click.secho(f'\t\t{tier}', fg='blue')
+        elif tiername in other_tiers_names:
+            click.secho(f'\t\t{tiername} has its own separate function ! ', fg='yellow', bold=True)
+            if i == len(requested): return None
+        else: return None
+    tiers_list = set(tiers_list)
+    name_list = set(name_list)
+    return tiers_list, name_list
+
+
+def _parse_file(filename):
+    """ Parse the file to fetch the json data
+
+    """
+    with open(filename) as json_file:
+        data = json.load(json_file)
+    return data
+
+
+
+
+
