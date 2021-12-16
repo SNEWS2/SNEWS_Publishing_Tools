@@ -1,12 +1,11 @@
 """
-Example initial dosctring
+Utility tools for SNEWS_PT
 """
 from dotenv import load_dotenv
 from datetime import datetime
 from collections import namedtuple
 import os, json, click
 import sys
-# from pathlib import Path
 
 
 def set_env(env_path=None):
@@ -72,95 +71,56 @@ def set_topic_state(which_topic, env_path=None):
     }
     return topics[which_topic.upper()]
 
-
-def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/detector_properties.json"):
-    ''' Retrieve the name-ID-location of the participating detectors.
-
-        Parameters
-        ----------
-        detectors_path : `str`, optional
-            path to detector proporties. File needs to be
-            in JSON format
-        
-        Returns
-        -------
-        None
-
-    '''
-    if not os.path.isfile(detectors_path):
-        os.system(f'python {os.path.dirname(__file__)}/auxiliary/make_detector_file.py')
-
-    with open(detectors_path) as json_file:
-        detectors = json.load(json_file)
-
-    # make a namedtuple
-    Detector = namedtuple("Detector", ["name", "id", "location"])
-    for k, v in detectors.items():
-        detectors[k] = Detector(v[0], v[1], v[2])
-    return detectors
-
-
-def get_detector(detector, detectors_path=os.path.dirname(__file__) +
-                                          "/auxiliary/detector_properties.json"):
-    """ Return the selected detector properties
-
-    Parameters
-    ----------
-    detector : `str`
-        The name of the detector. Should be one of the predetermined detectors.
-        If the name is not in that list, returns TEST detector.
-
-    """
-    Detector = namedtuple("Detector", ["name", "id", "location"])
-    if isinstance(detector, Detector): return detector  # not needed?
-    # search for the detector name in `detectors`
-    detectors = retrieve_detectors(detectors_path)
-    if isinstance(detector, str):
-        try:
-            return detectors[detector]
-        except KeyError:
-            print(f'{detector} is not a valid detector!')
-            return detectors['TEST']
-
-
-def summarize(detector, topic_type_, env_path=None):
-    """ Summarize the current configuration (DEPRECATED)
-
-    Parameters
-    ----------
-    detector : `str`
-        name of the detector
-    topic_type : `str`
-        The topic that is subscribed
-
-    Returns
-    -------
-
-    .. note:: Deprecated
-
-    """
-    import hop, snews, sys
-    set_env()
-    broker = os.getenv("HOP_BROKER")
-    observation_topic = os.getenv("OBSERVATION_TOPIC")
-    heartbeat_topic = os.getenv("OBSERVATION_TOPIC")
-    alert_topic = os.getenv("ALERT_TOPIC")
-    topic_type = f"Publish SNEWS {topic_type_} Messages"
-    print(
-        '#'.center(50, '#') +
-        f'\n# {topic_type:^46} #\n'
-        f'#{detector.name:_^48}#\n'
-        f'#{str(detector.id) + "-" + detector.location:_^48}#\n' +
-        '#'.center(50, '#') +
-        f'\nYour Python version:\n {sys.version}\n'
-        f'Current hop-client version:{hop.__version__}\n'
-        f'             snews version:{snews.__version__}\n\n'
-        f'Publishing to {broker}\n'
-        f'Observation Topic:\n==> {observation_topic}\n'
-        f'Heartbeat Topic:\n==> {heartbeat_topic}\n\n')
-
-
-
+# def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/detector_properties.json"):
+#     ''' Retrieve the name-ID-location of the participating detectors.
+#
+#         Parameters
+#         ----------
+#         detectors_path : `str`, optional
+#             path to detector proporties. File needs to be
+#             in JSON format
+#
+#         Returns
+#         -------
+#         None
+#
+#     '''
+#     if not os.path.isfile(detectors_path):
+#         os.system(f'python {os.path.dirname(__file__)}/auxiliary/make_detector_file.py')
+#
+#     with open(detectors_path) as json_file:
+#         detectors = json.load(json_file)
+#
+#     # make a namedtuple
+#     Detector = namedtuple("Detector", ["name", "id", "location"])
+#     for k, v in detectors.items():
+#         detectors[k] = Detector(v[0], v[1], v[2])
+#     return detectors
+#
+# def get_detector(detector, detectors_path=os.path.dirname(__file__) +
+#                                           "/auxiliary/detector_properties.json"):
+#     """ Return the selected detector properties
+#
+#     Parameters
+#     ----------
+#     detector : `str`
+#         The name of the detector. Should be one of the predetermined detectors.
+#         If the name is not in that list, returns TEST detector.
+#     detectors_path : `str`
+#         path for the json file with all detectors. By default this is
+#         /auxiliary/detector_properties.json
+#
+#     """
+#     Detector = namedtuple("Detector", ["name", "id", "location"])
+#     if isinstance(detector, Detector): return detector  # not needed?
+#     # search for the detector name in `detectors`
+#     detectors = retrieve_detectors(detectors_path)
+#     if isinstance(detector, str):
+#         try:
+#             return detectors[detector]
+#         except KeyError:
+#             print(f'{detector} is not a valid detector!')
+#             return detectors['TEST']
 
 def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwargs):
     """ Formats data for CoincidenceTier as dict object
@@ -193,7 +153,6 @@ def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwarg
     coincidence_tier_dict = dict(zip_iterator)
     return coincidence_tier_dict
 
-
 def sig_tier_data(machine_time=None, nu_time=None, p_values=None, **kwargs):
     """ Formats data for SigTier as dict object
 
@@ -224,7 +183,6 @@ def sig_tier_data(machine_time=None, nu_time=None, p_values=None, **kwargs):
     zip_iterator = zip(keys, values)
     sig_tier_dict = dict(zip_iterator)
     return sig_tier_dict
-
 
 def time_tier_data(machine_time=None, nu_time=None, timing_series=None,
                   **kwargs):
@@ -257,7 +215,6 @@ def time_tier_data(machine_time=None, nu_time=None, timing_series=None,
     zip_iterator = zip(keys, values)
     time_tier_dict = dict(zip_iterator)
     return time_tier_dict
-
 
 def retraction_data(machine_time=None, false_mgs_id=None, which_tier=None,
                         n_retract_latest=0, retraction_reason=None, **kwargs):
@@ -297,7 +254,6 @@ def retraction_data(machine_time=None, false_mgs_id=None, which_tier=None,
     zip_iterator = zip(keys, values)
     retraction_dict = dict(zip_iterator)
     return retraction_dict
-
 
 def heartbeat_data(machine_time=None,
                    detector_status=None, **kwargs):
@@ -373,8 +329,9 @@ def _check_cli_request(requested):
         if tiername in valid_tiers_names:
             tier_name_pair.append((tier_pairs[tiername],tiername))
         elif tiername in other_tiers_names:
-            click.secho(f'\t\t{tiername} has its own separate function !\n'
-                        f'\t\t  See {other_pairs[tiername]}', fg='yellow', bold=True)
+            click.echo(click.style(f'\t\t> {tiername}\n', fg='yellow', bold=True)+
+                       '\t\t    has its own separate function !\n'
+                      f'\t\t    See '+click.style(f'{other_pairs[tiername]}', fg='yellow'))
             if i == len(requested): return None
         else: return None
 
@@ -383,18 +340,46 @@ def _check_cli_request(requested):
         if name not in names_unique:
             names_unique.append(name)
             tiers_unique.append(Tier)
-            click.secho(f'\t\t{name}', fg='cyan')
+            click.secho(f'\t\t> {name}', fg='cyan')
     return tiers_unique, names_unique
-
 
 def _parse_file(filename):
     """ Parse the file to fetch the json data
 
+    Notes
+    -----
+    Infer Tier based on keys ?
     """
     with open(filename) as json_file:
         data = json.load(json_file)
     return data
 
+
+def isnotebook():
+    """ Tell if the script is running on a notebook
+
+    """
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            return True  # Jupyter notebook or qtconsole
+        elif shell == 'TerminalInteractiveShell':
+            return False  # Terminal running IPython
+        else:
+            return False  # Other type (?)
+    except NameError:
+        return False  # Probably standard Python interpreter
+
+
+def display_gif():
+    """ Some fun method to display an alert gif
+        If running on notebook
+
+    """
+    if isnotebook():
+        from IPython.display import HTML, display
+        giphy_snews = "https://raw.githubusercontent.com/SNEWS2/hop-SNalert-app/snews2_dev/hop_comms/auxiliary/snalert.gif"
+        display(HTML(f'<img src={giphy_snews}>'))
 
 
 

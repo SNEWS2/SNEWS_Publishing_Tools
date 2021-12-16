@@ -10,8 +10,10 @@
 from . import __version__
 from . import snews_pt_utils
 from .snews_pub import Publisher
+from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
+import sys
 
 
 @click.group(invoke_without_command=True)
@@ -20,18 +22,15 @@ import click
     default='./SNEWS_PT/auxiliary/test-config.env',
     show_default='auxiliary/test-config.env',
     help='environment file containing the configurations')
-# @click.pass_context
 def main(env):
     """ User interface for snews_pt tools
     """
     snews_pt_utils.set_env(env)
-    # ctx.obj = ctx.with_resource(Publisher(env, verbose=True))
 
 @main.command()
 @click.argument('tiers', nargs=-1)
 @click.option('--verbose','-v', type=bool, default=True)
 @click.option('--file','-f', type=str, default="", show_default='data file')
-# @click.option('--bypass/--no-bypass', default=True, show_default='True', help='if False, asks user to modify the content of a message')
 @click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
 @click.pass_context
 def publish(ctx, tiers, file, env, verbose):
@@ -70,22 +69,36 @@ def publish(ctx, tiers, file, env, verbose):
         pub = ctx.with_resource(Publisher(env, verbose=verbose))
         pub.send(message)
 
+
 @main.command()
-@click.argument('tier', nargs=1)
-def hearbeat():
-    raise NotImplementedError
+@click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
+def subscribe(env):
+    """
+    maybe also implement context menager
+    """
+    sub = Subscriber(env)
+    try:
+        sub.subscribe()
+    except KeyboardInterrupt:
+        pass
+
 
 @main.command()
 @click.argument('tier', nargs=1)
-def retract():
-    raise NotImplementedError
+def hearbeat(tier):
+    sys.exit("NotImplementedError")
+    # raise NotImplementedError
+
+@main.command()
+@click.argument('tier', nargs=1)
+def retract(tier):
+    sys.exit("NotImplementedError")
+    # raise NotImplementedError
 
 @main.command()
 @click.argument('tier', nargs=1, default='all')
 def message_schema(tier):
-    """
-    Display the message format
-    `tier` name can be given, default is 'all'
+    """ Display the message format for `tier`, default 'all'
     """
     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
                        'SignificanceTier':snews_pt_utils.sig_tier_data(),
