@@ -108,7 +108,7 @@ my_detector = 'DS-20K'
 Finally, to send a message you need initialize the Publisher, construct your message, and send it to Publisher. 
 ```Python
 with Publisher() as pub:
-    message = CoincidenceTier(detector_name=my_detector, nu_time=nu_t(), p_val = 0.98,).message()
+    message = CoincidenceTier(detector_name=my_detector, , neutrino_time=nu_t(), p_value = 0.98,).message()
     pub.send(message)
 ```
 
