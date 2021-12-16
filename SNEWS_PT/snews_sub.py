@@ -5,7 +5,7 @@ from . import snews_pt_utils
 
 
 def save_message(message):
-    """ Save messages to a json file
+    """ Save messages to a json file.
 
     """
     S = Subscriber()
