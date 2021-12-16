@@ -33,6 +33,7 @@ class Publisher:
     def send(self, message):
         message['sent_time'] = self.times.get_snews_time()
         self.stream.write(message)
+        self.display_message(message)
 
 
     def display_message(self, message):
