@@ -373,7 +373,7 @@ def isnotebook():
 
 def display_gif():
     """ Some fun method to display an alert gif
-        If running on notebook
+        If running on notebook.
 
     """
     if isnotebook():
