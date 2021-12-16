@@ -73,7 +73,7 @@ sent_time
 
 Before we get started, right now the publishing method will send your message to the test kafka server.
 
-First you need to import your desired Publisher class:
+First you need to import Publisher and  your desired Observation class:
 
 ````Python
 # Import the Publisher class
@@ -86,15 +86,7 @@ from SNEWS_PT.snews_pub import SignificanceTier
 from SNEWS_PT.snews_pub import TimingTier
 ````
 
-Initialize the Publisher.
-
-    Note: For this example I'm publishing to Coincidence Tier.
-
-````Python
-pub = Publisher()
-````
-
-Make your dummy nu time method (optional)
+First let's make a dummy nu time method (optional)
 
     Note: datetime object will be used to create a dummy nu times
 
@@ -106,18 +98,18 @@ def nu_t():
     return datetime.utcnow().strftime("%H:%M:%S:%f")
 ```
 
-Construct your message, don't forget the `.message()` at the end this returns the dict object with all your message
-data. **Make sure you pass it a detector name**!
-
+Let's define the name of our detector.
 ```Python
 my_detector = 'DS-20K'
-message = CoincidenceTier(detector_name=my_detector, nu_time=nu_t(), p_val = 0.98).message()
+
 ```
 
 
-Now send it ! 
+Finally, to send a message you need initialize the Publisher, construct your message, and send it to Publisher. 
 ```Python
-pub.send(message)
+with Publisher() as pub:
+    message = CoincidenceTier(detector_name=my_detector, nu_time=nu_t(), p_val = 0.98,).message()
+    pub.send(message)
 ```
 
 The output should look like this:
