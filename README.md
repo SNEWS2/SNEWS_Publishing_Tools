@@ -124,3 +124,13 @@ The output should look like this:
 ![img.png](img.png)
 
 See `example.ipynb` for more tutorial scripts 
+
+## How to Subscribe
+
+In two lines, one can subscribe to the alert topic specified in the default configuration. <br>
+This starts a stream, and waits for alert messages to be received.
+```python
+from SNEWS_PT.snews_sub import Subscriber
+
+Subscriber().subscribe()
+```

@@ -82,8 +82,11 @@ class Subscriber:
 
         # Initiate hop_stream
         stream = Stream(persist=True)
-        with stream.open(self.alert_topic, "r") as s:
-            for message in s:
-                save_message(message)
-                snews_pt_utils.display_gif()
-                display(message)
+        try:
+            with stream.open(self.alert_topic, "r") as s:
+                for message in s:
+                    save_message(message)
+                    snews_pt_utils.display_gif()
+                    display(message)
+        except KeyboardInterrupt:
+            click.secho('Done', fg='green')

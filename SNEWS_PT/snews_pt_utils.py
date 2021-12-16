@@ -71,56 +71,56 @@ def set_topic_state(which_topic, env_path=None):
     }
     return topics[which_topic.upper()]
 
-# def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/detector_properties.json"):
-#     ''' Retrieve the name-ID-location of the participating detectors.
-#
-#         Parameters
-#         ----------
-#         detectors_path : `str`, optional
-#             path to detector proporties. File needs to be
-#             in JSON format
-#
-#         Returns
-#         -------
-#         None
-#
-#     '''
-#     if not os.path.isfile(detectors_path):
-#         os.system(f'python {os.path.dirname(__file__)}/auxiliary/make_detector_file.py')
-#
-#     with open(detectors_path) as json_file:
-#         detectors = json.load(json_file)
-#
-#     # make a namedtuple
-#     Detector = namedtuple("Detector", ["name", "id", "location"])
-#     for k, v in detectors.items():
-#         detectors[k] = Detector(v[0], v[1], v[2])
-#     return detectors
-#
-# def get_detector(detector, detectors_path=os.path.dirname(__file__) +
-#                                           "/auxiliary/detector_properties.json"):
-#     """ Return the selected detector properties
-#
-#     Parameters
-#     ----------
-#     detector : `str`
-#         The name of the detector. Should be one of the predetermined detectors.
-#         If the name is not in that list, returns TEST detector.
-#     detectors_path : `str`
-#         path for the json file with all detectors. By default this is
-#         /auxiliary/detector_properties.json
-#
-#     """
-#     Detector = namedtuple("Detector", ["name", "id", "location"])
-#     if isinstance(detector, Detector): return detector  # not needed?
-#     # search for the detector name in `detectors`
-#     detectors = retrieve_detectors(detectors_path)
-#     if isinstance(detector, str):
-#         try:
-#             return detectors[detector]
-#         except KeyError:
-#             print(f'{detector} is not a valid detector!')
-#             return detectors['TEST']
+def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/detector_properties.json"):
+    ''' Retrieve the name-ID-location of the participating detectors.
+
+        Parameters
+        ----------
+        detectors_path : `str`, optional
+            path to detector proporties. File needs to be
+            in JSON format
+
+        Returns
+        -------
+        None
+
+    '''
+    if not os.path.isfile(detectors_path):
+        os.system(f'python {os.path.dirname(__file__)}/auxiliary/make_detector_file.py')
+
+    with open(detectors_path) as json_file:
+        detectors = json.load(json_file)
+
+    # make a namedtuple
+    Detector = namedtuple("Detector", ["name", "id", "location"])
+    for k, v in detectors.items():
+        detectors[k] = Detector(v[0], v[1], v[2])
+    return detectors
+
+def get_detector(detector, detectors_path=os.path.dirname(__file__) +
+                                          "/auxiliary/detector_properties.json"):
+    """ Return the selected detector properties
+
+    Parameters
+    ----------
+    detector : `str`
+        The name of the detector. Should be one of the predetermined detectors.
+        If the name is not in that list, returns TEST detector.
+    detectors_path : `str`
+        path for the json file with all detectors. By default this is
+        /auxiliary/detector_properties.json
+
+    """
+    Detector = namedtuple("Detector", ["name", "id", "location"])
+    if isinstance(detector, Detector): return detector  # not needed?
+    # search for the detector name in `detectors`
+    detectors = retrieve_detectors(detectors_path)
+    if isinstance(detector, str):
+        try:
+            return detectors[detector]
+        except KeyError:
+            print(f'{detector} is not a valid detector!')
+            return detectors['TEST']
 
 def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwargs):
     """ Formats data for CoincidenceTier as dict object
