@@ -33,6 +33,7 @@ class Publisher:
     def send(self, message):
         message['sent_time'] = self.times.get_snews_time()
         self.stream.write(message)
+        self.display_message(message)
 
 
     def display_message(self, message):
@@ -68,9 +69,10 @@ class CoincidenceTier:
         Make sure it's formatted as a dict.
 
     """
+
+    p_value: float
+    neutrino_time: str
     detector_name: str
-    p_val: float
-    nu_time: str
     machine_time: str = None
     message_type: str = 'CoincidenceTier'
     extra: dict = None
@@ -85,13 +87,13 @@ class CoincidenceTier:
 
         """
         data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time,
-                                                    p_value=self.p_val,
-                                                    nu_time=self.nu_time,
+                                                    p_value=self.p_value,
+                                                    nu_time=self.neutrino_time,
                                                     )
         if self.extra != None and type(self.extra) == dict:
             data = snews_pt_utils.coincidence_tier_data(**self.extra, machine_time=self.machine_time,
-                                                        p_value=self.p_val,
-                                                        nu_time=self.nu_time,
+                                                        p_value=self.p_value,
+                                                        nu_time=self.neutrino_time,
                                                         )
 
         return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
@@ -122,7 +124,7 @@ class SignificanceTier:
 
        """
     detector_name: str
-    nu_time: str
+    neutrino_time: str
     p_values: list
     machine_time: str = None
     extra: dict = None
@@ -137,10 +139,10 @@ class SignificanceTier:
            message as dict object
 
            """
-        data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time, nu_time=self.nu_time,
+        data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
                                             p_values=self.p_values)
         if self.extra != None and type(self.extra) == dict:
-            data = snews_pt_utils.sig_tier_data(**self.extra, machine_time=self.machine_time, nu_time=self.nu_time,
+            data = snews_pt_utils.sig_tier_data(**self.extra, machine_time=self.machine_time, nu_time=self.neutrino_time,
                                                 p_values=self.p_values)
 
         return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
@@ -171,7 +173,7 @@ class TimingTier:
 
           """
     detector_name: str
-    nu_time: str
+    neutrino_time: str
     timing_series: list
     machine_time: str = None
     extra: dict = None
@@ -186,10 +188,10 @@ class TimingTier:
            message as dict object
 
            """
-        data = snews_pt_utils.time_tier_data(machine_time=self.machine_time, nu_time=self.nu_time,
+        data = snews_pt_utils.time_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
                                              timing_series=self.timing_series, )
         if self.extra != None and type(self.extra) == dict:
-            data = snews_pt_utils.time_tier_data(machine_time=self.machine_time, nu_time=self.nu_time,
+            data = snews_pt_utils.time_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
                                                  timing_series=self.timing_series,
                                                  **self.extra)
 
