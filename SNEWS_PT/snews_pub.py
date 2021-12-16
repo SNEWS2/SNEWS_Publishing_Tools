@@ -17,6 +17,16 @@ from dataclasses import dataclass
 
 
 class Publisher:
+    """Class in charge of publishing messages to SNEWS-hop sever.
+    This class acts as a context manager.
+
+    Parameters
+    ----------
+    env_path: 'str'
+        path to SNEWS env file, defaults to tes_config.env if None is passed.
+    verbose: bool
+        Option to display message when publishing.
+    """
     def __init__(self, env_path=None, verbose=False):
         snews_pt_utils.set_env(env_path)
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
@@ -31,6 +41,14 @@ class Publisher:
         self.stream.close()
 
     def send(self, message):
+        """This method will set the sent_time and send the message to the hop broker.
+
+        Parameters
+        ----------
+        message: dict
+            observation message.
+
+        """
         message['sent_time'] = self.times.get_snews_time()
         self.stream.write(message)
         self.display_message(message)
