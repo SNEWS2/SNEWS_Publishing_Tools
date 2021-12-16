@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from datetime import datetime
 from collections import namedtuple
 import os, json, click
+import sys
 # from pathlib import Path
-# import sys
 
 
 def set_env(env_path=None):
@@ -329,7 +329,7 @@ def heartbeat_data(machine_time=None,
     heartbeat_dict = dict(zip_iterator)
     return heartbeat_dict
 
-def check_aliases(tier):
+def _check_aliases(tier):
     tier  = tier.lower()
     coincidence_aliases = ['coincidence','c','coincidencetier','coinc']
     significance_aliases = ['significance','s','significancetier', 'sigtier']
@@ -343,9 +343,9 @@ def check_aliases(tier):
     elif tier in false_aliases:     tier = 'FalseOBS'
     elif tier in heartbeat_aliases: tier = 'Heartbeat'
     else:
-        click.secho(f'{tier} < not a valid argument!', fg='red')
-        return None
-    return tier
+        click.secho(f'"{tier}" <- not a valid argument!', fg='bright_red')
+        sys.exit()
+    return [tier]
 
 def _check_cli_request(requested):
     """ check the requested tier in the CLI
@@ -365,23 +365,26 @@ def _check_cli_request(requested):
     other_tiers = [Publisher_Heartbeat, Retraction]
     other_pairs = dict(zip(other_tiers_names, other_tiers))
 
-    tiers_list = []
-    name_list = []
+    tier_name_pair = []
     click.secho('\nRequested tiers are; ', bold=True)
     for i, tier in enumerate(requested):
         tier = tier.lower()
-        tiername = check_aliases(tier)
+        tiername = _check_aliases(tier)[0]
         if tiername in valid_tiers_names:
-            tiers_list.append(tier_pairs[tiername])
-            name_list.append(tiername)
-            click.secho(f'\t\t{tier}', fg='blue')
+            tier_name_pair.append((tier_pairs[tiername],tiername))
         elif tiername in other_tiers_names:
-            click.secho(f'\t\t{tiername} has its own separate function ! ', fg='yellow', bold=True)
+            click.secho(f'\t\t{tiername} has its own separate function !\n'
+                        f'\t\t  See {other_pairs[tiername]}', fg='yellow', bold=True)
             if i == len(requested): return None
         else: return None
-    tiers_list = set(tiers_list)
-    name_list = set(name_list)
-    return tiers_list, name_list
+
+    tiers_unique, names_unique = [],[]
+    for Tier, name  in tier_name_pair:
+        if name not in names_unique:
+            names_unique.append(name)
+            tiers_unique.append(Tier)
+            click.secho(f'\t\t{name}', fg='cyan')
+    return tiers_unique, names_unique
 
 
 def _parse_file(filename):
