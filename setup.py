@@ -20,7 +20,8 @@ install_requires = [
     "jsonschema",
     "python-dotenv",
     "schedule",
-    "click"
+    "click",
+    "schedule"
 ]
 
 
