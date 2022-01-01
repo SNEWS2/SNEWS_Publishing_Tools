@@ -89,7 +89,7 @@ class CoincidenceTier:
 
     p_value: float
     neutrino_time: str
-    detector_name: str
+    detector_name: str = os.getenv('DETECTOR_NAME')
     machine_time: str = None
     message_type: str = 'CoincidenceTier'
     extra: dict = None
@@ -124,13 +124,13 @@ class SignificanceTier:
 
        Attributes
        ----------
+       nu_time: str
+           nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+       p_values: list of float
+           p-values for a SN nu flux.
        detector_name:  str
            Name of your detector.
            Use snews_pt_utils.retrieve_detectors() to see the available detector names.
-       p_values: list of float
-           p-values for a SN nu flux.
-       nu_time: str
-           nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
        machine_time: str
            time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
        message_type: str (default:'SigTier')
@@ -140,9 +140,9 @@ class SignificanceTier:
            Make sure it's formatted as a dict.
 
        """
-    detector_name: str
     neutrino_time: str
     p_values: list
+    detector_name: str = os.getenv('DETECTOR_NAME')
     machine_time: str = None
     extra: dict = None
     message_type: str = 'SigTier'
@@ -173,13 +173,13 @@ class TimingTier:
 
           Attributes
           ----------
-          detector_name:  str
-              Name of your detector.
-              Use snews_pt_utils.retrieve_detectors() to see the available detector names.
           nu_time: str
             nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
           timing_series: list of str
               nu arrival times. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+          detector_name:  str
+              Name of your detector.
+              Use snews_pt_utils.retrieve_detectors() to see the available detector names.
           machine_time: str
               time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
           message_type: str (default:'SigTier')
@@ -189,9 +189,9 @@ class TimingTier:
               Make sure it's formatted as a dict.
 
           """
-    detector_name: str
     neutrino_time: str
     timing_series: list
+    detector_name: str = os.getenv('DETECTOR_NAME')
     machine_time: str = None
     extra: dict = None
     message_type: str = 'TimeTier'
@@ -222,9 +222,6 @@ class Retraction:
     Container class for retraction messages.
     Attributes
     ----------
-    detector_name:  str
-        Name of your detector.
-        Use snews_pt_utils.retrieve_detectors() to see the available detector names.
     which_tier: str
         Name of tier you want to retract from,
             'CoincidenceTier'
@@ -232,6 +229,9 @@ class Retraction:
             'TimeTier'
     n_retract_latest: int
         Number of most recent message you want to retract
+    detector_name:  str
+        Name of your detector.
+        Use snews_pt_utils.retrieve_detectors() to see the available detector names.
     message_type: str (default: 'FalseOBS'
         Set message type for schema
     machine_time: str (default: None)
@@ -245,9 +245,9 @@ class Retraction:
         Make sure it's formatted as a dict!!!
 
     """
-    detector_name: str
     which_tier: str
     n_retract_latest: int
+    detector_name: str = os.getenv('DETECTOR_NAME')
     message_type: str = 'FalseOBS'
     machine_time: str = None
     false_mgs_id: str = None
@@ -275,50 +275,6 @@ class Retraction:
                                                                           sent_time='')
 
 
-# class Publisher_Heartbeat:
-#     """ Publish Heartbeat message.
-#
-#     Parameters
-#     ----------
-#     detector : `str`
-#             The name of the detector
-#     env_path : `str`
-#         path for the environment file.
-#         Use default settings if not given
-#
-#     """
-#
-#     def __init__(self, detector, env_path=None):
-#         snews_pt_utils.set_env(env_path)
-#         self.times = snews_pt_utils.TimeStuff()
-#         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
-#         self.msg_type = 'Heartbeat'
-#         self.schema = Message_Schema(detector_key=detector)
-#
-#     def send_HBs(self, path_to_log=None):
-#         """ Publish Heartbeat message to stream every 10 mins
-#
-#         Parameters
-#         ----------
-#         data : `dict`
-#             Data dictionary received from snews_utils.data()
-#
-#         """
-#         if path_to_log == None:
-#             path_to_log = './example_detector_log.json'
-#         with open(path_to_log) as log:
-#             log = json.load(log)
-#             detector_status = log['detector_status']
-#             machine_time = log['machine_time']
-#         sent_time = self.times.get_snews_time()
-#         data = snews_pt_utils.heartbeat_data(detector_status=detector_status, machine_time=machine_time)
-#         message_schema = self.schema.get_schema(message_type=self.msg_type, data=data, sent_time=sent_time)
-#
-#         stream = Stream(until_eos=False)
-#         with stream.open(self.obs_broker, 'w') as s:
-#             schedule.every(10).minute.at(":00").do(s.write(message_schema))
-
-
 @dataclass
 class Heartbeat:
     """ Publish Heartbeat message.
@@ -328,15 +284,13 @@ class Heartbeat:
 
         Parameters
         ----------
-        detector_name: `str`
-            name of the detector
         status : `str` ("ON"/"OFF")
             status of the detector at the time of invocation
-
+        detector_name: `str`
+            name of the detector
     """
-
-    detector_name: str
     status: str
+    detector_name: str = os.getenv('DETECTOR_NAME')
     machine_time: str = None
     extra: dict = None
     message_type: str = 'Heartbeat'
