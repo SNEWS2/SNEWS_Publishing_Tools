@@ -168,6 +168,6 @@ The rest of the publishing methods can take either a `.json` file saved in the l
 by default this display the message schema for all tiers, and specifies which fields can be set by the user.
 Finally, to submit a message;
 ```bash
-(venv) User$: snews_pt publihs C t FalSe hB
+(venv) User$: snews_pt publish C t FalSe hB
 ```
 notice that here we are publishing a default message that is structured with respect to its own tier. Also notice that there can be several case insensitive aliases for the tiers i.e. `C`, `c`, `coinc`, `coinCiDence`, `coincidencetier` would all publish to the same tier.
