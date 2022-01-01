@@ -19,15 +19,17 @@ import os
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
 @click.option('--env', type=str,
-    default='./SNEWS_PT/auxiliary/test-config.env',
+    default='/auxiliary/test-config.env',
     show_default='auxiliary/test-config.env',
     help='environment file containing the configurations')
 @click.pass_context
 def main(ctx, env):
     """ User interface for snews_pt tools
     """
+    base = os.path.dirname(os.path.realpath(__file__))
+    env_path = base + env
     ctx.ensure_object(dict)
-    snews_pt_utils.set_env(env)
+    snews_pt_utils.set_env(env_path)
     ctx.obj['env'] = env
     ctx.obj['DETECTOR_NAME'] = os.getenv("DETECTOR_NAME")
 
@@ -41,12 +43,8 @@ def publish(ctx, tiers, file, verbose):
 
     Notes
     -----
-    If neither broker nor env filepath is given, first checks if the topic
-    is set in the environment (i.e. os.getenv('X_TOPIC')). If not, sets
-    this topic from the defaults i.e. from auxiliary/test-config.env
-    If a different broker than that is set by the environment variables
-    is passed, this overwrites the existing broker at the given topic.
-    ::: if a different broker is given we can also make it the new env var
+    The topics are read from the defaults i.e. from auxiliary/test-config.env
+    If no file is given it can still submit dummy messages with default values
     """
     click.clear()
     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
@@ -56,19 +54,18 @@ def publish(ctx, tiers, file, verbose):
                        'Heartbeat':snews_pt_utils.heartbeat_data()}
 
     tiers_list, names_list = snews_pt_utils._check_cli_request(tiers)
-    detector = 'TEST'
     for Tier, name in zip(tiers_list, names_list):
         click.secho(f'\nPublishing to {name}; ', bold=True, fg='bright_cyan')
         # look for the data
         if file != "":
             data = snews_pt_utils._parse_file(file)
-            if 'detector_name' in data.keys():
-                detector = data['detector_name']
-            else:
-                detector = ctx.obj['DETECTOR_NAME']
         else:
             # get default data for tier
             data = tier_data_pairs[name]
+        if 'detector_name' in data.keys():
+            detector = data['detector_name']
+        else:
+            detector = ctx.obj['DETECTOR_NAME']
         data['detector_name'] = detector
         message = Tier(**data).message()
         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))

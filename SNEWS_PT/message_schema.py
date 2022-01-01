@@ -18,7 +18,9 @@ class Message_Schema:
 
     def __init__(self, env_path=None, detector_key='TEST'):
         self.times = TimeStuff(env_path)
+        print('AAAAA>>> ', detector_key)
         self.detector = get_detector(detector_key)
+        print('AAAAA>>> ', self.detector)
         self.detector_name = self.detector.name
 
     def id_format(self, topic_type):
