@@ -93,16 +93,16 @@ class CoincidenceTier:
     machine_time: str = None
     message_type: str = 'CoincidenceTier'
 
-    @classmethod
-    def from_dict(cls, env):
-        valid_data = cls(**{
-            k: v for k, v in env.items()
-            if k in inspect.signature(cls).parameters
-        })
-        for k,v in env.items():
-            if k not in inspect.signature(cls).parameters:
-                click.echo(click.style(k, fg='bright_red')+f' not a valid key for CoincidenceTier')
-        return valid_data
+    # @classmethod
+    # def from_dict(cls, env):
+    #     valid_data = cls(**{
+    #         k: v for k, v in env.items()
+    #         if k in inspect.signature(cls).parameters
+    #     })
+    #     for k,v in env.items():
+    #         if k not in inspect.signature(cls).parameters:
+    #             click.echo(click.style(k, fg='bright_red')+f' not a valid key for CoincidenceTier')
+    #     return valid_data
 
     def message(self):
         """
@@ -117,11 +117,11 @@ class CoincidenceTier:
                                                     p_value=self.p_value,
                                                     nu_time=self.neutrino_time,
                                                     )
-        if self.extra != None and type(self.extra) == dict:
-            data = snews_pt_utils.coincidence_tier_data(**self.extra, machine_time=self.machine_time,
-                                                        p_value=self.p_value,
-                                                        nu_time=self.neutrino_time,
-                                                        )
+        # if self.extra != None and type(self.extra) == dict:
+        #     data = snews_pt_utils.coincidence_tier_data(**self.extra, machine_time=self.machine_time,
+        #                                                 p_value=self.p_value,
+        #                                                 nu_time=self.neutrino_time,
+        #                                                 )
 
         return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
                                                                           sent_time='')
@@ -157,16 +157,16 @@ class SignificanceTier:
     extra: dict = None
     message_type: str = 'SigTier'
 
-    @classmethod
-    def from_dict(cls, env):
-        valid_data = cls(**{
-            k: v for k, v in env.items()
-            if k in inspect.signature(cls).parameters
-        })
-        for k,v in env.items():
-            if k not in inspect.signature(cls).parameters:
-                click.echo(click.style(k, fg='bright_red')+f' not a valid key for SigTier')
-        return valid_data
+    # @classmethod
+    # def from_dict(cls, env):
+    #     valid_data = cls(**{
+    #         k: v for k, v in env.items()
+    #         if k in inspect.signature(cls).parameters
+    #     })
+    #     for k,v in env.items():
+    #         if k not in inspect.signature(cls).parameters:
+    #             click.echo(click.style(k, fg='bright_red')+f' not a valid key for SigTier')
+    #     return valid_data
 
     def message(self):
         """
@@ -217,16 +217,16 @@ class TimingTier:
     extra: dict = None
     message_type: str = 'TimeTier'
 
-    @classmethod
-    def from_dict(cls, env):
-        valid_data = cls(**{
-            k: v for k, v in env.items()
-            if k in inspect.signature(cls).parameters
-        })
-        for k,v in env.items():
-            if k not in inspect.signature(cls).parameters:
-                click.echo(click.style(k, fg='bright_red')+f' not a valid key for TimeTier')
-        return valid_data
+    # @classmethod
+    # def from_dict(cls, env):
+    #     valid_data = cls(**{
+    #         k: v for k, v in env.items()
+    #         if k in inspect.signature(cls).parameters
+    #     })
+    #     for k,v in env.items():
+    #         if k not in inspect.signature(cls).parameters:
+    #             click.echo(click.style(k, fg='bright_red')+f' not a valid key for TimeTier')
+    #     return valid_data
 
     def message(self):
         """

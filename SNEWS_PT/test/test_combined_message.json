@@ -4,5 +4,9 @@
     "neutrino_time": 
         "test nu time",
     "p_value":
-        "test p-values"
+        "test p-value",
+    "p_values":
+        "test p-values",
+    "timing_series":
+        "test timing series"
 }

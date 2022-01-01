@@ -15,6 +15,7 @@ from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
 import os
+import inspect
 
 
 @click.group(invoke_without_command=True)
@@ -69,7 +70,15 @@ def publish(ctx, tiers, file, verbose):
             detector = ctx.obj['DETECTOR_NAME']
         data['detector_name'] = detector
         # message = Tier(**data).message()
-        message = Tier.from_dict(data).message()
+        # check if the input matches the required fields
+        valid_data = {}
+        sig = inspect.signature(Tier).parameters
+        for k, v in data.items():
+            if k not in sig:
+                click.echo(click.style(k, fg='bright_magenta') + f' not a valid key for {name}')
+            else:
+                valid_data[k] = v
+        message = Tier.from_dict(valid_data).message()
         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
         pub.send(message)
 
