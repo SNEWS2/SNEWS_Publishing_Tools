@@ -6,7 +6,6 @@
     Manipulations in the publish class can be made see
     https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
 """
-#TODO: check why message schema displays for S and T
 #TODO: check the issue on Github and allow usage of combined message
 
 from . import __version__
@@ -50,8 +49,8 @@ def publish(ctx, tiers, file, verbose):
     """
     click.clear()
     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
-                       'SignificanceTier':snews_pt_utils.sig_tier_data(),
-                       'TimingTier':snews_pt_utils.time_tier_data(),
+                       'SigTier':snews_pt_utils.sig_tier_data(),
+                       'TimeTier':snews_pt_utils.time_tier_data(),
                        'FalseOBS':snews_pt_utils.retraction_data(),
                        'Heartbeat':snews_pt_utils.heartbeat_data()}
 
@@ -122,8 +121,8 @@ def message_schema(tier):
     TODO: For some reason, the displayed keys are missing
     """
     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
-                       'SignificanceTier':snews_pt_utils.sig_tier_data(),
-                       'TimingTier':snews_pt_utils.time_tier_data(),
+                       'SigTier':snews_pt_utils.sig_tier_data(),
+                       'TimeTier':snews_pt_utils.time_tier_data(),
                        'FalseOBS':snews_pt_utils.retraction_data(),
                        'Heartbeat':snews_pt_utils.heartbeat_data()}
 
@@ -138,7 +137,9 @@ def message_schema(tier):
     msg = msg_schema()
     for t in tier:
         data = tier_data_pairs[t]
+        click.secho(f'{t} -> {data}', fg='yellow')
         all_data = msg.get_schema(t, data, 'foo')
+        click.secho(f'{t} -> {all_data}', fg='yellow')
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
         for k, v in all_data.items():
             if k not in data.keys():
