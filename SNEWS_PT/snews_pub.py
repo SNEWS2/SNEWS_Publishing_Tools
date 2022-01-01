@@ -13,6 +13,7 @@ from hop import Stream
 from . import snews_pt_utils
 from .message_schema import Message_Schema
 from dataclasses import dataclass
+import inspect
 
 
 class Publisher:
@@ -91,7 +92,17 @@ class CoincidenceTier:
     detector_name: str = os.getenv('DETECTOR_NAME')
     machine_time: str = None
     message_type: str = 'CoincidenceTier'
-    extra: dict = None
+
+    @classmethod
+    def from_dict(cls, env):
+        valid_data = cls(**{
+            k: v for k, v in env.items()
+            if k in inspect.signature(cls).parameters
+        })
+        for k,v in env.items():
+            if k not in inspect.signature(cls).parameters:
+                click.echo(click.style(k, fg='bright_red')+f' not a valid key for CoincidenceTier')
+        return valid_data
 
     def message(self):
         """
@@ -146,6 +157,17 @@ class SignificanceTier:
     extra: dict = None
     message_type: str = 'SigTier'
 
+    @classmethod
+    def from_dict(cls, env):
+        valid_data = cls(**{
+            k: v for k, v in env.items()
+            if k in inspect.signature(cls).parameters
+        })
+        for k,v in env.items():
+            if k not in inspect.signature(cls).parameters:
+                click.echo(click.style(k, fg='bright_red')+f' not a valid key for SigTier')
+        return valid_data
+
     def message(self):
         """
            Formats message structure
@@ -194,6 +216,17 @@ class TimingTier:
     machine_time: str = None
     extra: dict = None
     message_type: str = 'TimeTier'
+
+    @classmethod
+    def from_dict(cls, env):
+        valid_data = cls(**{
+            k: v for k, v in env.items()
+            if k in inspect.signature(cls).parameters
+        })
+        for k,v in env.items():
+            if k not in inspect.signature(cls).parameters:
+                click.echo(click.style(k, fg='bright_red')+f' not a valid key for TimeTier')
+        return valid_data
 
     def message(self):
         """

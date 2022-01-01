@@ -68,7 +68,8 @@ def publish(ctx, tiers, file, verbose):
         else:
             detector = ctx.obj['DETECTOR_NAME']
         data['detector_name'] = detector
-        message = Tier(**data).message()
+        # message = Tier(**data).message()
+        message = Tier.from_dict(data).message()
         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
         pub.send(message)
 
@@ -137,9 +138,7 @@ def message_schema(tier):
     msg = msg_schema()
     for t in tier:
         data = tier_data_pairs[t]
-        click.secho(f'{t} -> {data}', fg='yellow')
         all_data = msg.get_schema(t, data, 'foo')
-        click.secho(f'{t} -> {all_data}', fg='yellow')
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
         for k, v in all_data.items():
             if k not in data.keys():
