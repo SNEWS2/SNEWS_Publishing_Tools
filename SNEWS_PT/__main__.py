@@ -10,6 +10,7 @@
 from . import __version__
 from . import snews_pt_utils
 from .snews_pub import Publisher
+from .snews_pub import Heartbeat
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
@@ -84,10 +85,18 @@ def subscribe(env):
 
 
 @main.command()
-@click.argument('tier', nargs=1)
-def hearbeat(tier):
-    sys.exit("NotImplementedError")
-    # raise NotImplementedError
+@click.argument('status', nargs=1)
+@click.option('--detector', type=str, default='TEST')
+@click.option('--machine_time','-mt', type=str)
+@click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
+@click.option('--verbose','-v', type=bool, default=True)
+@click.pass_context
+def heartbeat(ctx, env, detector, status, machine_time, verbose):
+    click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
+    message = Heartbeat(detector_name=detector, status=status, machine_time=machine_time).message()
+    pub = ctx.with_resource(Publisher(env, verbose=verbose))
+    pub.send(message)
+
 
 @main.command()
 @click.argument('tier', nargs=1)

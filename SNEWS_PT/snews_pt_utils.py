@@ -312,13 +312,13 @@ def _check_cli_request(requested):
             The list of requested tiers
 
     """
-    from .snews_pub import CoincidenceTier, SignificanceTier, TimingTier, Retraction, Publisher_Heartbeat
+    from .snews_pub import CoincidenceTier, SignificanceTier, TimingTier, Retraction, Heartbeat
 
     valid_tiers_names = ['CoincidenceTier','SignificanceTier', 'TimingTier']
     valid_tiers = [CoincidenceTier, SignificanceTier, TimingTier]
     tier_pairs = dict(zip(valid_tiers_names, valid_tiers))
     other_tiers_names = ['Heartbeat', 'FalseOBS']
-    other_tiers = [Publisher_Heartbeat, Retraction]
+    other_tiers = [Heartbeat, Retraction]
     other_pairs = dict(zip(other_tiers_names, other_tiers))
 
     tier_name_pair = []

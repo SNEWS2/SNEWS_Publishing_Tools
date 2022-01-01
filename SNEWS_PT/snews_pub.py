@@ -27,7 +27,7 @@ class Publisher:
     verbose: bool
         Option to display message when publishing.
     """
-    def __init__(self, env_path=None, verbose=False):
+    def __init__(self, env_path=None, verbose=True):
         snews_pt_utils.set_env(env_path)
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         self.times = snews_pt_utils.TimeStuff()
@@ -55,13 +55,12 @@ class Publisher:
 
 
     def display_message(self, message):
-        if not self.verbose:
-            pass
-        click.secho(f'{"-" * 57}', fg='bright_blue')
-        if message['_id'].split('_')[1] == 'FalseOBS':
-            click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
-        for k, v in message.items():
-            print(f'{k:<20s}:{v}')
+        if self.verbose:
+            click.secho(f'{"-" * 57}', fg='bright_blue')
+            if message['_id'].split('_')[1] == 'FalseOBS':
+                click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
+            for k, v in message.items():
+                print(f'{k:<20s}:{v}')
 
 
 @dataclass
@@ -276,45 +275,79 @@ class Retraction:
                                                                           sent_time='')
 
 
-class Publisher_Heartbeat:
+# class Publisher_Heartbeat:
+#     """ Publish Heartbeat message.
+#
+#     Parameters
+#     ----------
+#     detector : `str`
+#             The name of the detector
+#     env_path : `str`
+#         path for the environment file.
+#         Use default settings if not given
+#
+#     """
+#
+#     def __init__(self, detector, env_path=None):
+#         snews_pt_utils.set_env(env_path)
+#         self.times = snews_pt_utils.TimeStuff()
+#         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
+#         self.msg_type = 'Heartbeat'
+#         self.schema = Message_Schema(detector_key=detector)
+#
+#     def send_HBs(self, path_to_log=None):
+#         """ Publish Heartbeat message to stream every 10 mins
+#
+#         Parameters
+#         ----------
+#         data : `dict`
+#             Data dictionary received from snews_utils.data()
+#
+#         """
+#         if path_to_log == None:
+#             path_to_log = './example_detector_log.json'
+#         with open(path_to_log) as log:
+#             log = json.load(log)
+#             detector_status = log['detector_status']
+#             machine_time = log['machine_time']
+#         sent_time = self.times.get_snews_time()
+#         data = snews_pt_utils.heartbeat_data(detector_status=detector_status, machine_time=machine_time)
+#         message_schema = self.schema.get_schema(message_type=self.msg_type, data=data, sent_time=sent_time)
+#
+#         stream = Stream(persist=True)
+#         with stream.open(self.obs_broker, 'w') as s:
+#             schedule.every(10).minute.at(":00").do(s.write(message_schema))
+
+
+@dataclass
+class Heartbeat:
     """ Publish Heartbeat message.
-
-    Parameters
-    ----------
-    detector : `str`
-            The name of the detector
-    env_path : `str`
-        path for the environment file.
-        Use default settings if not given
-
-    """
-
-    def __init__(self, detector, env_path=None):
-        snews_pt_utils.set_env(env_path)
-        self.times = snews_pt_utils.TimeStuff()
-        self.obs_broker = os.getenv("OBSERVATION_TOPIC")
-        self.msg_type = 'Heartbeat'
-        self.schema = Message_Schema(detector_key=detector)
-
-    def send_HBs(self, path_to_log=None):
-        """ Publish  Heartbeat message to stream every 10 mins
+        We recommend submitting messages every 3 minutes
+        Ideally, this function should be called after fetching
+        the status of the detector
 
         Parameters
         ----------
-        data : `dict`
-            Data dictionary received from snews_utils.data()
+        detector_name: `str`
+            name of the detector
+        status : `str` ("ON"/"OFF")
+            status of the detector at the time of invocation
 
-        """
-        if path_to_log == None:
-            path_to_log = './example_detector_log.json'
-        with open(path_to_log) as log:
-            log = json.load(log)
-            detector_status = log['detector_status']
-            machine_time = log['machine_time']
-        sent_time = self.times.get_snews_time()
-        data = snews_pt_utils.heartbeat_data(detector_status=detector_status, machine_time=machine_time)
-        message_schema = self.schema.get_schema(message_type=self.msg_type, data=data, sent_time=sent_time)
+    """
 
-        stream = Stream(persist=True)
-        with stream.open(self.obs_broker, 'w') as s:
-            schedule.every(10).minute.at(":00").do(s.write(message_schema))
+    detector_name: str
+    status: str
+    machine_time: str = None
+    extra: dict = None
+    message_type: str = 'Heartbeat'
+
+    def message(self):
+        status = self.status.upper()
+        if status not in ["ON", "OFF"]:
+            click.echo(f"{status} has to be 'ON' or 'OFF'\n\tSetting it to " + click.style('OFF', fg='red'))
+            status = "OFF"
+
+        data = snews_pt_utils.heartbeat_data(detector_status=status, machine_time=self.machine_time)
+        message = Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type,
+                                                                             data=data, sent_time='')
+        return message
