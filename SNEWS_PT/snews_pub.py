@@ -34,7 +34,7 @@ class Publisher:
         self.verbose = verbose
 
     def __enter__(self):
-        self.stream = Stream(persist=False).open(self.obs_broker, 'w')
+        self.stream = Stream(until_eos=True).open(self.obs_broker, 'w')
         return self
 
     def __exit__(self, *args):
@@ -314,7 +314,7 @@ class Retraction:
 #         data = snews_pt_utils.heartbeat_data(detector_status=detector_status, machine_time=machine_time)
 #         message_schema = self.schema.get_schema(message_type=self.msg_type, data=data, sent_time=sent_time)
 #
-#         stream = Stream(persist=True)
+#         stream = Stream(until_eos=False)
 #         with stream.open(self.obs_broker, 'w') as s:
 #             schedule.every(10).minute.at(":00").do(s.write(message_schema))
 

@@ -14,7 +14,7 @@ from .snews_pub import Heartbeat
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
-import sys
+import sys, os
 
 
 @click.group(invoke_without_command=True)
@@ -23,18 +23,21 @@ import sys
     default='./SNEWS_PT/auxiliary/test-config.env',
     show_default='auxiliary/test-config.env',
     help='environment file containing the configurations')
-def main(env):
+@click.pass_context
+def main(ctx, env):
     """ User interface for snews_pt tools
     """
+    ctx.ensure_object(dict)
     snews_pt_utils.set_env(env)
+    ctx.obj['env'] = env
+    ctx.obj['DETECTOR_NAME'] = os.getenv("DETECTOR_NAME")
 
 @main.command()
 @click.argument('tiers', nargs=-1)
 @click.option('--verbose','-v', type=bool, default=True)
 @click.option('--file','-f', type=str, default="", show_default='data file')
-@click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
 @click.pass_context
-def publish(ctx, tiers, file, env, verbose):
+def publish(ctx, tiers, file, verbose):
     """ Publish a message using snews_pub
 
     Notes
@@ -62,22 +65,23 @@ def publish(ctx, tiers, file, env, verbose):
             data = snews_pt_utils._parse_file(file)
             if 'detector_name' in data.keys():
                 detector = data['detector_name']
+            else:
+                detector = ctx.obj['DETECTOR_NAME']
         else:
             # get default data for tier
             data = tier_data_pairs[name]
         data['detector_name'] = detector
         message = Tier(**data).message()
-        pub = ctx.with_resource(Publisher(env, verbose=verbose))
+        pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
         pub.send(message)
 
 
 @main.command()
-@click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
-def subscribe(env):
+@click.pass_context
+def subscribe(ctx):
+    """ Subscribe to Alert topic
     """
-    maybe also implement context menager
-    """
-    sub = Subscriber(env)
+    sub = Subscriber(ctx.obj['env'])
     try:
         sub.subscribe()
     except KeyboardInterrupt:
@@ -86,15 +90,13 @@ def subscribe(env):
 
 @main.command()
 @click.argument('status', nargs=1)
-@click.option('--detector', type=str, default='TEST')
 @click.option('--machine_time','-mt', type=str)
-@click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
 @click.option('--verbose','-v', type=bool, default=True)
 @click.pass_context
-def heartbeat(ctx, env, detector, status, machine_time, verbose):
+def heartbeat(ctx, status, machine_time, verbose):
     click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
-    message = Heartbeat(detector_name=detector, status=status, machine_time=machine_time).message()
-    pub = ctx.with_resource(Publisher(env, verbose=verbose))
+    message = Heartbeat(detector_name=ctx.obj['detector'], status=status, machine_time=machine_time).message()
+    pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
     pub.send(message)
 
 
