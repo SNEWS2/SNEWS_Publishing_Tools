@@ -9,8 +9,7 @@
 
 from . import __version__
 from . import snews_pt_utils
-from .snews_pub import Publisher
-from .snews_pub import Heartbeat
+from .snews_pub import Publisher, Heartbeat, Retraction
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
@@ -101,10 +100,19 @@ def heartbeat(ctx, status, machine_time, verbose):
 
 
 @main.command()
-@click.argument('tier', nargs=1)
-def retract(tier):
-    sys.exit("NotImplementedError")
-    # raise NotImplementedError
+@click.option('--tier','-t', nargs=1, help='Name of tier you want to retract from')
+@click.option('--number','-n', type=int, default=1, help='Number of most recent message you want to retract')
+@click.option('--reason','-r', type=str, default='', help='Retraction reason')
+@click.option('--verbose','-v', type=bool, default=True)
+@click.pass_context
+def retract(ctx, tier, number, reason, verbose):
+    click.secho(f'\nRetracting from {tier}; ', bold=True, fg='bright_magenta')
+    message = Retraction(detector_name=ctx.obj['detector'],
+                         which_tier=tier,
+                         n_retract_latest=number,
+                         retraction_reason=reason).message()
+    pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
+    pub.send(message)
 
 @main.command()
 @click.argument('tier', nargs=1, default='all')

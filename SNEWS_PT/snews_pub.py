@@ -246,7 +246,7 @@ class Retraction:
 
     """
     which_tier: str
-    n_retract_latest: int
+    n_retract_latest: int = 1
     detector_name: str = os.getenv('DETECTOR_NAME')
     message_type: str = 'FalseOBS'
     machine_time: str = None
