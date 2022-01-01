@@ -6,7 +6,6 @@
     Manipulations in the publish class can be made see
     https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
 """
-#TODO: check the issue on Github and allow usage of combined message
 
 from . import __version__
 from . import snews_pt_utils
@@ -120,13 +119,19 @@ def heartbeat(ctx, status, machine_time, verbose):
 @click.option('--tier','-t', nargs=1, help='Name of tier you want to retract from')
 @click.option('--number','-n', type=int, default=1, help='Number of most recent message you want to retract')
 @click.option('--reason','-r', type=str, default='', help='Retraction reason')
+@click.option('--false_id', type=str, default='', help='Specific message ID to retract')
 @click.option('--verbose','-v', type=bool, default=True)
 @click.pass_context
-def retract(ctx, tier, number, reason, verbose):
+def retract(ctx, tier, number, reason, false_id, verbose):
+    """ Retract N latest message
+    """
+    _, name = snews_pt_utils._check_cli_request(tier)
+    tier = name[0]
     click.secho(f'\nRetracting from {tier}; ', bold=True, fg='bright_magenta')
     message = Retraction(detector_name=ctx.obj['DETECTOR_NAME'],
                          which_tier=tier,
                          n_retract_latest=number,
+                         false_mgs_id=false_id,
                          retraction_reason=reason).message()
     pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
     pub.send(message)

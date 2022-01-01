@@ -128,46 +128,5 @@ Subscriber().subscribe()
 ```
 
 ---
-# Command Line Interface (CLI)
-All the commands have their short descriptions accesible via `--help` flag. 
-```bash
-(venv) User$: snews_pt --help 
-```
-```bash
-  User interface for snews_pt tools 
-  Options:
-   --version   Show the version and exit. 
-   --env TEXT  environment file containing the configurations  
-               [default:(auxiliary/test-config.env)]
-   --help      Show this message and exit.
-  
-  Commands:
-   hearbeat 
-   message-schema  Display the message format for `tier`, default 'all'
-   publish         Publish a message using snews_pub
-   retract 
-   subscribe       maybe also implement context menager
-```
-
-Currently, the `retract` and `heartbeat` methods are not implemented in the CLI. All other commands can be called from the terminal. See their help for instructions.
-Quick demonstration;
-```bash 
-(venv) User$: snews_pt subscribe 
-> You are subscribing to ALERT                                                                                            
-> Broker:kafka://kafka.scimma.org/snews.alert-test
-```
-by default subscribes to the `ALERT_TOPIC` specified in the default environment file. This environment file can be modified, or a different one can be passed.
-
-Publishing method have several aliases for `coincidence`, `significance`, `timing`, `heartbeat` and `retraction`. Currently, the last two will raise a `NotImplementedError`, and planned to be added soon.
-The rest of the publishing methods can take either a `.json` file saved in the local machine, or for test purposes, submit a default message.
-**Notice that all the tiers have their expected message schemes** these schemes can be seen by;
-
-```bash
-(venv) User$: snews_pt message-schema
-```
-by default this display the message schema for all tiers, and specifies which fields can be set by the user.
-Finally, to submit a message;
-```bash
-(venv) User$: snews_pt publish C t FalSe hB
-```
-notice that here we are publishing a default message that is structured with respect to its own tier. Also notice that there can be several case insensitive aliases for the tiers i.e. `C`, `c`, `coinc`, `coinCiDence`, `coincidencetier` would all publish to the same tier.
+# [Command Line Interface (CLI)](./doc/cli_docs.md)
+There also exists tools for command line interactions. These are explained in detail [here](./doc/cli_docs.md)

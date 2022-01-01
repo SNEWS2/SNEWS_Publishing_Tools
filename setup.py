@@ -21,7 +21,6 @@ install_requires = [
     "click"
 ]
 
-
 def read_requirements():
     # with open('hop_comms/requirements.txt') as req:
     #     content = req.read()
