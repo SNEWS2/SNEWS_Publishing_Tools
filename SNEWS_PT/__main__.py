@@ -6,6 +6,8 @@
     Manipulations in the publish class can be made see
     https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
 """
+#TODO: check why message schema displays for S and T
+#TODO: check the issue on Github and allow usage of combined message
 
 from . import __version__
 from . import snews_pt_utils
@@ -115,6 +117,9 @@ def retract(ctx, tier, number, reason, verbose):
 @click.argument('tier', nargs=1, default='all')
 def message_schema(tier):
     """ Display the message format for `tier`, default 'all'
+
+    Notes
+    TODO: For some reason, the displayed keys are missing
     """
     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
                        'SignificanceTier':snews_pt_utils.sig_tier_data(),
