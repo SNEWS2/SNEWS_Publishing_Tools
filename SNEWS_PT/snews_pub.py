@@ -8,11 +8,10 @@ Authors:
 Melih Kara
 Sebastian Torres-Lara
 """
-import hop, sys, time, os, json, click
+import os, click
 from hop import Stream
 from . import snews_pt_utils
 from .message_schema import Message_Schema
-import schedule
 from dataclasses import dataclass
 
 

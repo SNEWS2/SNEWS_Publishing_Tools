@@ -13,7 +13,7 @@ from .snews_pub import Publisher, Heartbeat, Retraction
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
-import sys, os
+import os
 
 
 @click.group(invoke_without_command=True)

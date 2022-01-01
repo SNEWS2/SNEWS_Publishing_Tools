@@ -1,6 +1,5 @@
-from .snews_pt_utils import TimeStuff, get_detector
-import sys
 
+from .snews_pt_utils import TimeStuff, get_detector
 
 class Message_Schema:
     """ The Message scheme for the alert and observations

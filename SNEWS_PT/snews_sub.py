@@ -1,5 +1,5 @@
 
-import hop, sys, time, os, json, click
+import os, json, click
 from hop import Stream
 from . import snews_pt_utils
 
