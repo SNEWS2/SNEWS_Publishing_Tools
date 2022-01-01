@@ -78,7 +78,7 @@ def publish(ctx, tiers, file, verbose):
                 click.echo(click.style(k, fg='bright_magenta') + f' not a valid key for {name}')
             else:
                 valid_data[k] = v
-        message = Tier.from_dict(valid_data).message()
+        message = Tier(**valid_data).message()
         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
         pub.send(message)
 
@@ -97,12 +97,21 @@ def subscribe(ctx):
 
 @main.command()
 @click.argument('status', nargs=1)
-@click.option('--machine_time','-mt', type=str)
-@click.option('--verbose','-v', type=bool, default=True)
+@click.option('--machine_time','-mt', type=str, help='`str`, optional  Time when the status was fetched')
+@click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
 @click.pass_context
 def heartbeat(ctx, status, machine_time, verbose):
+    """
+    Publish heartbeat messages. Recommended frequency is
+    every 3 minutes.
+    machine_time is optional, and each message is appended with a `sent_time`
+    passing machine_time allows for latency studies.
+
+    USAGE: snews_pt heartbeat ON -mt '22/01/01 19:16:14'
+
+    """
     click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
-    message = Heartbeat(detector_name=ctx.obj['detector'], status=status, machine_time=machine_time).message()
+    message = Heartbeat(detector_name=ctx.obj['DETECTOR_NAME'], status=status, machine_time=machine_time).message()
     pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
     pub.send(message)
 
@@ -115,7 +124,7 @@ def heartbeat(ctx, status, machine_time, verbose):
 @click.pass_context
 def retract(ctx, tier, number, reason, verbose):
     click.secho(f'\nRetracting from {tier}; ', bold=True, fg='bright_magenta')
-    message = Retraction(detector_name=ctx.obj['detector'],
+    message = Retraction(detector_name=ctx.obj['DETECTOR_NAME'],
                          which_tier=tier,
                          n_retract_latest=number,
                          retraction_reason=reason).message()
