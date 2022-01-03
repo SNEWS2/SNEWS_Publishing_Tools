@@ -1,5 +1,5 @@
+
 from .snews_pt_utils import TimeStuff, get_detector
-import sys
 
 class Message_Schema:
     """ The Message scheme for the alert and observations
@@ -41,7 +41,7 @@ class Message_Schema:
         Returns
             :`str`
                 The formatted id as a string
-            
+
         """
         date_time = self.times.get_snews_time(fmt="%y/%m/%d_%H:%M:%S:%f")
 
@@ -56,13 +56,13 @@ class Message_Schema:
             message_type : `str`
                 type of the message to be published. Can be;
                 'TimeTier', 'SigTier', 'CoincidenceTier' for
-                observation messages and, 'HeartBeat' for 
+                observation messages and, 'HeartBeat' for
                 heartbeat messages
             data      : dict
                 dict object that contains message information.
             sent_time : `str`
                 time as a string
-            
+
             Returns
             -------
                :`dict`

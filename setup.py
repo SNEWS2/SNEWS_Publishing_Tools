@@ -15,14 +15,11 @@ version = version_match.group(1)
 
 # requirements
 install_requires = [
-    "hop-client >= 0.3",
-    "hop-plugin-snews",
+    "hop-client >= 0.5.0",
     "jsonschema",
     "python-dotenv",
-    "schedule",
     "click"
 ]
-
 
 def read_requirements():
     # with open('hop_comms/requirements.txt') as req:

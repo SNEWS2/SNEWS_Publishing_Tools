@@ -1,5 +1,5 @@
 
-import hop, sys, time, os, json, click
+import os, json, click
 from hop import Stream
 from . import snews_pt_utils
 
@@ -81,7 +81,7 @@ class Subscriber:
                    click.style(f'{ self.alert_topic}', bg='green'))
 
         # Initiate hop_stream
-        stream = Stream(persist=True)
+        stream = Stream(until_eos=False)
         try:
             with stream.open(self.alert_topic, "r") as s:
                 for message in s:

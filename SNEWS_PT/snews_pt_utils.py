@@ -294,8 +294,8 @@ def _check_aliases(tier):
     heartbeat_aliases = ['heartbeat', 'hb']
 
     if tier in coincidence_aliases:  tier = 'CoincidenceTier'
-    elif tier in significance_aliases: tier = 'SignificanceTier'
-    elif tier in timing_aliases:    tier = 'TimingTier'
+    elif tier in significance_aliases: tier = 'SigTier'
+    elif tier in timing_aliases:    tier = 'TimeTier'
     elif tier in false_aliases:     tier = 'FalseOBS'
     elif tier in heartbeat_aliases: tier = 'Heartbeat'
     else:
@@ -312,13 +312,13 @@ def _check_cli_request(requested):
             The list of requested tiers
 
     """
-    from .snews_pub import CoincidenceTier, SignificanceTier, TimingTier, Retraction, Publisher_Heartbeat
+    from .snews_pub import CoincidenceTier, SignificanceTier, TimingTier, Retraction, Heartbeat
 
-    valid_tiers_names = ['CoincidenceTier','SignificanceTier', 'TimingTier']
+    valid_tiers_names = ['CoincidenceTier','SigTier', 'TimeTier']
     valid_tiers = [CoincidenceTier, SignificanceTier, TimingTier]
     tier_pairs = dict(zip(valid_tiers_names, valid_tiers))
     other_tiers_names = ['Heartbeat', 'FalseOBS']
-    other_tiers = [Publisher_Heartbeat, Retraction]
+    other_tiers = [Heartbeat, Retraction]
     other_pairs = dict(zip(other_tiers_names, other_tiers))
 
     tier_name_pair = []
@@ -373,7 +373,7 @@ def isnotebook():
 
 def display_gif():
     """ Some fun method to display an alert gif
-        If running on notebook
+        If running on notebook.
 
     """
     if isnotebook():

@@ -9,74 +9,85 @@
 
 from . import __version__
 from . import snews_pt_utils
-from .snews_pub import Publisher
+from .snews_pub import Publisher, Heartbeat, Retraction
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
-import sys
+import os
+import inspect
 
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
 @click.option('--env', type=str,
-    default='./SNEWS_PT/auxiliary/test-config.env',
+    default='/auxiliary/test-config.env',
     show_default='auxiliary/test-config.env',
     help='environment file containing the configurations')
-def main(env):
+@click.pass_context
+def main(ctx, env):
     """ User interface for snews_pt tools
     """
-    snews_pt_utils.set_env(env)
+    base = os.path.dirname(os.path.realpath(__file__))
+    env_path = base + env
+    ctx.ensure_object(dict)
+    snews_pt_utils.set_env(env_path)
+    ctx.obj['env'] = env
+    ctx.obj['DETECTOR_NAME'] = os.getenv("DETECTOR_NAME")
 
 @main.command()
 @click.argument('tiers', nargs=-1)
 @click.option('--verbose','-v', type=bool, default=True)
 @click.option('--file','-f', type=str, default="", show_default='data file')
-@click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
 @click.pass_context
-def publish(ctx, tiers, file, env, verbose):
+def publish(ctx, tiers, file, verbose):
     """ Publish a message using snews_pub
 
     Notes
     -----
-    If neither broker nor env filepath is given, first checks if the topic
-    is set in the environment (i.e. os.getenv('X_TOPIC')). If not, sets
-    this topic from the defaults i.e. from auxiliary/test-config.env
-    If a different broker than that is set by the environment variables
-    is passed, this overwrites the existing broker at the given topic.
-    ::: if a different broker is given we can also make it the new env var
+    The topics are read from the defaults i.e. from auxiliary/test-config.env
+    If no file is given it can still submit dummy messages with default values
     """
     click.clear()
     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
-                       'SignificanceTier':snews_pt_utils.sig_tier_data(),
-                       'TimingTier':snews_pt_utils.time_tier_data(),
+                       'SigTier':snews_pt_utils.sig_tier_data(),
+                       'TimeTier':snews_pt_utils.time_tier_data(),
                        'FalseOBS':snews_pt_utils.retraction_data(),
                        'Heartbeat':snews_pt_utils.heartbeat_data()}
 
     tiers_list, names_list = snews_pt_utils._check_cli_request(tiers)
-    detector = 'TEST'
     for Tier, name in zip(tiers_list, names_list):
         click.secho(f'\nPublishing to {name}; ', bold=True, fg='bright_cyan')
         # look for the data
         if file != "":
             data = snews_pt_utils._parse_file(file)
-            if 'detector_name' in data.keys():
-                detector = data['detector_name']
         else:
             # get default data for tier
             data = tier_data_pairs[name]
+        if 'detector_name' in data.keys():
+            detector = data['detector_name']
+        else:
+            detector = ctx.obj['DETECTOR_NAME']
         data['detector_name'] = detector
-        message = Tier(**data).message()
-        pub = ctx.with_resource(Publisher(env, verbose=verbose))
+        # message = Tier(**data).message()
+        # check if the input matches the required fields
+        valid_data = {}
+        sig = inspect.signature(Tier).parameters
+        for k, v in data.items():
+            if k not in sig:
+                click.echo(click.style(k, fg='bright_magenta') + f' not a valid key for {name}')
+            else:
+                valid_data[k] = v
+        message = Tier(**valid_data).message()
+        pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
         pub.send(message)
 
 
 @main.command()
-@click.option('--env', default=None, show_default='test-config.env', help='environment file containing the configurations')
-def subscribe(env):
+@click.pass_context
+def subscribe(ctx):
+    """ Subscribe to Alert topic
     """
-    maybe also implement context menager
-    """
-    sub = Subscriber(env)
+    sub = Subscriber(ctx.obj['env'])
     try:
         sub.subscribe()
     except KeyboardInterrupt:
@@ -84,25 +95,58 @@ def subscribe(env):
 
 
 @main.command()
-@click.argument('tier', nargs=1)
-def hearbeat(tier):
-    sys.exit("NotImplementedError")
-    # raise NotImplementedError
+@click.argument('status', nargs=1)
+@click.option('--machine_time','-mt', type=str, help='`str`, optional  Time when the status was fetched')
+@click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
+@click.pass_context
+def heartbeat(ctx, status, machine_time, verbose):
+    """
+    Publish heartbeat messages. Recommended frequency is
+    every 3 minutes.
+    machine_time is optional, and each message is appended with a `sent_time`
+    passing machine_time allows for latency studies.
+
+    USAGE: snews_pt heartbeat ON -mt '22/01/01 19:16:14'
+
+    """
+    click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
+    message = Heartbeat(detector_name=ctx.obj['DETECTOR_NAME'], status=status, machine_time=machine_time).message()
+    pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
+    pub.send(message)
+
 
 @main.command()
-@click.argument('tier', nargs=1)
-def retract(tier):
-    sys.exit("NotImplementedError")
-    # raise NotImplementedError
+@click.option('--tier','-t', nargs=1, help='Name of tier you want to retract from')
+@click.option('--number','-n', type=int, default=1, help='Number of most recent message you want to retract')
+@click.option('--reason','-r', type=str, default='', help='Retraction reason')
+@click.option('--false_id', type=str, default='', help='Specific message ID to retract')
+@click.option('--verbose','-v', type=bool, default=True)
+@click.pass_context
+def retract(ctx, tier, number, reason, false_id, verbose):
+    """ Retract N latest message
+    """
+    _, name = snews_pt_utils._check_cli_request(tier)
+    tier = name[0]
+    click.secho(f'\nRetracting from {tier}; ', bold=True, fg='bright_magenta')
+    message = Retraction(detector_name=ctx.obj['DETECTOR_NAME'],
+                         which_tier=tier,
+                         n_retract_latest=number,
+                         false_mgs_id=false_id,
+                         retraction_reason=reason).message()
+    pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
+    pub.send(message)
 
 @main.command()
 @click.argument('tier', nargs=1, default='all')
 def message_schema(tier):
     """ Display the message format for `tier`, default 'all'
+
+    Notes
+    TODO: For some reason, the displayed keys are missing
     """
     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
-                       'SignificanceTier':snews_pt_utils.sig_tier_data(),
-                       'TimingTier':snews_pt_utils.time_tier_data(),
+                       'SigTier':snews_pt_utils.sig_tier_data(),
+                       'TimeTier':snews_pt_utils.time_tier_data(),
                        'FalseOBS':snews_pt_utils.retraction_data(),
                        'Heartbeat':snews_pt_utils.heartbeat_data()}
 
