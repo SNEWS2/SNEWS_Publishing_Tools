@@ -1,0 +1,4 @@
+hop-client >= 0.5.0
+jsonschema
+python-dotenv
+click
