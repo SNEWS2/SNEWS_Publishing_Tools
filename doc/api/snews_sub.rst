@@ -1,7 +1,7 @@
-.. _IStorage:
+.. _snews_sub:
 
-snews.storage
+SNEWS_PT.snews_sub
 #####################
 
-.. automodule:: snews.storage
+.. automodule:: SNEWS_PT.snews_sub
     :members:

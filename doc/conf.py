@@ -22,9 +22,9 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 # -- Project information -----------------------------------------------------
 
-project = u'snews'
+project = u'snews publishing tools'
 copyright = u'2022, Melih Kara'
-author = u'KAra, Melih'
+author = u'Kara, Melih; Torres-Lara, Sebastian; Smolsky, Joseph'
 
 # The short X.Y version
 version = u''
@@ -51,6 +51,8 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.autosectionlabel',
     'sphinxcontrib.programoutput',
+    'sphinx.ext.napoleon',
+    'myst_parser',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -59,8 +61,8 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
+# source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'
@@ -108,6 +110,12 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
     html_theme = 'sphinx_rtd_theme'
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+html_logo = "_build/html/_static/new_snews_logo_150px.png"
+html_theme_options = {
+    'logo_only': True,
+    'display_version': True,
+}
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
