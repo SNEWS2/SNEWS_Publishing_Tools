@@ -115,7 +115,7 @@ with Publisher() as pub:
 The output should look like this:
 ![img.png](img.png)
 
-See `example.ipynb` for more tutorial scripts 
+See [`example.ipynb`](./example.ipynb) for more tutorial scripts 
 
 ## How to Subscribe
 
