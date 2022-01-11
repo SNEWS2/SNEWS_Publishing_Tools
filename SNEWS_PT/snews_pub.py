@@ -26,15 +26,19 @@ class Publisher:
         path to SNEWS env file, defaults to tes_config.env if None is passed.
     verbose: bool
         Option to display message when publishing.
+    auth: bool
+        Option to run hop-Stream without authentication. Pass False to do so
     """
-    def __init__(self, env_path=None, verbose=True):
+
+    def __init__(self, env_path=None, verbose=True, auth=True):
         snews_pt_utils.set_env(env_path)
+        self.auth = auth
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         self.times = snews_pt_utils.TimeStuff()
         self.verbose = verbose
 
     def __enter__(self):
-        self.stream = Stream(until_eos=True).open(self.obs_broker, 'w')
+        self.stream = Stream(until_eos=True, auth=self.no_auth).open(self.obs_broker, 'w')
         return self
 
     def __exit__(self, *args):
@@ -49,10 +53,9 @@ class Publisher:
             observation message.
 
         """
-        message['sent_time'] = self.times.get_snews_time()
+
         self.stream.write(message)
         self.display_message(message)
-
 
     def display_message(self, message):
         if self.verbose:
@@ -86,7 +89,6 @@ class CoincidenceTier:
         Make sure it's formatted as a dict.
 
     """
-
     p_value: float
     neutrino_time: str
     detector_name: str = os.getenv('DETECTOR_NAME')
@@ -113,6 +115,7 @@ class CoincidenceTier:
         message as dict object
 
         """
+        times = snews_pt_utils.TimeStuff()
         data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time,
                                                     p_value=self.p_value,
                                                     nu_time=self.neutrino_time,
@@ -124,7 +127,7 @@ class CoincidenceTier:
         #                                                 )
 
         return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
-                                                                          sent_time='')
+                                                                          sent_time=times.get_snews_time())
 
 
 @dataclass
@@ -150,6 +153,7 @@ class SignificanceTier:
            Make sure it's formatted as a dict.
 
        """
+
     neutrino_time: str
     p_values: list
     detector_name: str = os.getenv('DETECTOR_NAME')
@@ -177,14 +181,16 @@ class SignificanceTier:
            message as dict object
 
            """
+        times = snews_pt_utils.TimeStuff()
         data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
                                             p_values=self.p_values)
         if self.extra != None and type(self.extra) == dict:
-            data = snews_pt_utils.sig_tier_data(**self.extra, machine_time=self.machine_time, nu_time=self.neutrino_time,
+            data = snews_pt_utils.sig_tier_data(**self.extra, machine_time=self.machine_time,
+                                                nu_time=self.neutrino_time,
                                                 p_values=self.p_values)
 
         return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
-                                                                          sent_time='')
+                                                                          sent_time=self.times.get_snews_time())
 
 
 @dataclass
@@ -237,6 +243,7 @@ class TimingTier:
            message as dict object
 
            """
+        times = snews_pt_utils.TimeStuff()
         data = snews_pt_utils.time_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
                                              timing_series=self.timing_series, )
         if self.extra != None and type(self.extra) == dict:
@@ -245,7 +252,7 @@ class TimingTier:
                                                  **self.extra)
 
         return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
-                                                                          sent_time='')
+                                                                          sent_time=times.get_snews_time())
 
 
 @dataclass
