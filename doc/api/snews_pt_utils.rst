@@ -1,7 +1,7 @@
-.. _generate:
+.. _snews_pt_utils:
 
-snews.generate
+SNEWS_PT.generate
 #####################
 
-.. automodule:: snews.generate
+.. automodule:: SNEWS_PT.snews_pt_utils
     :members:
