@@ -41,7 +41,7 @@ class TestPubSub(unittest.TestCase):
                 self.assertEqual(message['p_value'], self.test_p_val)
                 self.assertEqual(message['neutrino_time'],self.test_time)
                 break
-      pass
+        pass
 
 
 if __name__ == '__main__':

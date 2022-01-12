@@ -181,16 +181,17 @@ class SignificanceTier:
            message as dict object
 
            """
-        times = snews_pt_utils.TimeStuff()
+
         data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
                                             p_values=self.p_values)
+        times = snews_pt_utils.TimeStuff()
         if self.extra != None and type(self.extra) == dict:
             data = snews_pt_utils.sig_tier_data(**self.extra, machine_time=self.machine_time,
                                                 nu_time=self.neutrino_time,
                                                 p_values=self.p_values)
 
         return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
-                                                                          sent_time=self.times.get_snews_time())
+                                                                          sent_time=times.get_snews_time())
 
 
 @dataclass
