@@ -38,7 +38,13 @@ def display(message):
         if type(v) == str:
             click.echo(f'{k:<20s}:{v:<45}')
         elif type(v) == list:
-            items = '\t'.join(v)
+            _v = []                        # tmp fix, it crashes if there were None's in the list
+            for item in v:
+                if type(item)==type(None):
+                    _v.append('None')
+                else:
+                    _v.append(item)
+            items = '\t'.join(_v)
             if k == 'detector_names':
                 click.echo(f'{k:<20s}' + click.style(f':{items:<45}', bg='blue'))
             else:

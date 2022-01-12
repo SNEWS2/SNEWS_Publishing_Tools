@@ -38,7 +38,7 @@ class Publisher:
         self.verbose = verbose
 
     def __enter__(self):
-        self.stream = Stream(until_eos=True, auth=self.no_auth).open(self.obs_broker, 'w')
+        self.stream = Stream(until_eos=True, auth=self.auth).open(self.obs_broker, 'w')
         return self
 
     def __exit__(self, *args):
