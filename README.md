@@ -127,6 +127,8 @@ from SNEWS_PT.snews_sub import Subscriber
 Subscriber().subscribe()
 ```
 
+Should there be an alert message, this will be both displayed on the screen and saved into your local machine as `SNEWS_MSGs/<today fmt="%y_%m_%d">/subscribed_messages.json` and if there are multiple messages in the same day e.g. hype-mode is on and for the same supernova you kept receiving alerts with every coincidence message, these will be appended in this file with the sent time as the first key. An example (partly missing) can be found [here](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/doc/subscribed_messages.json)
+
 ---
 # [Command Line Interface (CLI)](./doc/cli_docs.md)
 There also exists tools for command line interactions. These are explained in detail [here](./doc/cli_docs.md)

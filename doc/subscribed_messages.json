@@ -1,0 +1,43 @@
+{
+    "22/01/12 10:56:09": {
+        "_id": "SNEWS_Coincidence_System_ALERT_22/01/12_10:56:06:578288",
+        "ids": null,
+        "neutrino_times": [
+            "10:56:01:210502",
+            "10:56:02:287532"
+        ],
+        "p_values": [
+            null,
+            null
+        ],
+        "sent_time": "22/01/12 10:56:06"
+    },
+    "22/01/12 11:00:59": {
+        "_id": "SNEWS_Coincidence_System_ALERT_22/01/12_11:00:55:321344",
+        "ids": null,
+        "neutrino_times": [
+            "11:00:49:983807",
+            "11:00:51:064870"
+        ],
+        "p_values": [
+            null,
+            null
+        ],
+        "sent_time": "22/01/12 11:00:55"
+    },
+    "22/01/12 11:01:03": {
+        "_id": "SNEWS_Coincidence_System_ALERT_22/01/12_11:00:59:602891",
+        "ids": null,
+        "neutrino_times": [
+            "11:00:49:983807",
+            "11:00:51:064870",
+            "11:00:52:140542"
+        ],
+        "p_values": [
+            null,
+            null,
+            null
+        ],
+        "sent_time": "22/01/12 11:00:59"
+    }
+}
