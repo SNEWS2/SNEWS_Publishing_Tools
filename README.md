@@ -2,7 +2,6 @@
 
 This packages provides users with a Python API and CLI to publish observation messages to SNEWS
 
-    Note: CLI is still WIP 
 
 ## How to Install
 
