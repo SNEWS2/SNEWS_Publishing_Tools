@@ -21,10 +21,13 @@ jobs:
     - name: Install librdkafka
       run: |
         sudo apt install librdkafka-dev
-    - name: Install hop-client
+    - name: Install confluent-kafka
       run: |
-        pip install wheel
-        pip install -U hop-client
+        pip install confluent-kafka
+    # - name: Install hop-client
+    #   run: |
+    #     pip install wheel
+    #     pip install -U hop-client
     # - name: Install dependencies
     #   run: |
     #     python -m pip install --upgrade pip
