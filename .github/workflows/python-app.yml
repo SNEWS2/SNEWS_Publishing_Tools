@@ -20,7 +20,7 @@ jobs:
         python-version: "3.10"
     - name: Install librdkafka
       run: |
-        apt install librdkafka-dev
+        sudo apt install librdkafka-dev
 
     # - name: Install hop-client
     #   run: |
