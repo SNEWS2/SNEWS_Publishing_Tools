@@ -19,7 +19,13 @@ jobs:
       with:
         python-version: "3.10"
     - name: Install hop-client
-      run: pip install -U hop-client
+      run: |
+        curl -L https://github.com/edenhill/librdkafka/archive/v0.9.2-RC1.tar.gz | tar xzf -
+        cd librdkafka-0.9.2-RC1/
+        ./configure --prefix=/usr
+        make -j
+        sudo make install
+        pip install -U hop-client
     # - name: Install dependencies
     #   run: |
     #     python -m pip install --upgrade pip
