@@ -1,7 +1,7 @@
-.. _model:
+.. _snews_pub:
 
-snews.model
+SNEWS_PT.snews_pub
 ##################
 
-.. automodule:: snews.model
+.. automodule:: SNEWS_PT.snews_pub
     :members:

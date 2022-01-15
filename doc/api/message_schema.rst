@@ -1,7 +1,7 @@
-.. _decider:
+.. _message_schema:
 
-snews.decider
+SNEWS_PT.message_schema
 #####################
 
-.. automodule:: snews.decider
+.. automodule:: SNEWS_PT.message_schema
     :members:
