@@ -1,3 +1,4 @@
+from SNEWS_PT.snews_pub import Publisher
 from SNEWS_PT.snews_pub import CoincidenceTier
 
 def test_CoincidenceTier_message_keys():
