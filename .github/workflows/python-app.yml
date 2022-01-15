@@ -10,7 +10,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: macos-11
 
     steps:
     - uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
         python-version: "3.10"
     - name: Install librdkafka
       run: |
-        sudo apt install librdkafka-dev
+        brew install librdkafka
     - name: Install confluent-kafka
       run: |
         pip install confluent-kafka
