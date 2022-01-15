@@ -30,8 +30,10 @@ jobs:
         pip install jsonschema python-dotenv click pytest
     - name: Install snews-pt
       run:  pip install .
-    - name: Check version
-      run: snews_pt --version
+    - name: Run pytest
+      run: pytest SNEWS_PT/test/test_workflow.py
+    # - name: Check version
+    #   run: snews_pt --version
     # - name: Lint with flake8
     #   run: |
     #     # stop the build if there are Python syntax errors or undefined names
