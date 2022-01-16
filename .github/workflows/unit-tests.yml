@@ -30,6 +30,7 @@ jobs:
       run: snews_pt --version
 
   test:
+    name: Run unit tests
     steps:
 
     - name: Run pytest

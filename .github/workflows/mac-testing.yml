@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-
+    name: Set up environment
     runs-on: macos-11
 
     steps:
@@ -20,7 +20,9 @@ jobs:
     - name: Install librdkafka
       run: brew install librdkafka
 
-  install-and-unit-test:
-      uses: SNEWS2/SNEWS_Publishing_Tools/.github/workflows/unit-tests.yml
-      with:
-        system: macos-11
+  install-and-test:
+    name: Install snews_pt and unit test
+    runs-on: macos-11
+    uses: SNEWS2/SNEWS_Publishing_Tools/.github/workflows/unit-tests.yml
+    with:
+      system: macos-11
