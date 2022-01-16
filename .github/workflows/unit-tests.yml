@@ -7,7 +7,9 @@ jobs:
   install:
     name: Install snews_pt
     runs-on: ${{ inputs.system }}
+    
     steps:
+    - uses: actions/checkout@v2
 
     - name: Install requirements
       run: |
@@ -31,7 +33,10 @@ jobs:
 
   test:
     name: Run unit tests
+    runs-on: ${{ inputs.system }}
+
     steps:
+    - uses: actions/checkout@v2
 
     - name: Run pytest
       run: |
