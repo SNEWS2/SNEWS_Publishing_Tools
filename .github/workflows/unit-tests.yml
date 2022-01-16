@@ -2,6 +2,10 @@ name: Installation and testing
 
 on:
   workflow_call:
+    inputs:
+      system:
+        required: true
+        type: string
 
 jobs:
   install:
