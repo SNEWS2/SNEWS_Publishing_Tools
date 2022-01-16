@@ -1,7 +1,7 @@
 name: Unit testing
 
 on:
-  workflow call:
+  workflow_call:
 
 jobs:
   - name: Install requirements
