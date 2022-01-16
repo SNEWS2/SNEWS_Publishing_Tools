@@ -1,0 +1,24 @@
+name: Mac testing
+
+on:
+  push:
+    branches: [ smolsky/testing ]
+
+jobs:
+  build:
+
+    runs-on: macos-11
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+
+    - name: Install librdkafka
+      run: brew install librdkafka
+
+  install-and-unit-test:
+      uses: SNEWS2/SNEWS_Publishing_Tools/.github/workflows/unit-tests.yml
