@@ -8,12 +8,17 @@ on:
         type: string
 
 jobs:
-  install:
-    name: Install snews_pt
+  install-and-test:
+    name: Install snews_pt and unit test
     runs-on: ${{ inputs.system }}
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
 
     - name: Install requirements
       run: |
@@ -34,13 +39,6 @@ jobs:
 
     - name: Check version
       run: snews_pt --version
-
-  test:
-    name: Run unit tests
-    runs-on: ${{ inputs.system }}
-
-    steps:
-    - uses: actions/checkout@v2
 
     - name: Run pytest
       run: |
