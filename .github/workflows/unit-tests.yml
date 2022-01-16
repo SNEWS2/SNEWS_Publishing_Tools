@@ -4,7 +4,9 @@ on:
   workflow_call:
 
 jobs:
-  install: 
+  install:
+    name: Install snews_pt
+    runs-on: ${{ inputs.system }}
     steps:
 
     - name: Install requirements

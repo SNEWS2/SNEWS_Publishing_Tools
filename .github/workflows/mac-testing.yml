@@ -21,4 +21,6 @@ jobs:
       run: brew install librdkafka
 
   install-and-unit-test:
-      uses: SNEWS2/SNEWS_Publishing_Tools/.github/workflows/unit-tests.yml@smolsky/testing
+      uses: SNEWS2/SNEWS_Publishing_Tools/.github/workflows/unit-tests.yml
+      with:
+        system: macos-11
