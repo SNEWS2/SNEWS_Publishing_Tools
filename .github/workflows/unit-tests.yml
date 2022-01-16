@@ -1,4 +1,4 @@
-name: Unit testing
+name: Installation and testing
 
 on:
   workflow_call:
@@ -7,7 +7,7 @@ jobs:
   install:
     name: Install snews_pt
     runs-on: ${{ inputs.system }}
-    
+
     steps:
     - uses: actions/checkout@v2
 

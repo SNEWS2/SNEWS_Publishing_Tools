@@ -23,6 +23,7 @@ jobs:
   install-and-test:
     name: Install snews_pt and unit test
     runs-on: macos-11
-    uses: SNEWS2/SNEWS_Publishing_Tools/.github/workflows/unit-tests.yml
+
+    uses: SNEWS2/SNEWS_Publishing_Tools/.github/workflows/unit-tests.yml@smolsky/testing
     with:
       system: macos-11
