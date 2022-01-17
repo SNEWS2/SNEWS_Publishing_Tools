@@ -7,7 +7,7 @@ def test_send_CoincidenceTier_working():
     
     Note
     ----
-    Checks if SNEWS_PT can import and run.  Does not check for accuracy.
+    Checks if SNEWS_PT can import, run, and connect to kafka.  Does not check for accuracy.
     """
     with Publisher() as pub:
         message = CoincidenceTier(detector_name='TEST', neutrino_time="01:23:45:678901", p_value = 0.01).message()
