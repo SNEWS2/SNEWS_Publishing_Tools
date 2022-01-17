@@ -27,7 +27,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Add hop authentication
-      shell: zsh
+      shell: bash
       env:
         username: ${{ secrets.username }}
         password: ${{ secrets.password }}
