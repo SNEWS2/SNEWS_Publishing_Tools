@@ -14,5 +14,5 @@ jobs:
         username: joe
         password: password
       run: |
-        echo $env.username
-        echo $env.password
+        echo "$env.username"
+        echo "$env.password"
