@@ -10,9 +10,9 @@ jobs:
 
     steps:
     - shell: bash
-      with:
-        username: ${{ secrets.test1 }}
-        password: ${{ secrets.testA }}
+      env:
+        USERNAME: ${{ secrets.TEST1 }}
+        PASSWORD: ${{ secrets.TESTA }}
       run: |
-        echo "%username"
-        echo "%password"
+        echo "$USERNAME"
+        echo "$PASSWORD"
