@@ -28,20 +28,20 @@ class TestPubSub(unittest.TestCase):
                                       p_value=self.test_p_val, machine_time=self.test_time).message()
             pub.send(message)
 
-    # def test_pub_and_sub_coincidence(self):
-    #     stream = Stream(until_eos=True, auth=True)
-    #     with stream.open(self.obs_broker, 'r') as s:
-    #         self.pub_test_coincidence()
-    #         for message in s:
-    #             test_message = message
-    #             print('testing initial params')
-    #             self.assertTrue(type(test_message) is dict)
-    #             self.assertEqual(list(test_message.keys()), self.keys)
-    #             self.assertEqual(message['detector_name'], self.test_detector)
-    #             self.assertEqual(message['p_value'], self.test_p_val)
-    #             self.assertEqual(message['neutrino_time'],self.test_time)
-    #             break
-    #     pass
+    def test_pub_and_sub_coincidence(self):
+        stream = Stream(until_eos=True, auth=True)
+        with stream.open(self.obs_broker, 'r') as s:
+            self.pub_test_coincidence()
+            for message in s:
+                test_message = message
+                print('testing initial params')
+                self.assertTrue(type(test_message) is dict)
+                self.assertEqual(list(test_message.keys()), self.keys)
+                self.assertEqual(message['detector_name'], self.test_detector)
+                self.assertEqual(message['p_value'], self.test_p_val)
+                self.assertEqual(message['neutrino_time'],self.test_time)
+                break
+        pass
 
 
 if __name__ == '__main__':
