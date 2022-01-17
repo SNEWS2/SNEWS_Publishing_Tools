@@ -28,6 +28,7 @@ jobs:
 
     - name: Add hop authentication
       run: |
+        hop --version
         hop auth add
         ${{ secrets.username }}
         ${{ secrets.password }}
