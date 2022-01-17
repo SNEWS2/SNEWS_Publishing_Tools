@@ -11,8 +11,8 @@ jobs:
     steps:
     - shell: bash
       env:
-        USERNAME: ${{ secrets.TEST1 }}
-        PASSWORD: ${{ secrets.TESTA }}
+        USERNAME: "joe"
+        PASSWORD: "password"
       run: |
         echo "$USERNAME"
         echo "$PASSWORD"
