@@ -13,9 +13,32 @@ jobs:
     - name: Install librdkafka
       run: brew install librdkafka
 
-  install-and-test:
-    name: Install snews_pt and unit test
+  install:
+    name: Install snews_pt
+    - name: Install requirements
+      run: |
+        python -m pip install --upgrade pip
+        pip install wheel
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        pip install flake8
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Install snews-pt
+      run:  pip install .
+
+    - name: Check version
+      run: snews_pt --version
+
+  test:
+    name: Run unit tests
+    - name: Run pytest
+      run: |
+        pip install pytest
+        pytest SNEWS_PT/test/test_workflow.py
     
-    uses: SNEWS2/SNEWS_Publishing_Tools/.github/workflows/unit-tests.yml@smolsky/testing
-    with:
-      system: macos-11
