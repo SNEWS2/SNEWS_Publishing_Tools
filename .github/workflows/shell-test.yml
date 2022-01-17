@@ -9,10 +9,12 @@ jobs:
     runs-on: macos-11
 
       steps:
+      - uses: actions/checkout@v2
+
       - name: Shell test
-        env:
+        with:
           username: joe
           password: password
         run: |
-          echo $username
-          echo $password
+          echo "$username"
+          echo "$password"
