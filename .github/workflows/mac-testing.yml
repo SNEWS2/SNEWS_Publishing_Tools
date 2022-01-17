@@ -59,4 +59,4 @@ jobs:
     - name: Run pytest
       run: |
         pip install pytest
-        pytest SNEWS_PT/test/test_workflow.py
+        pytest
