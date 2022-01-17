@@ -30,12 +30,16 @@ jobs:
         USERNAME: ${{ secrets.username }}
         PASSWORD: ${{ secrets.password }}
       run: |
-        hop auth add
-        "$USERNAME"
-        "$PASSWORD"
-        kafka.scimma.org
-        hop auth locate
-
+        /usr/bin/expect << HOP
+        expect "Username:"
+        send "$USERNAME\n"
+        expect "Password:"
+        send "$PASSWORD\n"
+        expect "Hostname (may be empty):"
+        send "kafka.scimma.org\n"
+        expect eof
+        HOP
+        
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
