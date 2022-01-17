@@ -9,7 +9,7 @@ jobs:
     runs-on: macos-11
 
     steps:
-    - name: Shell test
+    - shell: bash
       with:
         username: ${{ secrets.test1 }}
         password: ${{ secrets.testA }}
