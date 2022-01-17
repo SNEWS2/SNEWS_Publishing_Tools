@@ -27,14 +27,13 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Add hop authentication
-      shell: bash
       env:
-        username: ${{ secrets.username }}
-        password: ${{ secrets.password }}
+        USERNAME: ${{ secrets.username }}
+        PASSWORD: ${{ secrets.password }}
       run: |
         hop auth add
-        $username
-        $password
+        $USERNAME
+        $PASSWORD
         kafka.scimma.org
         hop auth locate
 
