@@ -28,8 +28,9 @@ jobs:
 
     - name: Add hop authentication
       with:
-        - username: ${{ secrets.username }}
-        - password: ${{ secrets.password }}
+        username: ${{ secrets.username }}
+      with:
+        password: ${{ secrets.password }}
       run: |
         hop auth add
         $username
