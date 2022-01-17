@@ -31,6 +31,7 @@ jobs:
         PASSWORD: ${{ secrets.password }}
       run: |
         /usr/bin/expect << HOP
+        spawn hop auth add
         expect "Username:"
         send "$USERNAME\n"
         expect "Password:"
