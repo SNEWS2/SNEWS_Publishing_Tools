@@ -18,7 +18,8 @@ install_requires = [
     "hop-client >= 0.5.0",
     "jsonschema",
     "python-dotenv",
-    "click"
+    "click",
+    "sphinxcontrib-programoutput"
 ]
 
 def read_requirements():
