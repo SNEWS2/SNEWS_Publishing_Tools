@@ -4,6 +4,7 @@ docutils==0.17.1
 fixtures==3.0.0
 hop==1.5.2
 ipython==8.0.1
+myst-parser==0.16.1
 mock==4.0.3
 nose==1.3.7
 python-dotenv==0.19.2
