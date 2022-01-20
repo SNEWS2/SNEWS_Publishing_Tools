@@ -111,7 +111,7 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     html_theme = 'sphinx_rtd_theme'
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
-html_logo = "_build/html/_static/new_snews_logo_150px.png"
+html_logo = "./snews_logo.png"
 html_theme_options = {
     'logo_only': True,
     'display_version': True,
