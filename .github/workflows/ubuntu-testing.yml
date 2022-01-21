@@ -16,15 +16,18 @@ jobs:
       with:
         python-version: "3.10"
 
-    - name: Install librdkafka
-      run: |
-        wget -qO - https://packages.confluent.io/deb/7.0/archive.key | sudo apt-key add -
-        sudo add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/7.0 stable main"
-        sudo add-apt-repository "deb https://packages.confluent.io/clients/deb $(lsb_release -cs) main"
-        sudo apt-get update && sudo apt-get install confluent-platform
-
     - name: Install hop-client
-      run: pip install hop-client
+      run: conda install --channel scimma hop-client
+
+    # - name: Install librdkafka
+    #   run: |
+    #     wget -qO - https://packages.confluent.io/deb/7.0/archive.key | sudo apt-key add -
+    #     sudo add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/7.0 stable main"
+    #     sudo add-apt-repository "deb https://packages.confluent.io/clients/deb $(lsb_release -cs) main"
+    #     sudo apt-get update && sudo apt-get install confluent-platform
+
+    # - name: Install hop-client
+    #   run: pip install hop-client
     # - uses: actions/checkout@v2
     
     # - name: Set up Python 3.10
