@@ -11,17 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    # - name: Set up Python 3.10
-    #   uses: actions/setup-python@v2
-    #   with:
-    #     python-version: "3.10"
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
 
-    # - name: Install hop-client
-    #   run: |
-    #     conda update -n base -c defaults conda
-    #     echo 'installing hop-client'
-    #     conda install -c conda-forge hop-client
-    #     echo 'installation complete'
+    - name: Install hop-client
+      run: |
+        conda update -n base -c defaults conda
+        echo 'installing hop-client'
+        conda install -c conda-forge hop-client
+        echo 'installation complete'
+        hop --version
 
     # # - name: Install requirements
     #   run: |
@@ -30,13 +31,13 @@ jobs:
     #     # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     #     pip install jsonschema python-dotenv click tabulate
 
-    - shell: bash
-      env:
-        USERNAME: ${{ secrets.username }}
-        PASSWORD: ${{ secrets.password }}
-      run: |
-        sudo apt-get install -y expect
-        which expect
+    # - shell: bash
+    #   env:
+    #     USERNAME: ${{ secrets.username }}
+    #     PASSWORD: ${{ secrets.password }}
+    #   run: |
+    #     sudo apt-get install -y expect
+    #     which expect
     #     /usr/bin/expect << HOP
     #     spawn hop auth add
     #     expect "Username:"
