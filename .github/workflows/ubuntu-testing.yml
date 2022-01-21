@@ -21,7 +21,6 @@ jobs:
 
     - name: Install hop-client
       run: |
-        conda update -n base -c defaults conda
         conda install --channel scimma hop-client
 
     # - name: Install librdkafka
