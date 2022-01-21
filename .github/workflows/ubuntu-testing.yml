@@ -19,15 +19,15 @@ jobs:
     - name: Check python version
       run: python --version
 
-    # - name: Install hop-client
-    #   run: |
-    #     conda update -n base -c defaults conda
-    #     conda init bash
-    #     source /home/runner/.bashrc
-    #     # conda create -n pt-env python=3.8
-    #     conda create --name pt-env python=8 --channel conda-forge
-    #     conda activate pt-env
-    #     conda install --channel scimma hop-client
+    - name: Install hop-client
+      run: |
+        conda update -n base -c defaults conda
+        conda init bash
+        source /home/runner/.bashrc
+        # conda create -n pt-env python=3.8
+        conda create --name pt-env python=3.8 --channel conda-forge
+        conda activate pt-env
+        conda install --channel scimma hop-client
 
     # - name: Install librdkafka
     #   run: |
