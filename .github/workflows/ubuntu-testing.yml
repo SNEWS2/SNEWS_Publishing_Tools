@@ -21,7 +21,11 @@ jobs:
 
     - name: Install hop-client
       run: |
-        conda install --channel scimma hop-client
+        pwd
+        tar -xzf hop-client-x.y.z.tar.gz
+        cd hop-client-x.y.z
+        python setup.py install
+        # conda install --channel scimma hop-client
 
     # - name: Install librdkafka
     #   run: |
