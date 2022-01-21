@@ -28,31 +28,6 @@ jobs:
         python setup.py install
         cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
 
-    # - name: Install librdkafka
-    #   run: |
-    #     wget -qO - https://packages.confluent.io/deb/7.0/archive.key | sudo apt-key add -
-    #     sudo add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/7.0 stable main"
-    #     sudo add-apt-repository "deb https://packages.confluent.io/clients/deb $(lsb_release -cs) main"
-    #     sudo apt-get update && sudo apt-get install confluent-platform
-
-    # - name: Install hop-client
-    #   run: pip install hop-client
-    # - uses: actions/checkout@v2
-    
-    # - name: Set up Python 3.10
-    #   uses: actions/setup-python@v2
-    #   with:
-    #     python-version: "3.10"
-
-    # # - name: Install hop-client
-    #   run: |
-    #     conda update -n base -c defaults conda
-    #     echo 'installing hop-client'
-    #     conda install -c conda-forge hop-client
-    #     echo 'installation complete'
-    #     echo 'check hop version'
-    #     hop --version
-
     - name: Install requirements
       run: |
         python -m pip install --upgrade pip
@@ -96,4 +71,4 @@ jobs:
     - name: Run pytest
       run: |
         pip install pytest
-        pytest
+        pytest SNEWS_PT
