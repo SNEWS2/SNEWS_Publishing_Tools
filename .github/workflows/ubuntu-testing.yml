@@ -19,8 +19,9 @@ jobs:
     - name: Install hop-client
       run: |
         conda update -n base -c defaults conda
+        echo 'installing hop-client'
         conda install -c conda-forge hop-client
-        which hop
+        echo 'installation complete'
 
     # - name: Install requirements
     #   run: |
