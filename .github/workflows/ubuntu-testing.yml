@@ -17,48 +17,50 @@ jobs:
         python-version: "3.10"
 
     - name: Install hop-client
-      run: conda install -c conda-forge hop-client
-
-    - name: Install requirements
       run: |
-        python -m pip install --upgrade pip
-        pip install wheel
-        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        pip install jsonschema python-dotenv click tabulate
+        conda install -c conda-forge hop-client
+        which hop
 
-    - shell: bash
-      env:
-        USERNAME: ${{ secrets.username }}
-        PASSWORD: ${{ secrets.password }}
-      run: |
-        sudo apt-get install -y expect
-        /usr/bin/expect << HOP
-        spawn hop auth add
-        expect "Username:"
-        send "$USERNAME\n"
-        expect "Password:"
-        send "$PASSWORD\n"
-        expect "Hostname (may be empty):"
-        send "kafka.scimma.org\n"
-        expect eof
-        HOP
-        hop auth locate
+    # - name: Install requirements
+    #   run: |
+    #     python -m pip install --upgrade pip
+    #     pip install wheel
+    #     # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    #     pip install jsonschema python-dotenv click tabulate
 
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        pip install flake8
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    # - shell: bash
+    #   env:
+    #     USERNAME: ${{ secrets.username }}
+    #     PASSWORD: ${{ secrets.password }}
+    #   run: |
+    #     sudo apt-get install -y expect
+    #     /usr/bin/expect << HOP
+    #     spawn hop auth add
+    #     expect "Username:"
+    #     send "$USERNAME\n"
+    #     expect "Password:"
+    #     send "$PASSWORD\n"
+    #     expect "Hostname (may be empty):"
+    #     send "kafka.scimma.org\n"
+    #     expect eof
+    #     HOP
+    #     hop auth locate
 
-    - name: Install snews-pt
-      run:  pip install .
+    # - name: Lint with flake8
+    #   run: |
+    #     # stop the build if there are Python syntax errors or undefined names
+    #     pip install flake8
+    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Check version
-      run: snews_pt --version
+    # - name: Install snews-pt
+    #   run:  pip install .
 
-    - name: Run pytest
-      run: |
-        pip install pytest
-        pytest
+    # - name: Check version
+    #   run: snews_pt --version
+
+    # - name: Run pytest
+    #   run: |
+    #     pip install pytest
+    #     pytest
