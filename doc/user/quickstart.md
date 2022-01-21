@@ -27,7 +27,7 @@ Below, we present a quick start for the Supernova Early Warning System communica
 
 
 ## Python-Api
-## How to Publish
+### How to Publish
 Keep in mind that currently the topic set under `/auxiliary/test_config.env` is set to a test kafka server. 
 This can be changed, new environment file can be passed to tools.
 
@@ -71,7 +71,7 @@ with Publisher() as pub:
 > 
 See also this [examples notebook](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/examples.ipynb) for more examples.
 
-## How to Subscribe
+### How to Subscribe
 
 In two lines, one can subscribe to the alert topic specified in the default configuration. <br>
 This starts a stream, and waits for alert messages to be received.
@@ -84,7 +84,7 @@ Subscriber().subscribe()
 Should there be an alert message, this will be both displayed on the screen and saved into your local machine as `SNEWS_MSGs/<today fmt="%y_%m_%d">/subscribed_messages.json` and if there are multiple messages in the same day e.g. hype-mode is on and for the same supernova you kept receiving alerts with every coincidence message, these will be appended in this file with the sent time as the first key. An example (partly missing) can be found [here](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/doc/subscribed_messages.json)
 
 
-# Command Line Interface (CLI)
+## Command Line Interface (CLI)
 
 It is also possible to interact with `snews_pt` through the command line. <br>
 All the commands have their short descriptions accessible via `--help` flag. 
@@ -112,7 +112,7 @@ E.g. `snews_pt --env myenvfile.env subscribe` will set the variables in _myenvfi
 By default, it uses the environment file that comes with the package.
 
 ---
-## Subscribing to Alert Topics
+### Subscribing to Alert Topics
 The subscription command can be called without any arguments.
 ```bash 
 (venv) User$: snews_pt subscribe 
@@ -122,7 +122,7 @@ The subscription command can be called without any arguments.
 > Broker:kafka://kafka.scimma.org/snews.alert-test
 ```
 ---
-## Message Schema
+### Message Schema
 `snews_pt message-schema` can tell you the required contents for each tiers. You can display the contents of a single tier by calling e.g.
 ```bash
 (venv) User$: snews_pt message-schema time
@@ -141,7 +141,7 @@ or you can simply call `snews_pt message-schema` without any positional argument
 
 ---
 
-## Publishing Observation Messages
+### Publishing Observation Messages
 User can publish observation messages to one of the 'CoincidenceTier', 'TimeTier', or 'SigTier'. It is also possible to publish _Heartbeat_ and _Retraction_ messages, see respective section below.
 
 To publish one or more tier user can request arbitrary number of tiers in one line
@@ -178,7 +178,7 @@ p_value             :test p-values
 ```
 ----
 
-## Publishing Heartbeat messages
+### Publishing Heartbeat messages
 
 `snews_pt heartbeat`  can be used to publish heartbeat messages. It is up to the user to invoke this function with a desired frequency, however it is recommended to publish heartbeats consistently and with couple of minutes intervals.
 
@@ -190,7 +190,7 @@ Additionaly, `machine_time` can be passed using `--machine_time` (`-mt`) flag as
 ```
 ---
 
-## Retraction Messages
+### Retraction Messages
 
 It can happen that user publishes a message by accident or with wrong input. In these cases `snews_pt` allows for retraction messages. <br>
 While the specific message id can be passed, it is also possible to publish a retraction message for the last `n` number of messages. This
