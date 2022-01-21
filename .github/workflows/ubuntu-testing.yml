@@ -19,7 +19,7 @@ jobs:
     - name: Install hop-client
       run: |
         conda init bash
-        source ~/.bashrc
+        source /home/runner/.bashrc
         conda create -n pt-env python=3.8
         conda activate pt-env
         conda install --channel scimma hop-client
