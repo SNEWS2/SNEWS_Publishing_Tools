@@ -13,7 +13,6 @@ from hop import Stream
 from . import snews_pt_utils
 from .message_schema import Message_Schema
 from dataclasses import dataclass
-import inspect
 
 
 class Publisher:
