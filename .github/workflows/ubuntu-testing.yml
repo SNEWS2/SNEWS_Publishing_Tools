@@ -22,6 +22,7 @@ jobs:
         echo 'installing hop-client'
         conda install -c conda-forge hop-client
         echo 'installation complete'
+        echo 'check hop version'
         hop --version
 
     # # - name: Install requirements
