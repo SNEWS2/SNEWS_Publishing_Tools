@@ -15,15 +15,27 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: "3.10"
-
-    - name: Install hop-client
+        
+    - name: Install librdkafka
       run: |
-        conda update -n base -c defaults conda
-        echo 'installing hop-client'
-        conda install -c conda-forge hop-client
-        echo 'installation complete'
-        echo 'check hop version'
-        hop --version
+        sudo apt-get update -y
+        sudo apt-get install -y librdkafka-dev
+        pip install hop-client
+    # - uses: actions/checkout@v2
+    
+    # - name: Set up Python 3.10
+    #   uses: actions/setup-python@v2
+    #   with:
+    #     python-version: "3.10"
+
+    # # - name: Install hop-client
+    #   run: |
+    #     conda update -n base -c defaults conda
+    #     echo 'installing hop-client'
+    #     conda install -c conda-forge hop-client
+    #     echo 'installation complete'
+    #     echo 'check hop version'
+    #     hop --version
 
     # # - name: Install requirements
     #   run: |
