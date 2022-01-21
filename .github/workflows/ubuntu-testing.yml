@@ -1,0 +1,20 @@
+name: Ubuntu testing
+
+on:
+  push:
+    branches: [ smolsky/testing ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+
+    - name: Install hop-client
+      run: conda install hop-client
