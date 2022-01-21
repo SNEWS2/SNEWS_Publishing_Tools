@@ -17,4 +17,4 @@ jobs:
         python-version: "3.10"
 
     - name: Install hop-client
-      run: conda install hop-client
+      run: conda install -c conda-forge hop-client
