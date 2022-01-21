@@ -53,7 +53,10 @@ extensions = [
     'sphinxcontrib.programoutput',
     'sphinx.ext.napoleon',
     'myst_parser',
+    'autoapi.extension',
 ]
+
+autoapi_dirs = ['../SNEWS_PT']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

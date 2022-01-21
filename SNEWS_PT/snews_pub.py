@@ -8,12 +8,19 @@ Authors:
 Melih Kara
 Sebastian Torres-Lara
 """
+
+# TODO: based on this post and its answers https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
+# We can add a class method and allow for entries using ".from_kwargs/ from_dict" which then passes only the
+# relevant fields to Tiers and displays/stores or appends extra fields
+# Not sure if we should do this. As it still requires, user to know what is not needed and pass via this .from_kwargs
+# I already implemented the functionality down; see commented-out parts
+
 import os, click
 from hop import Stream
 from . import snews_pt_utils
 from .message_schema import Message_Schema
 from dataclasses import dataclass
-
+import inspect
 
 class Publisher:
     """Class in charge of publishing messages to SNEWS-hop sever.

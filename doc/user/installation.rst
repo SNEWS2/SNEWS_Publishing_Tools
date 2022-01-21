@@ -7,11 +7,15 @@ Installation
 
 You can install snews publishing tools via ~pip~ or from source.
 
-~To install with pip:~
+.. role:: strike
+    :class: strike
+
+:strike: To install with pip:
+Currently it is not yet deployed to pip. Please install from the source
 
 .. code:: bash
 
-   ~pip install -U snews~
+   :strike: pip install -U snews
 
 To install from source:
 Using ssh-key:
