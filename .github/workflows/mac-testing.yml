@@ -24,24 +24,14 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    # - name: Install librdkafka
-    #   run: brew install librdkafka
-    - name: Install hop-client
-      run: |
-        pwd
-        wget https://files.pythonhosted.org/packages/de/a2/1f663c824b7e6ac139110005888cda7e1aea74e3bb8a57d774a00a1802f5/hop-client-0.5.0.tar.gz
-        tar -xzf hop-client-0.5.0.tar.gz
-        cd hop-client-0.5.0
-        python setup.py install
-        # cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
-        cd /Users/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
+    - name: Install librdkafka
+      run: brew install librdkafka
 
     - name: Install requirements
       run: |
         python -m pip install --upgrade pip
         pip install wheel
-        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        pip install jsonschema python-dotenv click tabulate
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - shell: bash
       env:
