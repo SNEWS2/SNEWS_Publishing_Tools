@@ -27,7 +27,7 @@ jobs:
         cd hop-client-0.5.0
         python setup.py install
         # cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
-        cd /Users/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
+        cd C:/Users/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
 
     - name: Install requirements
       run: |
