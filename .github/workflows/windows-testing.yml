@@ -1,4 +1,4 @@
-name: Mac testing
+name: Windows testing
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -15,17 +15,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: "3.8"
-    
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        pip install flake8
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      
+    - name: Check python version
+      run: python --version
 
-    # - name: Install librdkafka
-    #   run: brew install librdkafka
     - name: Install hop-client
       run: |
         pwd
@@ -39,14 +32,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install wheel
-        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install jsonschema python-dotenv click tabulate
-        
+
     - shell: bash
       env:
         USERNAME: ${{ secrets.username }}
         PASSWORD: ${{ secrets.password }}
       run: |
+        sudo apt-get install -y expect
+        which expect
         /usr/bin/expect << HOP
         spawn hop auth add
         expect "Username:"
@@ -59,6 +53,14 @@ jobs:
         HOP
         hop auth locate
 
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        pip install flake8
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
     - name: Install snews-pt
       run:  pip install .
 
@@ -68,4 +70,4 @@ jobs:
     - name: Run pytest
       run: |
         pip install pytest
-        pytest
+        pytest SNEWS_PT
