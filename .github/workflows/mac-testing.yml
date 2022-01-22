@@ -33,7 +33,8 @@ jobs:
         tar -xzf hop-client-0.5.0.tar.gz
         cd hop-client-0.5.0
         python setup.py install
-        cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
+        # cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
+        cd /Users/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
 
     - name: Install requirements
       run: |
@@ -41,7 +42,7 @@ jobs:
         pip install wheel
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install jsonschema python-dotenv click tabulate
-        
+
     - shell: bash
       env:
         USERNAME: ${{ secrets.username }}
