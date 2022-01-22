@@ -30,8 +30,8 @@ jobs:
     #     pip install wheel
     #     pip install jsonschema python-dotenv click tabulate
 
-    - name: Shell change
-      run: bash
+    # - name: Shell change
+    #   run: bash
 
     # - name: Shell revert
     #   run: |
@@ -40,11 +40,12 @@ jobs:
     #     echo $SHELL
     #     exit
 
-    - shell: bash
+    - shell: powershell
       env:
         USERNAME: ${{ secrets.username }}
         PASSWORD: ${{ secrets.password }}
       run: |
+        bash
         apt-get install -y expect
         which expect
         /usr/bin/expect << HOP
