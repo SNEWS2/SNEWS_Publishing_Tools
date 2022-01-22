@@ -46,7 +46,6 @@ jobs:
         PASSWORD: ${{ secrets.password }}
       run: |
         bash
-        sudo apt-get install -y expect
         which expect
         /usr/bin/expect << HOP
         spawn hop auth add
