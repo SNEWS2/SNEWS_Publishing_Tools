@@ -22,6 +22,7 @@ jobs:
     - name: Install hop-client
       run: |
         pip install -U hop-client
+        which hop
         # powershell -c "Invoke-WebRequest -Uri 'https://files.pythonhosted.org/packages/de/a2/1f663c824b7e6ac139110005888cda7e1aea74e3bb8a57d774a00a1802f5/hop-client-0.5.0.tar.gz' -OutFile 'hop-client-0.5.0.tar.gz'"
         # tar -xzf hop-client-0.5.0.tar.gz
         # cd hop-client-0.5.0
@@ -29,46 +30,46 @@ jobs:
         # # cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
         # cd D:\a\SNEWS_Publishing_Tools\SNEWS_Publishing_Tools
 
-    - name: Install requirements
-      run: |
-        python -m pip install --upgrade pip
-        pip install wheel
-        pip install jsonschema python-dotenv click tabulate
+    # - name: Install requirements
+    #   run: |
+    #     python -m pip install --upgrade pip
+    #     pip install wheel
+    #     pip install jsonschema python-dotenv click tabulate
 
-    - shell: bash
-      env:
-        USERNAME: ${{ secrets.username }}
-        PASSWORD: ${{ secrets.password }}
-      run: |
-        sudo apt-get install -y expect
-        which expect
-        /usr/bin/expect << HOP
-        spawn hop auth add
-        expect "Username:"
-        send "$USERNAME\n"
-        expect "Password:"
-        send "$PASSWORD\n"
-        expect "Hostname (may be empty):"
-        send "kafka.scimma.org\n"
-        expect eof
-        HOP
-        hop auth locate
+    # - shell: bash
+    #   env:
+    #     USERNAME: ${{ secrets.username }}
+    #     PASSWORD: ${{ secrets.password }}
+    #   run: |
+    #     sudo apt-get install -y expect
+    #     which expect
+    #     /usr/bin/expect << HOP
+    #     spawn hop auth add
+    #     expect "Username:"
+    #     send "$USERNAME\n"
+    #     expect "Password:"
+    #     send "$PASSWORD\n"
+    #     expect "Hostname (may be empty):"
+    #     send "kafka.scimma.org\n"
+    #     expect eof
+    #     HOP
+    #     hop auth locate
 
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        pip install flake8
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    # - name: Lint with flake8
+    #   run: |
+    #     # stop the build if there are Python syntax errors or undefined names
+    #     pip install flake8
+    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Install snews-pt
-      run:  pip install .
+    # - name: Install snews-pt
+    #   run:  pip install .
 
-    - name: Check version
-      run: snews_pt --version
+    # - name: Check version
+    #   run: snews_pt --version
 
-    - name: Run pytest
-      run: |
-        pip install pytest
-        pytest SNEWS_PT
+    # - name: Run pytest
+    #   run: |
+    #     pip install pytest
+    #     pytest SNEWS_PT
