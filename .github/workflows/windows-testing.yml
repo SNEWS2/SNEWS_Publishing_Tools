@@ -45,7 +45,7 @@ jobs:
         USERNAME: ${{ secrets.username }}
         PASSWORD: ${{ secrets.password }}
       run: |
-        bash
+        apt-get install -y expect
         which expect
         /usr/bin/expect << HOP
         spawn hop auth add
