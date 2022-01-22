@@ -36,6 +36,8 @@ jobs:
     - name: Shell revert
       run: |
         pwd
+        ls
+        echo $SHELL
         exit
 
     # - shell: bash
