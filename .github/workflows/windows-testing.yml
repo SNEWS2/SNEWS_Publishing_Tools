@@ -11,18 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
-      with:
-        python-version: "3.8"
+    # - name: Set up Python 3.8
+    #   uses: actions/setup-python@v2
+    #   with:
+    #     python-version: "3.8"
       
-    - name: Check python version
-      run: python --version
+    # - name: Check python version
+    #   run: python --version
 
-    - name: Install hop-client
-      run: |
-        pip install -U hop-client
-        hop --version
+    # - name: Install hop-client
+    #   run: |
+    #     pip install -U hop-client
+    #     hop --version
 
     # - name: Install requirements
     #   run: |
@@ -30,26 +30,34 @@ jobs:
     #     pip install wheel
     #     pip install jsonschema python-dotenv click tabulate
 
-    - shell: bash
-      env:
-        USERNAME: ${{ secrets.username }}
-        PASSWORD: ${{ secrets.password }}
+    - name: Shell change
+      run: bash
+
+    - name: Shell revert
       run: |
-        bash
-        sudo apt-get install -y expect
-        which expect
-        /usr/bin/expect << HOP
-        spawn hop auth add
-        expect "Username:"
-        send "$USERNAME\n"
-        expect "Password:"
-        send "$PASSWORD\n"
-        expect "Hostname (may be empty):"
-        send "kafka.scimma.org\n"
-        expect eof
-        HOP
+        pwd
         exit
-        hop auth locate
+
+    # - shell: bash
+    #   env:
+    #     USERNAME: ${{ secrets.username }}
+    #     PASSWORD: ${{ secrets.password }}
+    #   run: |
+    #     bash
+    #     sudo apt-get install -y expect
+    #     which expect
+    #     /usr/bin/expect << HOP
+    #     spawn hop auth add
+    #     expect "Username:"
+    #     send "$USERNAME\n"
+    #     expect "Password:"
+    #     send "$PASSWORD\n"
+    #     expect "Hostname (may be empty):"
+    #     send "kafka.scimma.org\n"
+    #     expect eof
+    #     HOP
+    #     exit
+    #     hop auth locate
 
     # - name: Lint with flake8
     #   run: |
