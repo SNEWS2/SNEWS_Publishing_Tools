@@ -21,7 +21,7 @@ jobs:
 
     - name: Install hop-client
       run: |
-        pwd
+        echo %cd%
         powershell -c "Invoke-WebRequest -Uri 'https://files.pythonhosted.org/packages/de/a2/1f663c824b7e6ac139110005888cda7e1aea74e3bb8a57d774a00a1802f5/hop-client-0.5.0.tar.gz' -OutFile 'hop-client-0.5.0.tar.gz'"
         tar -xzf hop-client-0.5.0.tar.gz
         cd hop-client-0.5.0
