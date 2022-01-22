@@ -33,33 +33,33 @@ jobs:
     - name: Shell change
       run: bash
 
-    - name: Shell revert
-      run: |
-        pwd
-        ls
-        echo $SHELL
-        exit
-
-    # - shell: bash
-    #   env:
-    #     USERNAME: ${{ secrets.username }}
-    #     PASSWORD: ${{ secrets.password }}
+    # - name: Shell revert
     #   run: |
-    #     bash
-    #     sudo apt-get install -y expect
-    #     which expect
-    #     /usr/bin/expect << HOP
-    #     spawn hop auth add
-    #     expect "Username:"
-    #     send "$USERNAME\n"
-    #     expect "Password:"
-    #     send "$PASSWORD\n"
-    #     expect "Hostname (may be empty):"
-    #     send "kafka.scimma.org\n"
-    #     expect eof
-    #     HOP
+    #     pwd
+    #     ls
+    #     echo $SHELL
     #     exit
-    #     hop auth locate
+
+    - shell: bash
+      env:
+        USERNAME: ${{ secrets.username }}
+        PASSWORD: ${{ secrets.password }}
+      run: |
+        bash
+        sudo apt-get install -y expect
+        which expect
+        /usr/bin/expect << HOP
+        spawn hop auth add
+        expect "Username:"
+        send "$USERNAME\n"
+        expect "Password:"
+        send "$PASSWORD\n"
+        expect "Hostname (may be empty):"
+        send "kafka.scimma.org\n"
+        expect eof
+        HOP
+        exit
+        hop auth locate
 
     # - name: Lint with flake8
     #   run: |
