@@ -8,6 +8,7 @@ SNEWS Protocols
 
 Coincidence Requirement
 ------------------------
+NOT WRITTEN YET. PLEASE IGNORE BELOW FOR NOW.
 
 Upon observing a potential pre-supernova phenomena, the detector
 generates an observation message and publish it. The SNEWS 2.0

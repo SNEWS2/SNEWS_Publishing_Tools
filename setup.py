@@ -14,19 +14,22 @@ version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", version_file, re.M)
 version = version_match.group(1)
 
 # requirements
-install_requires = [
-    "hop-client >= 0.5.0",
-    "jsonschema",
-    "python-dotenv",
-    "click"
-]
+#install_requires = [
+#    "hop-client >= 0.5.0",
+#    "jsonschema",
+#    "python-dotenv",
+#    "click",
+#    "sphinxcontrib-programoutput"
+#]
+
+install_requires = []
 
 def read_requirements():
-    # with open('hop_comms/requirements.txt') as req:
-    #     content = req.read()
-    #     requirements = content.split('\n')
-    # return install_requires.append(requirements)
-    return install_requires
+    with open('doc/requirements.txt') as req:
+        content = req.read()
+        requirements = content.split('\n')
+    return install_requires.append(requirements)
+    #return install_requires
 
 
 extras_require = {

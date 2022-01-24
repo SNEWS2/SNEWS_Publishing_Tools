@@ -1,4 +1,4 @@
-snews documentation
+Snews Publishing Tools Documentation
 ====================================================
 
 User's Guide
@@ -8,11 +8,9 @@ User's Guide
    :maxdepth: 2
 
    user/installation
-   user/command_line_interface
    user/quickstart
-   user/architecture
-   user/messages
-   user/protocol
+   user/message_schema
+
 
 API Reference
 -------------
