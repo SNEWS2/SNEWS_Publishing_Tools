@@ -9,6 +9,7 @@ class TestSchema(unittest.TestCase):
         self.test_timing_series = ['00:00:00:1234', '00:00:00:1234']
         self.test_p_val = 0.0
         self.test_p_vals = [0.0, 0.0]
+        self.meta = {}
         self.coincidence_schema = {
             '_id': '',
             'detector_name': 'TEST',
@@ -16,7 +17,7 @@ class TestSchema(unittest.TestCase):
             'machine_time': self.test_time,
             'neutrino_time': self.test_time,
             'p_value': self.test_p_val,
-            'meta': {}
+            'meta':{},
         }
         self.timing_series_schema = {
             '_id': '',
@@ -25,7 +26,7 @@ class TestSchema(unittest.TestCase):
             'machine_time': self.test_time,
             'neutrino_time': self.test_time,
             'timing_series': self.test_timing_series,
-            'meta': {}
+            'meta':{},
         }
         self.significance_tier_schema = {
             '_id': '',
@@ -34,7 +35,7 @@ class TestSchema(unittest.TestCase):
             'machine_time': self.test_time,
             'neutrino_time': self.test_time,
             'p_values': self.test_p_vals,
-            'meta': {}
+            'meta':{},
         }
 
     def tearDown(self):
