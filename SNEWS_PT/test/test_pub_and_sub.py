@@ -29,7 +29,6 @@ class TestPubSub(unittest.TestCase):
             pub.send(message)
 
     def test_pub_and_sub_coincidence(self):
-        # return
         stream = Stream(until_eos=True, auth=True)
         with stream.open(self.obs_broker, 'r') as s:
             self.pub_test_coincidence()
