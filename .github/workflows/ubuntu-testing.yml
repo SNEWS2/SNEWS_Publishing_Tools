@@ -5,6 +5,7 @@ on:
     branches: 
       - smolsky/testing
       - main
+      
   pull_request:
     branches:
       - main
