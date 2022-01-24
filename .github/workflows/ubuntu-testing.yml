@@ -1,14 +1,13 @@
 name: Ubuntu testing
 
 on:
-  pull_request: 
-    branches: 
-      - main
-    
   push:
     branches: 
-      - main 
       - smolsky/testing
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
