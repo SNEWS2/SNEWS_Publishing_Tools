@@ -15,7 +15,8 @@ class TestSchema(unittest.TestCase):
             'sent_time': '',
             'machine_time': self.test_time,
             'neutrino_time': self.test_time,
-            'p_value': self.test_p_val
+            'p_value': self.test_p_val,
+            'meta': {}
         }
         self.timing_series_schema = {
             '_id': '',
@@ -24,6 +25,7 @@ class TestSchema(unittest.TestCase):
             'machine_time': self.test_time,
             'neutrino_time': self.test_time,
             'timing_series': self.test_timing_series,
+            'meta': {}
         }
         self.significance_tier_schema = {
             '_id': '',
@@ -32,6 +34,7 @@ class TestSchema(unittest.TestCase):
             'machine_time': self.test_time,
             'neutrino_time': self.test_time,
             'p_values': self.test_p_vals,
+            'meta': {}
         }
 
     def tearDown(self):

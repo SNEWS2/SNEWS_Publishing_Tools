@@ -211,6 +211,7 @@ class TimingTier:
         self.neutrino_time = neutrino_time
         self.detector_name = detector_name
         self.machine_time = machine_time
+        self.meta = {}
         self.kwargs = dict(kwargs)
 
     def message(self):
