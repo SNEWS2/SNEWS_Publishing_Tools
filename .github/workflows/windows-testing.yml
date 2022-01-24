@@ -1,0 +1,81 @@
+name: Windows testing
+
+on:
+  push:
+    branches: [ smolsky/testing ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    # - name: Set up Python 3.8
+    #   uses: actions/setup-python@v2
+    #   with:
+    #     python-version: "3.8"
+      
+    # - name: Check python version
+    #   run: python --version
+
+    # - name: Install hop-client
+    #   run: |
+    #     pip install -U hop-client
+    #     hop --version
+
+    # - name: Install requirements
+    #   run: |
+    #     python -m pip install --upgrade pip
+    #     pip install wheel
+    #     pip install jsonschema python-dotenv click tabulate
+
+    # - name: Shell change
+    #   run: bash
+
+    # - name: Shell revert
+    #   run: |
+    #     pwd
+    #     ls
+    #     echo $SHELL
+    #     exit
+
+    - shell: powershell
+      env:
+        USERNAME: ${{ secrets.username }}
+        PASSWORD: ${{ secrets.password }}
+      run: |
+        bash
+        apt-get install -y expect
+        which expect
+        /usr/bin/expect << HOP
+        spawn hop auth add
+        expect "Username:"
+        send "$USERNAME\n"
+        expect "Password:"
+        send "$PASSWORD\n"
+        expect "Hostname (may be empty):"
+        send "kafka.scimma.org\n"
+        expect eof
+        HOP
+        exit
+        hop auth locate
+
+    # - name: Lint with flake8
+    #   run: |
+    #     # stop the build if there are Python syntax errors or undefined names
+    #     pip install flake8
+    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    # - name: Install snews-pt
+    #   run:  pip install .
+
+    # - name: Check version
+    #   run: snews_pt --version
+
+    # - name: Run pytest
+    #   run: |
+    #     pip install pytest
+    #     pytest SNEWS_PT

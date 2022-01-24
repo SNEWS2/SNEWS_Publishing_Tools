@@ -1,0 +1,47 @@
+CHANGES
+=======
+
+* Minor updates to examples.ipynb
+* correct structure
+* documented the cli
+* some minor fixes
+* moved the type check to CLI. kept them commented in snews\_pub for now
+* now Sig, Time, and Coinc Tiers do not crash if extra args passed via \`from\_dict()\`
+* tier names corrected in string formats "SignificanceTier" -> "SigTier" "TimingTier" -> "TimeTier"
+* few tests added
+* corrected env path in CLI
+* cleaned unused imports
+* Added retraction to CLI
+* fetch detector name from environment
+* upgraded to hop 0.5.0 main change: persist=True -> until\_eos=False also updated CLI
+* added basic heartbeat method
+* minor typo fix
+* added to README for the CLI
+* added "schedule" in the requirements file
+* test folder to get us started
+* Update README.md
+* Update README.md
+* Added docstring to snew\_pub.Publisher
+* minor
+* minor
+* added subscribe in examples
+* added a subscription script. slack bot now allows for testing without tagging the channel
+* Minor updates
+* corrected nu\_time -> neutrino\_time, p\_val -> p\_values inconsistencies. Added features to CLI, adjusted to use context menager
+* Changed Publisher to a conctext manager
+* Changed Publisher to a conctext manager
+* git auth test
+* updated cli
+* minor adjustments
+* added a CLI and relevant tools in other scripts
+* small fixes
+* Updated README
+* Updated README
+* Improved workflow Publisher, redid the examples to reflect the changes, and updated the README file
+* Added Python.gitignore template
+* Added python.gitignore template
+* added schedule to requirements
+* Fixed packaging issues (please test it!), implemented Andrey's feedback (publisher class for each tier), and added examples.ipynb (examples of publishing messages)
+* Updated readme file and got rid of some uselles code
+* Inital Commit
+* Initial commit
