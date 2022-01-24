@@ -15,10 +15,6 @@ User's Guide
 API Reference
 -------------
 
-.. toctree::
-   :maxdepth: 2
-
-   api/api
 
 Indices and tables
 ==================

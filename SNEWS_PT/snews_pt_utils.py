@@ -122,7 +122,7 @@ def get_detector(detector, detectors_path=os.path.dirname(__file__) +
             print(f'{detector} is not a valid detector!')
             return detectors['TEST']
 
-def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwargs):
+def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, meta=None):
     """ Formats data for CoincidenceTier as dict object
 
         Parameters
@@ -143,12 +143,17 @@ def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwarg
                 dictionary of the complete CoincidenceTier data
 
     """
-    keys = ['machine_time', 'neutrino_time', 'p_value']
-    values = [machine_time, nu_time, p_value]
-    # allow for keyword-args
-    for k, v in kwargs.items():
-        keys.append(k)
-        values.append(v)
+    # adjust meta
+    _meta = {}
+    if meta != None:
+        for k,v in meta.items():
+            if sys.getsizeof(v) < 2048:
+                _meta[k] = v
+            else:
+                click.secho(f"meta-{k} is too large! Skipping...")
+
+    keys = ['machine_time', 'neutrino_time', 'p_value', 'meta']
+    values = [machine_time, nu_time, p_value, _meta]
     zip_iterator = zip(keys, values)
     coincidence_tier_dict = dict(zip_iterator)
     return coincidence_tier_dict

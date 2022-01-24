@@ -20,7 +20,7 @@ from hop import Stream
 from . import snews_pt_utils
 from .message_schema import Message_Schema
 from dataclasses import dataclass
-import inspect
+import inspect, sys
 
 class Publisher:
     """Class in charge of publishing messages to SNEWS-hop sever.
@@ -73,6 +73,25 @@ class Publisher:
 
 
 @dataclass
+class _CoincidenceTier:
+    p_value: float
+    neutrino_time: str
+    detector_name: str
+    machine_time: str
+    meta : dict = None
+
+    def message(self):
+        times = snews_pt_utils.TimeStuff()
+        data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time,
+                                                    p_value=self.p_value,
+                                                    nu_time=self.neutrino_time,
+                                                    meta=self.meta,
+                                                    )
+        message = Message_Schema(detector_key=self.detector_name).get_schema(message_type='CoincidenceTier', data=data,
+                                                                             sent_time=times.get_snews_time())
+        return message
+
+
 class CoincidenceTier:
     """CoincidenceTier
     Container class for CoincidenceTier, takes in message info and sets up schema.
@@ -88,29 +107,20 @@ class CoincidenceTier:
         nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
     machine_time: str
         time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
-    message_type: str (default:'CoincidenceTier')
-        Name of tier, used to format the schema
-    extra: dict (default: None)
-        Use this in case you want to send extra information.
-        Make sure it's formatted as a dict.
-
+    **kwargs:
+        any key-value pairs that you want to pass
+        These will be stored as meta-data if they are not larger than 2048 bytes
+        They do not appear in the alert messages (#ToDo: pass them to experiments?)
     """
-    p_value: float
-    neutrino_time: str
-    detector_name: str = os.getenv('DETECTOR_NAME')
-    machine_time: str = None
-    message_type: str = 'CoincidenceTier'
-
-    # @classmethod
-    # def from_dict(cls, env):
-    #     valid_data = cls(**{
-    #         k: v for k, v in env.items()
-    #         if k in inspect.signature(cls).parameters
-    #     })
-    #     for k,v in env.items():
-    #         if k not in inspect.signature(cls).parameters:
-    #             click.echo(click.style(k, fg='bright_red')+f' not a valid key for CoincidenceTier')
-    #     return valid_data
+    def __init__(self, p_value, neutrino_time,
+                 detector_name = os.getenv('DETECTOR_NAME'),
+                 machine_time = None,
+                 **kwargs):
+        self.args = dict(p_value = p_value,
+                         neutrino_time = neutrino_time,
+                         detector_name = detector_name,
+                         machine_time = machine_time)
+        self.kwargs = dict(kwargs)
 
     def message(self):
         """
@@ -121,19 +131,9 @@ class CoincidenceTier:
         message as dict object
 
         """
-        times = snews_pt_utils.TimeStuff()
-        data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time,
-                                                    p_value=self.p_value,
-                                                    nu_time=self.neutrino_time,
-                                                    )
-        # if self.extra != None and type(self.extra) == dict:
-        #     data = snews_pt_utils.coincidence_tier_data(**self.extra, machine_time=self.machine_time,
-        #                                                 p_value=self.p_value,
-        #                                                 nu_time=self.neutrino_time,
-        #                                                 )
-
-        return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
-                                                                          sent_time=times.get_snews_time())
+        meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
+        click.echo(click.style('\t"'+'; '.join(meta.keys())+'"', fg='magenta', bold=True) +' are passed as meta data')
+        return _CoincidenceTier(**self.args, meta=meta).message()
 
 
 @dataclass
@@ -166,17 +166,6 @@ class SignificanceTier:
     machine_time: str = None
     extra: dict = None
     message_type: str = 'SigTier'
-
-    # @classmethod
-    # def from_dict(cls, env):
-    #     valid_data = cls(**{
-    #         k: v for k, v in env.items()
-    #         if k in inspect.signature(cls).parameters
-    #     })
-    #     for k,v in env.items():
-    #         if k not in inspect.signature(cls).parameters:
-    #             click.echo(click.style(k, fg='bright_red')+f' not a valid key for SigTier')
-    #     return valid_data
 
     def message(self):
         """
