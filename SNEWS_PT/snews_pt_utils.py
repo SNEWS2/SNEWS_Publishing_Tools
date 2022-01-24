@@ -122,7 +122,7 @@ def get_detector(detector, detectors_path=os.path.dirname(__file__) +
             print(f'{detector} is not a valid detector!')
             return detectors['TEST']
 
-def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwargs):
+def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, meta=None):
     """ Formats data for CoincidenceTier as dict object
 
         Parameters
@@ -133,9 +133,8 @@ def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwarg
             The neutrino arrival time
         p_value : `float`
             If determined, the p value of the observation
-        **kwargs
-            Any other key-value pair desired to be published. Notice,
-            these additional arguments will be prepended with ^.
+        meta : `dict`
+            Any other key-value pair desired to be published.
 
         Returns
         -------
@@ -143,17 +142,13 @@ def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwarg
                 dictionary of the complete CoincidenceTier data
 
     """
-    keys = ['machine_time', 'neutrino_time', 'p_value']
-    values = [machine_time, nu_time, p_value]
-    # allow for keyword-args
-    for k, v in kwargs.items():
-        keys.append(k)
-        values.append(v)
+    keys = ['machine_time', 'neutrino_time', 'p_value', 'meta']
+    values = [machine_time, nu_time, p_value, meta]
     zip_iterator = zip(keys, values)
     coincidence_tier_dict = dict(zip_iterator)
     return coincidence_tier_dict
 
-def sig_tier_data(machine_time=None, nu_time=None, p_values=None, **kwargs):
+def sig_tier_data(machine_time=None, nu_time=None, p_values=None, meta=None):
     """ Formats data for SigTier as dict object
 
         Parameters
@@ -164,9 +159,8 @@ def sig_tier_data(machine_time=None, nu_time=None, p_values=None, **kwargs):
             The neutrino arrival time
         p_values : `list`
             If determined, the p values of the observation
-        **kwargs
-            Any other key-value pair desired to be published. Notice,
-            these additional arguments will be prepended with ^.
+        meta : `dict`
+            Any other key-value pair desired to be published.
 
         Returns
         -------
@@ -174,18 +168,13 @@ def sig_tier_data(machine_time=None, nu_time=None, p_values=None, **kwargs):
                 dictionary of the complete observation data
 
     """
-    keys = ['machine_time', 'neutrino_time', 'p_values']
-    values = [machine_time, nu_time, p_values]
-    # allow for keyword-args
-    for k, v in kwargs.items():
-        keys.append(k)
-        values.append(v)
+    keys = ['machine_time', 'neutrino_time', 'p_values', 'meta']
+    values = [machine_time, nu_time, p_values, meta]
     zip_iterator = zip(keys, values)
     sig_tier_dict = dict(zip_iterator)
     return sig_tier_dict
 
-def time_tier_data(machine_time=None, nu_time=None, timing_series=None,
-                  **kwargs):
+def time_tier_data(machine_time=None, nu_time=None, timing_series=None, meta=None):
     """ Formats data for TimingTier as dict object
 
         Parameters
@@ -196,9 +185,8 @@ def time_tier_data(machine_time=None, nu_time=None, timing_series=None,
             The neutrino arrival time
         timing_series : `array-like`
             Time series of the detected signal
-        **kwargs
-            Any other key-value pair desired to be published. Notice,
-            these additional arguments will be prepended with ^.
+        meta : `dict`
+            Any other key-value pair desired to be published.
 
         Returns
         -------
@@ -206,12 +194,8 @@ def time_tier_data(machine_time=None, nu_time=None, timing_series=None,
                 dictionary of the TimingTier data
 
     """
-    keys = ['machine_time', 'neutrino_time', 'timing_series']
-    values = [machine_time, nu_time, timing_series]
-    # allow for keyword-args
-    for k, v in kwargs.items():
-        keys.append(k)
-        values.append(v)
+    keys = ['machine_time', 'neutrino_time', 'timing_series', 'meta']
+    values = [machine_time, nu_time, timing_series, {}]
     zip_iterator = zip(keys, values)
     time_tier_dict = dict(zip_iterator)
     return time_tier_dict
