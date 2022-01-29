@@ -1,4 +1,4 @@
-name: Ubuntu testing
+name: Ubuntu 18.04 testing
 
 on:
   push:
@@ -14,11 +14,11 @@ jobs:
   # Copied from snewpy. ;)
   build:
     # The type of runner that the job will run on.
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     strategy:
       # Add a list of python versions we want to use for testing.
       matrix:
-        python-version: ['3.7', '3.9']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
     - uses: actions/checkout@v2
