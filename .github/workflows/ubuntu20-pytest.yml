@@ -1,9 +1,9 @@
-name: Ubuntu 20.04 testing
+name: Ubuntu 20.04 Python 3.7-3.9
 
 on:
   push:
     branches: 
-      # - smolsky/testing
+      - smolsky/testing
       - main
       
   pull_request:
