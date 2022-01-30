@@ -1,9 +1,9 @@
-name: Ubuntu 20.04 Python 3.9
+name: testing
 
 on:
   push:
     branches: 
-      - smolsky/testing
+      - smolsky/badges
       - main
       
   pull_request:
