@@ -1,4 +1,4 @@
-name: Mac 11 testing
+name: Mac 11 Python 3.7
 
 on:
   push:
