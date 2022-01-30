@@ -1,6 +1,11 @@
 # SNEWS Publishing Tool
+[![Documentation Status](https://readthedocs.org/projects/snews-publishing-tools/badge/?version=latest)](https://snews-publishing-tools.readthedocs.io/en/latest/?badge=latest)
+<br>See the docs at
 
-See the docs at [![Documentation Status](https://readthedocs.org/projects/snews-publishing-tools/badge/?version=latest)](https://snews-publishing-tools.readthedocs.io/en/latest/?badge=latest)
+|              |        |
+| ------------ | ------ |
+| **Docs:**    | https://snews-publishing-tools.readthedocs.io/en/latest/  |
+
 
 
 This packages provides users with a Python API and CLI to publish observation messages to SNEWS

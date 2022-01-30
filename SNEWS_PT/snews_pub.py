@@ -20,7 +20,7 @@ from hop import Stream
 from . import snews_pt_utils
 from .message_schema import Message_Schema
 from dataclasses import dataclass
-import inspect
+import inspect, sys
 
 class Publisher:
     """Class in charge of publishing messages to SNEWS-hop sever.
@@ -30,9 +30,9 @@ class Publisher:
     ----------
     env_path: 'str'
         path to SNEWS env file, defaults to tes_config.env if None is passed.
-    verbose: bool
+    verbose: `bool`
         Option to display message when publishing.
-    auth: bool
+    auth: `bool`
         Option to run hop-Stream without authentication. Pass False to do so
     """
 
@@ -72,193 +72,169 @@ class Publisher:
                 print(f'{k:<20s}:{v}')
 
 
-@dataclass
 class CoincidenceTier:
     """CoincidenceTier
     Container class for CoincidenceTier, takes in message info and sets up schema.
 
     Attributes
     ----------
-    detector_name:  str
-        Name of your detector.
-        Use snews_pt_utils.retrieve_detectors() to see the available detector names.
-    p_val: float
+    p_value: `float`
         p-value of nu signal.
-    nu_time: str
+    neutrino_time: `str`
         nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
-    machine_time: str
+    detector_name:  `str`, optional
+        Name of your detector. default set by environment file
+        Use snews_pt_utils.retrieve_detectors() to see the available detector names.
+    machine_time: `str`
         time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
-    message_type: str (default:'CoincidenceTier')
-        Name of tier, used to format the schema
-    extra: dict (default: None)
-        Use this in case you want to send extra information.
-        Make sure it's formatted as a dict.
-
+    **kwargs:
+        any key-value pairs that you want to pass
+        These will be stored as meta-data if they are not larger than 2048 bytes
+        They do not appear in the alert messages (#ToDo: pass them to experiments?)
     """
-    p_value: float
-    neutrino_time: str
-    detector_name: str = os.getenv('DETECTOR_NAME')
-    machine_time: str = None
-    message_type: str = 'CoincidenceTier'
-
-    # @classmethod
-    # def from_dict(cls, env):
-    #     valid_data = cls(**{
-    #         k: v for k, v in env.items()
-    #         if k in inspect.signature(cls).parameters
-    #     })
-    #     for k,v in env.items():
-    #         if k not in inspect.signature(cls).parameters:
-    #             click.echo(click.style(k, fg='bright_red')+f' not a valid key for CoincidenceTier')
-    #     return valid_data
+    def __init__(self, p_value, neutrino_time,
+                 detector_name = os.getenv('DETECTOR_NAME'),
+                 machine_time = None, **kwargs):
+        self.p_value = p_value
+        self.neutrino_time = neutrino_time
+        self.detector_name = detector_name
+        self.machine_time = machine_time
+        self.kwargs = dict(kwargs)
 
     def message(self):
-        """
-        Formats message structure
+        """ Formats message structure
 
         returns
         -------
         message as dict object
 
         """
-        times = snews_pt_utils.TimeStuff()
+        # deal with the meta-data
+        meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
+        click.echo(click.style('\t"'+'; '.join(meta.keys())+'"', fg='magenta', bold=True) +' are passed as meta data')
+
+        # deal with the data
         data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time,
                                                     p_value=self.p_value,
                                                     nu_time=self.neutrino_time,
+                                                    meta=meta,
                                                     )
-        # if self.extra != None and type(self.extra) == dict:
-        #     data = snews_pt_utils.coincidence_tier_data(**self.extra, machine_time=self.machine_time,
-        #                                                 p_value=self.p_value,
-        #                                                 nu_time=self.neutrino_time,
-        #                                                 )
-
-        return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
-                                                                          sent_time=times.get_snews_time())
+        times = snews_pt_utils.TimeStuff()
+        return Message_Schema(detector_key=self.detector_name).get_schema(message_type='CoincidenceTier', data=data,
+                                                                             sent_time=times.get_snews_time())
 
 
-@dataclass
 class SignificanceTier:
     """SignificanceTier
        Container class for SignificanceTier, takes in message info and sets up schema.
 
        Attributes
        ----------
-       nu_time: str
+       neutrino_time: `str`
            nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
        p_values: list of float
            p-values for a SN nu flux.
-       detector_name:  str
-           Name of your detector.
+       detector_name:  `str`, optional
+           Name of your detector. default set by environment file
            Use snews_pt_utils.retrieve_detectors() to see the available detector names.
-       machine_time: str
+       machine_time: `str`
            time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
-       message_type: str (default:'SigTier')
+       message_type: `str` (default:'SigTier')
            Name of tier, used to format the schema
-       extra: dict (default: None)
-           Use this in case you want to send extra information.
-           Make sure it's formatted as a dict.
-
+       **kwargs:
+           any key-value pairs that you want to pass
+           These will be stored as meta-data if they are not larger than 2048 bytes
+           They do not appear in the alert messages (#ToDo: pass them to experiments?)
        """
-
-    neutrino_time: str
-    p_values: list
-    detector_name: str = os.getenv('DETECTOR_NAME')
-    machine_time: str = None
-    extra: dict = None
-    message_type: str = 'SigTier'
-
-    # @classmethod
-    # def from_dict(cls, env):
-    #     valid_data = cls(**{
-    #         k: v for k, v in env.items()
-    #         if k in inspect.signature(cls).parameters
-    #     })
-    #     for k,v in env.items():
-    #         if k not in inspect.signature(cls).parameters:
-    #             click.echo(click.style(k, fg='bright_red')+f' not a valid key for SigTier')
-    #     return valid_data
+    def __init__(self, p_values, neutrino_time,
+                 detector_name = os.getenv('DETECTOR_NAME'),
+                 machine_time = None, **kwargs):
+        self.p_values = p_values
+        self.neutrino_time = neutrino_time
+        self.detector_name = detector_name
+        self.machine_time = machine_time
+        self.kwargs = dict(kwargs)
 
     def message(self):
-        """
-           Formats message structure
+        """ Formats message structure
 
            returns
            -------
            message as dict object
 
-           """
+        """
+        # deal with the meta-data
+        meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
+        click.echo(
+            click.style('\t"' + '; '.join(meta.keys()) + '"', fg='magenta', bold=True) + ' are passed as meta data')
 
-        data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
-                                            p_values=self.p_values)
+        # deal with the data
+        data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time,
+                                            nu_time=self.neutrino_time,
+                                            p_values=self.p_values,
+                                            meta=meta,
+                                            )
         times = snews_pt_utils.TimeStuff()
-        if self.extra != None and type(self.extra) == dict:
-            data = snews_pt_utils.sig_tier_data(**self.extra, machine_time=self.machine_time,
-                                                nu_time=self.neutrino_time,
-                                                p_values=self.p_values)
-
-        return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
+        return Message_Schema(detector_key=self.detector_name).get_schema(message_type='SigTier', data=data,
                                                                           sent_time=times.get_snews_time())
 
 
-@dataclass
 class TimingTier:
     """Timing Tier
           Container class for Timing Tier, takes in message info and sets up schema.
 
           Attributes
           ----------
-          nu_time: str
+          nu_time: `str`
             nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
           timing_series: list of str
               nu arrival times. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
-          detector_name:  str
-              Name of your detector.
+          detector_name:  `str`, optional
+              Name of your detector. default set by environment file
               Use snews_pt_utils.retrieve_detectors() to see the available detector names.
-          machine_time: str
+          machine_time: `str`
               time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
-          message_type: str (default:'SigTier')
+          message_type: `str` (default:'SigTier')
               Name of tier, used to format the schema
-          extra: dict (default: None)
-              Use this in case you want to send extra information.
-              Make sure it's formatted as a dict.
+          **kwargs:
+           any key-value pairs that you want to pass
+           These will be stored as meta-data if they are not larger than 2048 bytes
+           They do not appear in the alert messages (#ToDo: pass them to experiments?)
 
           """
-    neutrino_time: str
-    timing_series: list
-    detector_name: str = os.getenv('DETECTOR_NAME')
-    machine_time: str = None
-    extra: dict = None
-    message_type: str = 'TimeTier'
-
-    # @classmethod
-    # def from_dict(cls, env):
-    #     valid_data = cls(**{
-    #         k: v for k, v in env.items()
-    #         if k in inspect.signature(cls).parameters
-    #     })
-    #     for k,v in env.items():
-    #         if k not in inspect.signature(cls).parameters:
-    #             click.echo(click.style(k, fg='bright_red')+f' not a valid key for TimeTier')
-    #     return valid_data
+    def __init__(self,
+                 timing_series,
+                 neutrino_time,
+                 detector_name = os.getenv('DETECTOR_NAME'),
+                 machine_time = None, **kwargs):
+        self.timing_series = timing_series
+        self.neutrino_time = neutrino_time
+        self.detector_name = detector_name
+        self.machine_time = machine_time
+        self.meta = {}
+        self.kwargs = dict(kwargs)
 
     def message(self):
-        """
-           Formats message structure
+        """ Formats message structure
 
            returns
            -------
            message as dict object
 
-           """
-        times = snews_pt_utils.TimeStuff()
-        data = snews_pt_utils.time_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
-                                             timing_series=self.timing_series, )
-        if self.extra != None and type(self.extra) == dict:
-            data = snews_pt_utils.time_tier_data(machine_time=self.machine_time, nu_time=self.neutrino_time,
-                                                 timing_series=self.timing_series,
-                                                 **self.extra)
+        """
+        # deal with the meta-data
+        meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
+        click.echo(
+            click.style('\t"' + '; '.join(meta.keys()) + '"', fg='magenta', bold=True) + ' are passed as meta data')
 
-        return Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type, data=data,
+        # deal with the data
+        data = snews_pt_utils.time_tier_data(machine_time=self.machine_time,
+                                             nu_time=self.neutrino_time,
+                                             timing_series=self.timing_series,
+                                             meta=meta
+                                             )
+        times = snews_pt_utils.TimeStuff()
+        return Message_Schema(detector_key=self.detector_name).get_schema(message_type='TimeTier', data=data,
                                                                           sent_time=times.get_snews_time())
 
 
@@ -275,8 +251,8 @@ class Retraction:
             'TimeTier'
     n_retract_latest: int
         Number of most recent message you want to retract
-    detector_name:  str
-        Name of your detector.
+    detector_name:  str, Optional
+        Name of your detector. default set by environment file
         Use snews_pt_utils.retrieve_detectors() to see the available detector names.
     message_type: str (default: 'FalseOBS'
         Set message type for schema
@@ -286,7 +262,7 @@ class Retraction:
         specific id of message you want to retract.
     retraction_reason: str (default: None)
         Reason why you are retracting.
-    extra: dict (default: None)
+    meta: dict (default: None)
         Use this in case you want to send extra information.
         Make sure it's formatted as a dict!!!
 
@@ -298,7 +274,7 @@ class Retraction:
     machine_time: str = None
     false_mgs_id: str = None
     retraction_reason: str = None
-    extra: dict = None
+    meta: dict = None
 
     def message(self):
         """
@@ -332,14 +308,15 @@ class Heartbeat:
         ----------
         status : `str` ("ON"/"OFF")
             status of the detector at the time of invocation
-        detector_name: `str`
-            name of the detector
+        machine time : `str`
+            The time of submission of the message.
+        detector_name: `str`, optional
+            name of the detector, default set by environment file
     """
     status: str
-    detector_name: str = os.getenv('DETECTOR_NAME')
     machine_time: str = None
-    extra: dict = None
-    message_type: str = 'Heartbeat'
+    detector_name: str = os.getenv('DETECTOR_NAME')
+
 
     def message(self):
         status = self.status.upper()
@@ -348,6 +325,6 @@ class Heartbeat:
             status = "OFF"
 
         data = snews_pt_utils.heartbeat_data(detector_status=status, machine_time=self.machine_time)
-        message = Message_Schema(detector_key=self.detector_name).get_schema(message_type=self.message_type,
+        message = Message_Schema(detector_key=self.detector_name).get_schema(message_type='Heartbeat',
                                                                              data=data, sent_time='')
         return message

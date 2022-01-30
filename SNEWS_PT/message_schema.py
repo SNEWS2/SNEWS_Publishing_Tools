@@ -80,14 +80,17 @@ class Message_Schema:
         if message_type == 'TimeTier':
             message['neutrino_time'] = data['neutrino_time']
             message['timing_series'] = data['timing_series']
+            message['meta'] = data['meta']
 
         if message_type == 'SigTier':
             message['neutrino_time'] = data['neutrino_time']
             message['p_values'] = data['p_values']
+            message['meta'] = data['meta']
 
         if message_type == 'CoincidenceTier':
             message['neutrino_time'] = data['neutrino_time']
             message['p_value'] = data['p_value']
+            message['meta'] = data['meta']
 
         if message_type == 'FalseOBS':
             message['false_id'] = data['false_id']
