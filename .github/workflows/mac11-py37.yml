@@ -1,24 +1,16 @@
-name: Ubuntu 18.04 testing
+name: Mac 11 testing
 
 on:
   push:
-    branches: 
-      # - smolsky/testing
-      - main
-      
-  pull_request:
-    branches:
-      - main
+    branches: [ smolsky/testing ]
 
 jobs:
-  # Copied from snewpy. ;)
   build:
-    # The type of runner that the job will run on.
-    runs-on: ubuntu-18.04
+    runs-on: macos-11
     strategy:
       # Add a list of python versions we want to use for testing.
       matrix:
-        python-version: ['3.7', '3.8', '3.9']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
     - uses: actions/checkout@v2
@@ -27,10 +19,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-      
-    - name: Check python version
-      run: python --version
-
+    
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -39,28 +28,22 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Install hop-client
-      run: |
-        pwd
-        wget https://files.pythonhosted.org/packages/de/a2/1f663c824b7e6ac139110005888cda7e1aea74e3bb8a57d774a00a1802f5/hop-client-0.5.0.tar.gz
-        tar -xzf hop-client-0.5.0.tar.gz
-        cd hop-client-0.5.0
-        python setup.py install
-        cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
+    - name: Install librdkafka
+      run: brew install librdkafka
+    # - name: Install hop-client
+    #   run: conda install -c conda-forge hop-client
 
     - name: Install requirements
       run: |
         python -m pip install --upgrade pip
         pip install wheel
-        pip install jsonschema python-dotenv click tabulate
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - shell: bash
       env:
         USERNAME: ${{ secrets.username }}
         PASSWORD: ${{ secrets.password }}
       run: |
-        sudo apt-get install -y expect
-        which expect
         /usr/bin/expect << HOP
         spawn hop auth add
         expect "Username:"
@@ -81,5 +64,5 @@ jobs:
 
     - name: Run pytest
       run: |
-        pip install pytest
-        pytest SNEWS_PT
+        conda install pytest
+        pytest

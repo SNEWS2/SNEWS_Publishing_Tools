@@ -3,7 +3,7 @@ name: Ubuntu 20.04 testing
 on:
   push:
     branches: 
-      - smolsky/testing
+      # - smolsky/testing
       - main
       
   pull_request:
@@ -18,7 +18,7 @@ jobs:
     strategy:
       # Add a list of python versions we want to use for testing.
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.7', '3.8', '3.9']
 
     steps:
     - uses: actions/checkout@v2
