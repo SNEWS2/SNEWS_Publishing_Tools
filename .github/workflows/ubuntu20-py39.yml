@@ -3,7 +3,6 @@ name: testing
 on:
   push:
     branches: 
-      - smolsky/badges
       - main
       
   pull_request:
