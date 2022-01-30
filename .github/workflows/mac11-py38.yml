@@ -64,5 +64,5 @@ jobs:
 
     - name: Run pytest
       run: |
-        conda install pytest
+        pip install pytest
         pytest
