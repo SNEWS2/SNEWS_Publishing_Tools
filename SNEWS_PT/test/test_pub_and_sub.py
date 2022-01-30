@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit tests for the snew_pt.pub
+"""Unit tests for the snews_pt.pub
 """
 
 import unittest
@@ -16,7 +16,7 @@ class TestPubSub(unittest.TestCase):
         self.test_timing_series = ['test', 'test']
         self.test_p_val = 0.0
         self.test_p_vals = [0.0, 0.0]
-        self.keys = ['_id', 'detector_name', 'sent_time', 'machine_time', 'neutrino_time', 'p_value', {}]
+        self.keys = ['_id', 'detector_name', 'sent_time', 'machine_time', 'neutrino_time', 'p_value', 'meta']
 
     def tearDown(self):
         print('Tearing down')
