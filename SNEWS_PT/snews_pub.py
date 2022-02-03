@@ -65,7 +65,7 @@ class Publisher:
 
     def display_message(self, message):
         if self.verbose:
-            click.secho(f'{"-" * 57}', fg='bright_blue')
+            click.secho(f'{"-" * 64}', fg='bright_blue')
             if message['_id'].split('_')[1] == 'FalseOBS':
                 click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
             for k, v in message.items():
@@ -111,7 +111,8 @@ class CoincidenceTier:
         """
         # deal with the meta-data
         meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
-        click.echo(click.style('\t"'+'; '.join(meta.keys())+'"', fg='magenta', bold=True) +' are passed as meta data')
+        if len(meta):
+            click.echo(click.style('\t"'+'; '.join(meta.keys())+'"', fg='magenta', bold=True) +' are passed as meta data')
 
         # deal with the data
         data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time,
@@ -165,8 +166,9 @@ class SignificanceTier:
         """
         # deal with the meta-data
         meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
-        click.echo(
-            click.style('\t"' + '; '.join(meta.keys()) + '"', fg='magenta', bold=True) + ' are passed as meta data')
+        if len(meta):
+            click.echo(
+                click.style('\t"' + '; '.join(meta.keys()) + '"', fg='magenta', bold=True) + ' are passed as meta data')
 
         # deal with the data
         data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time,
@@ -224,8 +226,9 @@ class TimingTier:
         """
         # deal with the meta-data
         meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
-        click.echo(
-            click.style('\t"' + '; '.join(meta.keys()) + '"', fg='magenta', bold=True) + ' are passed as meta data')
+        if len(meta):
+            click.echo(
+                click.style('\t"' + '; '.join(meta.keys()) + '"', fg='magenta', bold=True) + ' are passed as meta data')
 
         # deal with the data
         data = snews_pt_utils.time_tier_data(machine_time=self.machine_time,
