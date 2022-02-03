@@ -195,7 +195,7 @@ def time_tier_data(machine_time=None, nu_time=None, timing_series=None, meta=Non
 
     """
     keys = ['machine_time', 'neutrino_time', 'timing_series', 'meta']
-    values = [machine_time, nu_time, timing_series, {}]
+    values = [machine_time, nu_time, timing_series, meta]
     zip_iterator = zip(keys, values)
     time_tier_dict = dict(zip_iterator)
     return time_tier_dict

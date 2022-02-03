@@ -14,7 +14,8 @@ This packages provides users with a Python API and CLI to publish observation me
 
 ## How to Install
 
-    Note: Make sure your hop credentials are set up !!
+> Note: Make sure your hop credentials are set up !!<br>
+> Follow the instructions [**here**](https://github.com/scimma/hop-client) if needed
 
 First you need to clone this repo. In your terminal run the following:
 
