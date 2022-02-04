@@ -1,27 +1,27 @@
 import json
 
 msg1 = {"detector_name": "XENONnT",
-        "neutrino_time": "12:34:45:678999",
+        "neutrino_time": "22/01/01 12:34:45:678999",
         "p_value": 0.98}
 
 msg2 = {"detector_name": "DS-20K",
-        "neutrino_time": "12:34:47:678999",
+        "neutrino_time": "22/01/01 12:34:47:678999",
         "p_value": 0.98}
 
 msg3 = {"detector_name": "DUNE",
-        "neutrino_time": "12:34:55:678999",
+        "neutrino_time": "22/01/01 12:34:55:678999",
         "p_value": 0.98}
 
 msg4 = {"detector_name": "JUNO",
-        "neutrino_time": "12:30:55:678999",
+        "neutrino_time": "22/01/01 12:30:55:678999",
         "p_value": 0.98}
 
 msg5 = {"detector_name": "Baksan",
-        "neutrino_time": "12:30:52:678999",
+        "neutrino_time": "22/01/01 12:30:52:678999",
         "p_value": 0.98}
 
 msg6 = {"detector_name": "JUNO",
-        "neutrino_time": "12:30:56:678999",
+        "neutrino_time": "22/01/01 12:30:56:678999",
         "p_value": 0.98}
 
 scenarios = {

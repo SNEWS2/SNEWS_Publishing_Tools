@@ -11,7 +11,7 @@ try:
     from inquirer.themes import GreenPassion
     questions = [
       inquirer.Checkbox('scenarios',
-                    message=" Which scenario(s) would you like to run next?", # click.style(, fg='bright_blue'),
+                    message=click.style(" Which scenario(s) would you like to run next?", bg='yellow', bold=True),
                     choices=['reset cache']+list(data.keys()),
                 )
     ]
