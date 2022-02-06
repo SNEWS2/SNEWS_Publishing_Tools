@@ -12,7 +12,7 @@ try:
     questions = [
       inquirer.Checkbox('scenarios',
                     message=click.style(" Which scenario(s) would you like to run next?", bg='yellow', bold=True),
-                    choices=['reset cache']+list(data.keys()),
+                    choices=list(data.keys()),
                 )
     ]
 
@@ -29,8 +29,8 @@ try:
                         pub.send(message)
                         time.sleep(1)
                     # clear cache after each scenario
-                    pub.send({'_id': 'hard-reset_'})
                     time.sleep(1)
+                    pub.send({'_id': 'hard-reset_'})
                     print('> Cache cleaned\n')
             except KeyboardInterrupt:
                 sys.exit()
