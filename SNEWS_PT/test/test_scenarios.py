@@ -21,18 +21,17 @@ try:
             try:
                 answers = inquirer.prompt(questions) # , theme=GreenPassion()
                 for scenario in answers['scenarios']:
-                    if scenario == 'reset cache':
-                        pub.send({'_id': 'hard-reset_'})
-                        time.sleep(1)
-                        print('> Cache cleaned')
-                        continue
                     click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                     messages = data[scenario]
                     for msg in messages:
                         message = CoincidenceTier(**msg).message()
+                        message['_id'] = "00_CoincidenceTier_TEST_"
                         pub.send(message)
                         time.sleep(1)
-                    print()
+                    # clear cache after each scenario
+                    pub.send({'_id': 'hard-reset_'})
+                    time.sleep(1)
+                    print('> Cache cleaned\n')
             except KeyboardInterrupt:
                 sys.exit()
 except:
