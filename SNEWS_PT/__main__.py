@@ -161,5 +161,13 @@ def message_schema(tier):
                 click.secho(f'{k:<20s}:(User Input)', fg='bright_cyan')
         click.echo()
 
+@main.command()
+def run_scenarios():
+    """
+    """
+    base = os.path.dirname(os.path.realpath(__file__))
+    path = os.path.join(base, 'test/test_scenarios.py')
+    os.system(f'python3 {path}')
+
 if __name__ == "__main__":
     main()
