@@ -152,7 +152,7 @@ def message_schema(tier):
     msg = msg_schema()
     for t in tier:
         data = tier_data_pairs[t]
-        all_data = msg.get_schema(t, data, 'foo')
+        all_data = msg.get_schema(t, data)
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
         for k, v in all_data.items():
             if k not in data.keys():

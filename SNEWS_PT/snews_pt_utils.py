@@ -71,6 +71,7 @@ def set_topic_state(which_topic, env_path=None):
     }
     return topics[which_topic.upper()]
 
+
 def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/detector_properties.json"):
     ''' Retrieve the name-ID-location of the participating detectors.
 
@@ -97,6 +98,7 @@ def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/de
         detectors[k] = Detector(v[0], v[1], v[2])
     return detectors
 
+
 def get_detector(detector, detectors_path=os.path.dirname(__file__) +
                                           "/auxiliary/detector_properties.json"):
     """ Return the selected detector properties
@@ -122,7 +124,8 @@ def get_detector(detector, detectors_path=os.path.dirname(__file__) +
             print(f'{detector} is not a valid detector!')
             return detectors['TEST']
 
-def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, meta=None):
+
+def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, meta=None, ):
     """ Formats data for CoincidenceTier as dict object
 
         Parameters
@@ -147,6 +150,7 @@ def coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, meta=No
     zip_iterator = zip(keys, values)
     coincidence_tier_dict = dict(zip_iterator)
     return coincidence_tier_dict
+
 
 def sig_tier_data(machine_time=None, nu_time=None, p_values=None, meta=None):
     """ Formats data for SigTier as dict object
@@ -174,7 +178,8 @@ def sig_tier_data(machine_time=None, nu_time=None, p_values=None, meta=None):
     sig_tier_dict = dict(zip_iterator)
     return sig_tier_dict
 
-def time_tier_data(machine_time=None, nu_time=None, timing_series=None, meta=None):
+
+def time_tier_data(machine_time=None, nu_time=None, p_val=None, timing_series=None, meta=None):
     """ Formats data for TimingTier as dict object
 
         Parameters
@@ -194,22 +199,21 @@ def time_tier_data(machine_time=None, nu_time=None, timing_series=None, meta=Non
                 dictionary of the TimingTier data
 
     """
-    keys = ['machine_time', 'neutrino_time', 'timing_series', 'meta']
-    values = [machine_time, nu_time, timing_series, meta]
+    keys = ['machine_time', 'neutrino_time', 'timing_series', 'p_val', 'meta']
+    values = [machine_time, nu_time, timing_series, p_val, meta]
     zip_iterator = zip(keys, values)
     time_tier_dict = dict(zip_iterator)
     return time_tier_dict
 
-def retraction_data(machine_time=None, false_mgs_id=None, which_tier=None,
-                        n_retract_latest=0, retraction_reason=None, **kwargs):
+
+def retraction_data(machine_time=None, which_tier=None,
+                    n_retract_latest=0, retraction_reason=None, meta=None):
     """ Formats data for Retraction as dict object
 
         Parameters
         ----------
         machine_time : `str`
             The machine time at the time of execution of command
-        false_mgs_id : `str`
-            The id of the message that is falsely published
         which_tier : 'str'
             OBS type of false message ['CoincidenceTier', 'SigTier', 'TimeTier, 'ALL']
         n_retract_latest: 'int' or 'str'
@@ -217,9 +221,9 @@ def retraction_data(machine_time=None, false_mgs_id=None, which_tier=None,
             to retract all messages in a OBS tier.
         retraction_reason: 'str"
             Reason for message(s) retraction
-        **kwargs
-            Any other key-value pair desired to be published. Notice,
-            these additional arguments will be prepended with ^.
+       meta : `dict`
+            Any other key-value pair desired to be published.
+
 
         Returns
         -------
@@ -227,20 +231,17 @@ def retraction_data(machine_time=None, false_mgs_id=None, which_tier=None,
                 dictionary of the retraction data
 
     """
-    keys = ['machine_time', 'false_id',
-            'N_retract_latest', 'which_tier', 'retraction_reason']
-    values = [machine_time, false_mgs_id, n_retract_latest,
-              which_tier, retraction_reason]
-    # allow for keyword-args
-    for k, v in kwargs.items():
-        keys.append(k)
-        values.append(v)
+    keys = ['machine_time',
+            'N_retract_latest', 'which_tier', 'retraction_reason', 'meta']
+    values = [machine_time, n_retract_latest,
+              which_tier, retraction_reason, meta]
     zip_iterator = zip(keys, values)
     retraction_dict = dict(zip_iterator)
     return retraction_dict
 
+
 def heartbeat_data(machine_time=None,
-                   detector_status=None, **kwargs):
+                   detector_status=None, meta=None):
     """ Formats data for Heartbeat as dict object
 
         Parameters
@@ -249,9 +250,8 @@ def heartbeat_data(machine_time=None,
             The machine time at the time of execution of command
         detector_status : 'str'
             ON or OFF
-        **kwargs
-            Any other key-value pair desired to be published. Notice,
-            these additional arguments will be prepended with ^.
+         meta : `dict`
+            Any other key-value pair desired to be published.
 
         Returns
         -------
@@ -259,33 +259,37 @@ def heartbeat_data(machine_time=None,
                 dictionary of the Heartbeat data
 
     """
-    keys = ['machine_time', 'detector_status']
-    values = [machine_time, detector_status]
-    # allow for keyword-args
-    for k, v in kwargs.items():
-        keys.append(k)
-        values.append(v)
+    keys = ['machine_time', 'detector_status', 'meta']
+    values = [machine_time, detector_status, meta]
+
     zip_iterator = zip(keys, values)
     heartbeat_dict = dict(zip_iterator)
     return heartbeat_dict
 
+
 def _check_aliases(tier):
-    tier  = tier.lower()
-    coincidence_aliases = ['coincidence','c','coincidencetier','coinc']
-    significance_aliases = ['significance','s','significancetier', 'sigtier']
-    timing_aliases = ['timing','time','timeingtier','timetier','t']
-    false_aliases = ['false', 'falseobs','reatraction','retract','r','f']
+    tier = tier.lower()
+    coincidence_aliases = ['coincidence', 'c', 'coincidencetier', 'coinc']
+    significance_aliases = ['significance', 's', 'significancetier', 'sigtier']
+    timing_aliases = ['timing', 'time', 'timeingtier', 'timetier', 't']
+    false_aliases = ['false', 'falseobs', 'reatraction', 'retract', 'r', 'f']
     heartbeat_aliases = ['heartbeat', 'hb']
 
-    if tier in coincidence_aliases:  tier = 'CoincidenceTier'
-    elif tier in significance_aliases: tier = 'SigTier'
-    elif tier in timing_aliases:    tier = 'TimeTier'
-    elif tier in false_aliases:     tier = 'FalseOBS'
-    elif tier in heartbeat_aliases: tier = 'Heartbeat'
+    if tier in coincidence_aliases:
+        tier = 'CoincidenceTier'
+    elif tier in significance_aliases:
+        tier = 'SigTier'
+    elif tier in timing_aliases:
+        tier = 'TimeTier'
+    elif tier in false_aliases:
+        tier = 'FalseOBS'
+    elif tier in heartbeat_aliases:
+        tier = 'Heartbeat'
     else:
         click.secho(f'"{tier}" <- not a valid argument!', fg='bright_red')
         sys.exit()
     return [tier]
+
 
 def _check_cli_request(requested):
     """ check the requested tier in the CLI
@@ -298,7 +302,7 @@ def _check_cli_request(requested):
     """
     from .snews_pub import CoincidenceTier, SignificanceTier, TimingTier, Retraction, Heartbeat
 
-    valid_tiers_names = ['CoincidenceTier','SigTier', 'TimeTier']
+    valid_tiers_names = ['CoincidenceTier', 'SigTier', 'TimeTier']
     valid_tiers = [CoincidenceTier, SignificanceTier, TimingTier]
     tier_pairs = dict(zip(valid_tiers_names, valid_tiers))
     other_tiers_names = ['Heartbeat', 'FalseOBS']
@@ -311,21 +315,23 @@ def _check_cli_request(requested):
         tier = tier.lower()
         tiername = _check_aliases(tier)[0]
         if tiername in valid_tiers_names:
-            tier_name_pair.append((tier_pairs[tiername],tiername))
+            tier_name_pair.append((tier_pairs[tiername], tiername))
         elif tiername in other_tiers_names:
-            click.echo(click.style(f'\t\t> {tiername}\n', fg='yellow', bold=True)+
+            click.echo(click.style(f'\t\t> {tiername}\n', fg='yellow', bold=True) +
                        '\t\t    has its own separate function !\n'
-                      f'\t\t    See '+click.style(f'{other_pairs[tiername]}', fg='yellow'))
+                       f'\t\t    See ' + click.style(f'{other_pairs[tiername]}', fg='yellow'))
             if i == len(requested): return None
-        else: return None
+        else:
+            return None
 
-    tiers_unique, names_unique = [],[]
-    for Tier, name  in tier_name_pair:
+    tiers_unique, names_unique = [], []
+    for Tier, name in tier_name_pair:
         if name not in names_unique:
             names_unique.append(name)
             tiers_unique.append(Tier)
             click.secho(f'\t\t> {name}', fg='cyan')
     return tiers_unique, names_unique
+
 
 def _parse_file(filename):
     """ Parse the file to fetch the json data
@@ -364,7 +370,3 @@ def display_gif():
         from IPython.display import HTML, display
         giphy_snews = "https://raw.githubusercontent.com/SNEWS2/hop-SNalert-app/snews2_dev/hop_comms/auxiliary/snalert.gif"
         display(HTML(f'<img src={giphy_snews}>'))
-
-
-
-
