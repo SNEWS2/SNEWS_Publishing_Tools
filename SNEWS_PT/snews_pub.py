@@ -111,12 +111,14 @@ class SNEWSTiers:
             time_message = self.schema.get_schema(tier='TimeTier', data=data, )
             messages.append(time_message)
             return messages
+        # CoincidenceTier if it has p_value
         if type(self.p_value) == float:
-            data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time, nu_time=self.nu_time,
-                                                        p_value=self.p_value, meta=meta)
+            data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time, p_val=self.p_value,
+                                                        nu_time=self.nu_time, meta=meta)
             coincidence_message = self.schema.get_schema(tier='CoincidenceTier', data=data,)
             messages.append(coincidence_message)
 
+        # SignificanceTier if it has p_values
         if type(self.p_values) == list :
             data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time,
                                                 nu_time=self.nu_time,
@@ -126,6 +128,7 @@ class SNEWSTiers:
             sig_message = self.schema.get_schema(tier='SigTier', data=data,)
             messages.append(sig_message)
 
+        # TimingTier if timing_series exists (@Seb why do we need p_value to be float?)
         if type(self.timing_series) == list and type(self.p_value) == float:
             data = snews_pt_utils.time_tier_data(machine_time=self.machine_time,
                                                  nu_time=self.nu_time,
@@ -137,6 +140,7 @@ class SNEWSTiers:
             time_message = self.schema.get_schema(tier='TimeTier', data=data, )
             messages.append(time_message)
 
+        # Retraction Command if retraction field is passed
         if self.n_retract_latest != 0 and type(self.which_tier) == str:
             data = snews_pt_utils.retraction_data(machine_time=self.machine_time,
                                                   which_tier=self.which_tier, n_retract_latest=self.n_retract_latest,
@@ -144,6 +148,8 @@ class SNEWSTiers:
             retraction_message = self.schema.get_schema(tier='Retraction', data=data, )
             messages.append(retraction_message)
 
+        # Heartbeat if detector status passed (and maybe other==None ?)
+        # they can also set status=ON when they submit coincidence, do we want to publish also a HB at the same time?
         if type(self.detector_status) == str:
             data = snews_pt_utils.heartbeat_data(detector_status=self.detector_status, machine_time=self.machine_time)
             heartbeat_message = self.schema.get_schema(tier='Heartbeat', data=data, )
