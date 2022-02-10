@@ -76,9 +76,8 @@ class Publisher:
 
 
 class SNEWSTiers:
-    def __init__(self, detector_name=os.getenv('DETECTOR_NAME'), machine_time=None, nu_time=None, p_value=None,
-                 p_values=None, timing_series=None,
-                 which_tier=None,
+    def __init__(self, machine_time=None, nu_time=None, p_value=None,
+                 p_values=None, timing_series=None, which_tier=None,
                  n_retract_latest=0, retraction_reason=None, detector_status=None, is_pre_sn=False, **kwargs):
         self.machine_time = machine_time
         self.nu_time = nu_time
@@ -90,6 +89,7 @@ class SNEWSTiers:
         self.retraction_reason = retraction_reason
         self.detector_status = detector_status
         self.is_pre_sn = is_pre_sn
+        detector_name = kwargs.get('detector_name', os.getenv('DETECTOR_NAME'))
         self.kwargs = dict(kwargs)
         self.schema = Message_Schema(detector_key=detector_name, is_pre_sn=is_pre_sn)
 
