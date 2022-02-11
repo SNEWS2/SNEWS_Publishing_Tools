@@ -1,7 +1,7 @@
 
 import json, click, time, sys
 from os import path as osp
-from SNEWS_PT.snews_pub import CoincidenceTier, Publisher
+from SNEWS_PT.snews_pub import SNEWSTiers, Publisher
 
 with open(osp.join(osp.dirname(__file__), "scenarios.json")) as json_file:
     data = json.load(json_file)
@@ -29,7 +29,7 @@ try:
                     click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                     messages = data[scenario]
                     for msg in messages:
-                        message = CoincidenceTier(**msg).message()
+                        message = SNEWSTiers(**msg).message()
                         pub.send(message)
                         time.sleep(1)
                     print()
