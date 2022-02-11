@@ -76,7 +76,7 @@ class Publisher:
 
 
 class SNEWSTiers:
-    def __init__(self, machine_time=None, nu_time=None, p_value=None,
+    def __init__(self, detector_name=None, machine_time=None, nu_time=None, p_value=None,
                  p_values=None, timing_series=None, which_tier=None,
                  n_retract_latest=0, retraction_reason=None, detector_status=None, is_pre_sn=False, **kwargs):
         self.machine_time = machine_time
@@ -89,9 +89,11 @@ class SNEWSTiers:
         self.retraction_reason = retraction_reason
         self.detector_status = detector_status
         self.is_pre_sn = is_pre_sn
-        detector_name = kwargs.get('detector_name', os.getenv('DETECTOR_NAME'))
+        self.detector_name = detector_name
+        if detector_name is None:
+            self.detector_name = os.getenv('DETECTOR_NAME')
         self.kwargs = dict(kwargs)
-        self.schema = Message_Schema(detector_key=detector_name, is_pre_sn=is_pre_sn)
+        self.schema = Message_Schema(detector_key=self.detector_name, is_pre_sn=is_pre_sn)
 
     def determine_tier(self, ):
         messages = []
@@ -111,21 +113,21 @@ class SNEWSTiers:
             time_message = self.schema.get_schema(tier='TimeTier', data=data, )
             messages.append(time_message)
             return messages
-        # CoincidenceTier if it has p_value
-        if type(self.p_value) == float:
+        # CoincidenceTier if it has p_value and nu time
+        if type(self.p_value) == float and type(self.nu_time) == str:
             data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time, p_val=self.p_value,
                                                         nu_time=self.nu_time, meta=meta)
-            coincidence_message = self.schema.get_schema(tier='CoincidenceTier', data=data,)
+            coincidence_message = self.schema.get_schema(tier='CoincidenceTier', data=data, )
             messages.append(coincidence_message)
 
         # SignificanceTier if it has p_values
-        if type(self.p_values) == list :
+        if type(self.p_values) == list:
             data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time,
                                                 nu_time=self.nu_time,
                                                 p_values=self.p_values,
                                                 meta=meta,
                                                 )
-            sig_message = self.schema.get_schema(tier='SigTier', data=data,)
+            sig_message = self.schema.get_schema(tier='SigTier', data=data, )
             messages.append(sig_message)
 
         # TimingTier if timing_series exists (@Seb why do we need p_value to be float?)
@@ -156,4 +158,3 @@ class SNEWSTiers:
             messages.append(heartbeat_message)
 
         return messages
-
