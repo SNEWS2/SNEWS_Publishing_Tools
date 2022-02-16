@@ -94,10 +94,6 @@ class SNEWSTiersPublisher:
             self.detector_name = os.getenv('DETECTOR_NAME')
         self.kwargs = dict(kwargs)
         self.schema = Message_Schema(detector_key=self.detector_name, is_pre_sn=is_pre_sn)
-        # self.message = self._make_tier_messages()
-        # with Publisher() as pub:
-        #     pub.send(self.message)
-
 
     def _make_tier_messages(self, ):
         messages = []
