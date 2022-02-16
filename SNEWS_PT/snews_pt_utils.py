@@ -266,7 +266,7 @@ def heartbeat_data(machine_time=None,
     heartbeat_dict = dict(zip_iterator)
     return heartbeat_dict
 
-
+# TODO: still need it ???!
 def _check_aliases(tier):
     tier = tier.lower()
     coincidence_aliases = ['coincidence', 'c', 'coincidencetier', 'coinc']

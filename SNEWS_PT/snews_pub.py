@@ -113,6 +113,7 @@ class SNEWSTiers:
             time_message = self.schema.get_schema(tier='TimeTier', data=data, )
             messages.append(time_message)
             return messages
+        # TODO: 16/02 ask about p val in CT
         # CoincidenceTier if it has p_value and nu time
         if type(self.p_value) == float and type(self.nu_time) == str:
             data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time, p_val=self.p_value,
@@ -152,7 +153,7 @@ class SNEWSTiers:
 
         # Heartbeat if detector status passed (and maybe other==None ?)
         # they can also set status=ON when they submit coincidence, do we want to publish also a HB at the same time?
-        if type(self.detector_status) == str:
+        if type(self.detector_status) == str and type(self.machine_time) == str:
             data = snews_pt_utils.heartbeat_data(detector_status=self.detector_status, machine_time=self.machine_time)
             heartbeat_message = self.schema.get_schema(tier='Heartbeat', data=data, )
             messages.append(heartbeat_message)
