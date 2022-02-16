@@ -281,17 +281,13 @@ def _tier_decider(data:dict) -> tuple:
     # if there are keys that wouldn't belong to any tier/command pass them as meta
     meta_keys = [key for key,value in data.items() if sys.getsizeof(value) < 2048]
     meta_data = {k:data[k] for k in meta_keys if k not in valid_keys}
-    print('meta data ',meta_data)
     messages, tiernames = [], []
     def _append_messages(tier_function, name):
         tier_keys = list(signature(tier_function).parameters.keys())
         data_for_tier = {k: v for k, v in data.items() if k in tier_keys}
         data_for_tier = tier_function(**data_for_tier)
-        print(name)
         if name not in ['Retraction','Heartbeat']:
             data_for_tier['meta'] = meta_data
-            print(name, 'APPENDED META', meta_data)
-        # print(f">>>>> \n{data_for_tier}")
         msg =  schema.get_schema(tier=name, data=data_for_tier, )
         tiernames.append(name)
         messages.append(msg)

@@ -98,7 +98,6 @@ class SNEWSTiersPublisher:
         # if is_pre_sn not given, it is False. If name not given fetch from env
         self.args_dict["is_pre_sn"] = kwargs.get("is_pre_sn", False)
         self.args_dict['detector_name'] = kwargs.get("detector_name", os.getenv('DETECTOR_NAME'))
-        self.schema = Message_Schema(detector_key=self.args_dict['detector_name'], is_pre_sn=kwargs.get("is_pre_sn", False))
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.args_dict)
 
         # if we want to have all of them as attributes,
@@ -110,6 +109,9 @@ class SNEWSTiersPublisher:
 
         """
         input_json = snews_pt_utils._parse_file(jsonfile)
+        self.args_dict = input_json
+        self.args_dict["is_pre_sn"] = input_json.get("is_pre_sn", False)
+        self.args_dict['detector_name'] = input_json.get("detector_name", os.getenv('DETECTOR_NAME'))
         assert type(input_json)==dict ,'json is not read as dictionary'
         self.messages, self.tiernames = snews_pt_utils._tier_decider(input_json)
 
