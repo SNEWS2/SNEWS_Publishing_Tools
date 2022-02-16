@@ -75,7 +75,7 @@ class Publisher:
                 print(f'{k:<20s}:{v}')
 
 
-class SNEWSTiers:
+class SNEWSTiersPublisher:
     def __init__(self, detector_name=None, machine_time=None, nu_time=None, p_value=None,
                  p_values=None, timing_series=None, which_tier=None,
                  n_retract_latest=0, retraction_reason=None, detector_status=None, is_pre_sn=False, **kwargs):
@@ -94,8 +94,12 @@ class SNEWSTiers:
             self.detector_name = os.getenv('DETECTOR_NAME')
         self.kwargs = dict(kwargs)
         self.schema = Message_Schema(detector_key=self.detector_name, is_pre_sn=is_pre_sn)
+        self.message = self.make_messages()
+        with Publisher() as pub:
+            pub.send(self.message)
 
-    def determine_tier(self, ):
+    #     make init return the messages by passing tier decider
+    def make_messages(self, ):
         messages = []
         meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
         if len(meta):
