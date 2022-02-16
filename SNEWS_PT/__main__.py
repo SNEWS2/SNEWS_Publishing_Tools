@@ -9,13 +9,11 @@
 
 from . import __version__
 from . import snews_pt_utils
-from .snews_pub import Publisher, Heartbeat, Retraction
+from .snews_pub import Publisher
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
 import os
-import inspect
-
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
@@ -34,44 +32,6 @@ def main(ctx, env):
     ctx.obj['env'] = env
     ctx.obj['DETECTOR_NAME'] = os.getenv("DETECTOR_NAME")
 
-# @main.command()
-# @click.argument('tiers', nargs=-1)
-# @click.option('--verbose','-v', type=bool, default=True)
-# @click.option('--file','-f', type=str, default="", show_default='data file')
-# @click.pass_context
-# def publish(ctx, tiers, file, verbose):
-#     """ Publish a message using snews_pub
-#
-#     Notes
-#     -----
-#     The topics are read from the defaults i.e. from auxiliary/test-config.env
-#     If no file is given it can still submit dummy messages with default values
-#     """
-#     click.clear()
-#     tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
-#                        'SigTier':snews_pt_utils.sig_tier_data(),
-#                        'TimeTier':snews_pt_utils.time_tier_data(),
-#                        'FalseOBS':snews_pt_utils.retraction_data(),
-#                        'Heartbeat':snews_pt_utils.heartbeat_data()}
-#
-#     tiers_list, names_list = snews_pt_utils._check_cli_request(tiers)
-#     for Tier, name in zip(tiers_list, names_list):
-#         click.secho(f'\nPublishing to {name}; ', bold=True, fg='bright_cyan')
-#         # look for the data
-#         if file != "":
-#             data = snews_pt_utils._parse_file(file)
-#         else:
-#             # get default data for tier
-#             data = tier_data_pairs[name]
-#         if 'detector_name' in data.keys():
-#             detector = data['detector_name']
-#         else:
-#             detector = ctx.obj['DETECTOR_NAME']
-#         data['detector_name'] = detector
-#         message = Tier(**data).message()
-#         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-#         pub.send(message)
-
 @main.command()
 @click.option('--verbose','-v', type=bool, default=True)
 @click.argument('file', nargs=-1)
@@ -89,7 +49,7 @@ def publish(ctx, file, verbose):
     """
     click.clear()
     data = snews_pt_utils._parse_file(file)
-    names_list, messages = snews_pt_utils._tier_decider(data)
+    messages, names_list = snews_pt_utils._tier_decider(data)
     for name, message in zip(names_list, messages):
         click.secho(f'\nPublishing to {name}; ', bold=True, fg='bright_cyan')
         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
@@ -129,6 +89,7 @@ def heartbeat(ctx, status, machine_time, verbose):
     pub.send(message)
 
 
+# TODO: add retraction
 # @main.command()
 # @click.option('--tier','-t', nargs=1, help='Name of tier you want to retract from')
 # @click.option('--number','-n', type=int, default=1, help='Number of most recent message you want to retract')
