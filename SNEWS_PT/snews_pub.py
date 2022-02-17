@@ -61,7 +61,6 @@ class Publisher:
 
         """
         for message in messages:
-            print(message)
             self.stream.write(message)
             self.display_message(message)
 
