@@ -266,7 +266,7 @@ def heartbeat_data(machine_time=None, detector_status=None, meta=None):
     return heartbeat_dict
 
 
-def _tier_decider(data:dict) -> tuple:
+def _tier_decider(data:dict, env_file=None) -> tuple:
     """ Decide on the tier(s) or commands (Heartbeat/Retraction)
         Based on the content of the message
 
@@ -274,6 +274,10 @@ def _tier_decider(data:dict) -> tuple:
     from inspect import signature
     from .message_schema import Message_Schema
 
+    # set environment and assign detector name & pre SN flag
+    set_env(env_file)
+    data["is_pre_sn"] = data.get("is_pre_sn", False)
+    data['detector_name'] = data.get("detector_name", os.getenv('DETECTOR_NAME'))
     schema = Message_Schema(detector_key=data['detector_name'] , is_pre_sn=data['is_pre_sn'] )
     valid_keys = ["detector_name", "machine_time", "nu_time", "p_val", "p_values", "timing_series", "which_tier",
                   "n_retract_latest", "retraction_reason", "detector_status", "is_pre_sn",]
@@ -297,7 +301,7 @@ def _tier_decider(data:dict) -> tuple:
     #     _append_messages(time_tier_data, 'TimingTier')
 
     # CoincidenceTier if it has nu time
-    if type(data.get('nu_time', False))==float:
+    if data.get('nu_time', False):
         _append_messages(coincidence_tier_data,'CoincidenceTier')
 
     # SignificanceTier if it has p_values

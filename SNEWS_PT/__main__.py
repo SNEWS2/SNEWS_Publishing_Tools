@@ -13,7 +13,7 @@ from .snews_pub import Publisher
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
-import os
+import os, sys
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
@@ -37,7 +37,7 @@ def main(ctx, env):
 @click.argument('file', nargs=-1)
 @click.pass_context
 def publish(ctx, file, verbose):
-    """ Publish a message using snews_pub
+    """ Publish a message using snews_pub, multiple files are allowed
     Examples
     --------
     $: snews_pt publish my_json_message.json
@@ -48,12 +48,16 @@ def publish(ctx, file, verbose):
     If no file is given it can still submit dummy messages with default values
     """
     click.clear()
-    data = snews_pt_utils._parse_file(file)
-    messages, names_list = snews_pt_utils._tier_decider(data)
-    for name, message in zip(names_list, messages):
-        click.secho(f'\nPublishing to {name}; ', bold=True, fg='bright_cyan')
+    for f in file:
+        if f.endswith('.json'):
+            data = snews_pt_utils._parse_file(f)
+        else:
+            click.secho(f"Expected json file with .json format! Got {f}", fg='red', bold=True)
+            sys.exit()
+
+        messages, names_list = snews_pt_utils._tier_decider(data)
         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-        pub.send(message)
+        pub.send(messages)
 
 
 @main.command()

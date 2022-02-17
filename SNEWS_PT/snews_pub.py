@@ -92,16 +92,9 @@ class SNEWSTiersPublisher:
       `is_pre_sn`
     """
     def __init__(self, env_file=None, **kwargs):
-        snews_pt_utils.set_env(env_file)
         self.args_dict = dict(**kwargs)
-        # if is_pre_sn not given, it is False. If name not given fetch from env
-        self.args_dict["is_pre_sn"] = kwargs.get("is_pre_sn", False)
-        self.args_dict['detector_name'] = kwargs.get("detector_name", os.getenv('DETECTOR_NAME'))
-        self.messages, self.tiernames = snews_pt_utils._tier_decider(self.args_dict)
-
-        # if we want to have all of them as attributes,
-        # for key, value in kwargs.items():
-        #     setattr(self, key, value)
+        self.env_file = env_file
+        self.messages, self.tiernames = snews_pt_utils._tier_decider(self.args_dict, env_file)
 
     def from_json(self, jsonfile):
         """ Read the data from a json file
@@ -109,10 +102,7 @@ class SNEWSTiersPublisher:
         """
         input_json = snews_pt_utils._parse_file(jsonfile)
         self.args_dict = input_json
-        self.args_dict["is_pre_sn"] = input_json.get("is_pre_sn", False)
-        self.args_dict['detector_name'] = input_json.get("detector_name", os.getenv('DETECTOR_NAME'))
-        assert type(input_json)==dict ,'json is not read as dictionary'
-        self.messages, self.tiernames = snews_pt_utils._tier_decider(input_json)
+        self.messages, self.tiernames = snews_pt_utils._tier_decider(input_json, self.env_file)
 
     def send_to_snews(self):
         with Publisher() as pub:
