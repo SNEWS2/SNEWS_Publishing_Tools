@@ -7,7 +7,6 @@ from collections import namedtuple
 import os, json, click
 import sys
 from inspect import signature
-from .message_schema import Message_Schema
 
 
 def set_env(env_path=None):
@@ -127,7 +126,7 @@ def get_detector(detector, detectors_path=os.path.dirname(__file__) +
             return detectors['TEST']
 
 
-def coincidence_tier_data(machine_time=None, nu_time=None, p_val=None, meta=None):
+def coincidence_tier_data(machine_time=None, neutrino_time=None, p_val=None, meta=None):
     """ Formats data for CoincidenceTier as dict object
 
         Parameters
@@ -147,14 +146,14 @@ def coincidence_tier_data(machine_time=None, nu_time=None, p_val=None, meta=None
                 dictionary of the complete CoincidenceTier data
 
     """
-    keys = ['machine_time', 'neutrino_time', 'p_value', 'meta']
-    values = [machine_time, nu_time, p_val, meta]
+    keys = ['machine_time', 'neutrino_time', 'p_val', 'meta']
+    values = [machine_time, neutrino_time, p_val, meta]
     zip_iterator = zip(keys, values)
     coincidence_tier_dict = dict(zip_iterator)
     return coincidence_tier_dict
 
 
-def sig_tier_data(machine_time=None, nu_time=None, p_values=None, meta=None):
+def sig_tier_data(machine_time=None, neutrino_time=None, p_values=None, meta=None):
     """ Formats data for SigTier as dict object
 
         Parameters
@@ -175,13 +174,13 @@ def sig_tier_data(machine_time=None, nu_time=None, p_values=None, meta=None):
 
     """
     keys = ['machine_time', 'neutrino_time', 'p_values', 'meta']
-    values = [machine_time, nu_time, p_values, meta]
+    values = [machine_time, neutrino_time, p_values, meta]
     zip_iterator = zip(keys, values)
     sig_tier_dict = dict(zip_iterator)
     return sig_tier_dict
 
 
-def time_tier_data(machine_time=None, nu_time=None, p_val=None, timing_series=None, meta=None):
+def time_tier_data(machine_time=None, neutrino_time=None, p_val=None, timing_series=None, meta=None):
     """ Formats data for TimingTier as dict object
 
         Parameters
@@ -202,7 +201,7 @@ def time_tier_data(machine_time=None, nu_time=None, p_val=None, timing_series=No
 
     """
     keys = ['machine_time', 'neutrino_time', 'timing_series', 'p_val', 'meta']
-    values = [machine_time, nu_time, timing_series, p_val, meta]
+    values = [machine_time, neutrino_time, timing_series, p_val, meta]
     zip_iterator = zip(keys, values)
     time_tier_dict = dict(zip_iterator)
     return time_tier_dict
@@ -292,16 +291,9 @@ def _tier_decider(data:dict, env_file=None) -> tuple:
         Based on the content of the message
 
     """
+    # this import has to be here, otherwise crashes due to circular import
+    from .message_schema import Message_Schema
 
-    def _append_messages(tier_function, name):
-        tier_keys = list(signature(tier_function).parameters.keys())
-        data_for_tier = {k: v for k, v in data.items() if k in tier_keys}
-        data_for_tier = tier_function(**data_for_tier)
-        if name not in ['Retraction', 'Heartbeat']:
-            data_for_tier['meta'] = meta_data
-        msg = schema.get_schema(tier=name, data=data_for_tier, )
-        tiernames.append(name)
-        messages.append(msg)
 
     # set environment and assign detector name & pre SN flag
     set_env(env_file)
@@ -315,6 +307,16 @@ def _tier_decider(data:dict, env_file=None) -> tuple:
     meta_keys = [key for key,value in data.items() if sys.getsizeof(value) < 2048]
     meta_data = {k:data[k] for k in meta_keys if k not in valid_keys}
     messages, tiernames = [], []
+
+    def _append_messages(tier_function, name):
+        tier_keys = list(signature(tier_function).parameters.keys())
+        data_for_tier = {k: v for k, v in data.items() if k in tier_keys}
+        data_for_tier = tier_function(**data_for_tier)
+        if name not in ['Retraction', 'Heartbeat']:
+            data_for_tier['meta'] = meta_data
+        msg = schema.get_schema(tier=name, data=data_for_tier, )
+        tiernames.append(name)
+        messages.append(msg)
 
     # if is_pre_sn:
     #     print('This is a pre-supernova message')
