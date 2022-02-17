@@ -60,6 +60,8 @@ class Publisher:
             list containing observation message.
 
         """
+        if type(messages)==dict:
+            messages = list(messages)
         for message in messages:
             self.stream.write(message)
             self.display_message(message)
@@ -81,7 +83,7 @@ class SNEWSTiersPublisher:
     Else, the following keys and more kwargs can be passed
       `detector_name`
       `machine_time`
-      `nu_time`
+      `neutrino_time`
       `p_val`
       `p_values`
       `timing_series`
@@ -97,12 +99,14 @@ class SNEWSTiersPublisher:
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.args_dict, env_file)
 
     @classmethod
-    def from_json(cls, jsonfile, env_file=None):
+    def from_json(cls, jsonfile, env_file=None, **kwargs):
         """ Read the data from a json file
+            Additional data / overwrite is allowed
 
         """
         input_json = snews_pt_utils._parse_file(jsonfile)
-        return cls(env_file=env_file, **input_json)
+        output_data = {**input_json, **kwargs}
+        return cls(env_file=env_file, **output_data)
 
     def send_to_snews(self):
         with Publisher() as pub:

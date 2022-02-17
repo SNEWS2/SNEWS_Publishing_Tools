@@ -6,6 +6,8 @@ from datetime import datetime
 from collections import namedtuple
 import os, json, click
 import sys
+from inspect import signature
+from .message_schema import Message_Schema
 
 
 def set_env(env_path=None):
@@ -265,43 +267,61 @@ def heartbeat_data(machine_time=None, detector_status=None, meta=None):
     heartbeat_dict = dict(zip_iterator)
     return heartbeat_dict
 
+# used in message schema display, keep for now
+def _check_aliases(tier):
+    tier  = tier.lower()
+    coincidence_aliases = ['coincidence','c','coincidencetier','coinc']
+    significance_aliases = ['significance','s','significancetier', 'sigtier']
+    timing_aliases = ['timing','time','timeingtier','timetier','t']
+    false_aliases = ['false', 'falseobs','reatraction','retract','r','f']
+    heartbeat_aliases = ['heartbeat', 'hb']
+
+    if tier in coincidence_aliases:  tier = 'CoincidenceTier'
+    elif tier in significance_aliases: tier = 'SigTier'
+    elif tier in timing_aliases:    tier = 'TimeTier'
+    elif tier in false_aliases:     tier = 'FalseOBS'
+    elif tier in heartbeat_aliases: tier = 'Heartbeat'
+    else:
+        click.secho(f'"{tier}" <- not a valid argument!', fg='bright_red')
+        sys.exit()
+    return [tier]
+
 
 def _tier_decider(data:dict, env_file=None) -> tuple:
     """ Decide on the tier(s) or commands (Heartbeat/Retraction)
         Based on the content of the message
 
     """
-    from inspect import signature
-    from .message_schema import Message_Schema
+
+    def _append_messages(tier_function, name):
+        tier_keys = list(signature(tier_function).parameters.keys())
+        data_for_tier = {k: v for k, v in data.items() if k in tier_keys}
+        data_for_tier = tier_function(**data_for_tier)
+        if name not in ['Retraction', 'Heartbeat']:
+            data_for_tier['meta'] = meta_data
+        msg = schema.get_schema(tier=name, data=data_for_tier, )
+        tiernames.append(name)
+        messages.append(msg)
 
     # set environment and assign detector name & pre SN flag
     set_env(env_file)
     data["is_pre_sn"] = data.get("is_pre_sn", False)
     data['detector_name'] = data.get("detector_name", os.getenv('DETECTOR_NAME'))
     schema = Message_Schema(detector_key=data['detector_name'] , is_pre_sn=data['is_pre_sn'] )
-    valid_keys = ["detector_name", "machine_time", "nu_time", "p_val", "p_values", "timing_series", "which_tier",
+    valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series", "which_tier",
                   "n_retract_latest", "retraction_reason", "detector_status", "is_pre_sn",]
 
     # if there are keys that wouldn't belong to any tier/command pass them as meta
     meta_keys = [key for key,value in data.items() if sys.getsizeof(value) < 2048]
     meta_data = {k:data[k] for k in meta_keys if k not in valid_keys}
     messages, tiernames = [], []
-    def _append_messages(tier_function, name):
-        tier_keys = list(signature(tier_function).parameters.keys())
-        data_for_tier = {k: v for k, v in data.items() if k in tier_keys}
-        data_for_tier = tier_function(**data_for_tier)
-        if name not in ['Retraction','Heartbeat']:
-            data_for_tier['meta'] = meta_data
-        msg =  schema.get_schema(tier=name, data=data_for_tier, )
-        tiernames.append(name)
-        messages.append(msg)
 
     # if is_pre_sn:
     #     print('This is a pre-supernova message')
     #     _append_messages(time_tier_data, 'TimingTier')
 
     # CoincidenceTier if it has nu time
-    if data.get('nu_time', False):
+    if data.get('neutrino_time', False):
         _append_messages(coincidence_tier_data,'CoincidenceTier')
 
     # SignificanceTier if it has p_values
