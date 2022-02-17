@@ -96,13 +96,13 @@ class SNEWSTiersPublisher:
         self.env_file = env_file
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.args_dict, env_file)
 
-    def from_json(self, jsonfile):
+    @classmethod
+    def from_json(cls, jsonfile, env_file=None):
         """ Read the data from a json file
 
         """
         input_json = snews_pt_utils._parse_file(jsonfile)
-        self.args_dict = input_json
-        self.messages, self.tiernames = snews_pt_utils._tier_decider(input_json, self.env_file)
+        return cls(env_file=env_file, **input_json)
 
     def send_to_snews(self):
         with Publisher() as pub:
