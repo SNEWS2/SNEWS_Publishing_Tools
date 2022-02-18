@@ -323,7 +323,7 @@ def _tier_decider(data:dict, env_file=None) -> tuple:
     #     _append_messages(time_tier_data, 'TimingTier')
 
     # CoincidenceTier if it has nu time
-    if data.get('neutrino_time', False):
+    if type(data.get('neutrino_time', False)) == str:
         _append_messages(coincidence_tier_data,'CoincidenceTier')
 
     # SignificanceTier if it has p_values
