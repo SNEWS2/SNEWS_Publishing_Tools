@@ -6,6 +6,7 @@ from datetime import datetime
 from collections import namedtuple
 import os, json, click
 import sys
+from inspect import signature
 
 
 def set_env(env_path=None):
@@ -125,7 +126,7 @@ def get_detector(detector, detectors_path=os.path.dirname(__file__) +
             return detectors['TEST']
 
 
-def coincidence_tier_data(machine_time=None, nu_time=None, p_val=None, meta=None):
+def coincidence_tier_data(machine_time=None, neutrino_time=None, p_val=None, meta=None):
     """ Formats data for CoincidenceTier as dict object
 
         Parameters
@@ -145,14 +146,14 @@ def coincidence_tier_data(machine_time=None, nu_time=None, p_val=None, meta=None
                 dictionary of the complete CoincidenceTier data
 
     """
-    keys = ['machine_time', 'neutrino_time', 'p_value', 'meta']
-    values = [machine_time, nu_time, p_val, meta]
+    keys = ['machine_time', 'neutrino_time', 'p_val', 'meta']
+    values = [machine_time, neutrino_time, p_val, meta]
     zip_iterator = zip(keys, values)
     coincidence_tier_dict = dict(zip_iterator)
     return coincidence_tier_dict
 
 
-def sig_tier_data(machine_time=None, nu_time=None, p_values=None, meta=None):
+def sig_tier_data(machine_time=None, neutrino_time=None, p_values=None, meta=None):
     """ Formats data for SigTier as dict object
 
         Parameters
@@ -173,13 +174,13 @@ def sig_tier_data(machine_time=None, nu_time=None, p_values=None, meta=None):
 
     """
     keys = ['machine_time', 'neutrino_time', 'p_values', 'meta']
-    values = [machine_time, nu_time, p_values, meta]
+    values = [machine_time, neutrino_time, p_values, meta]
     zip_iterator = zip(keys, values)
     sig_tier_dict = dict(zip_iterator)
     return sig_tier_dict
 
 
-def time_tier_data(machine_time=None, nu_time=None, p_val=None, timing_series=None, meta=None):
+def time_tier_data(machine_time=None, neutrino_time=None, p_val=None, timing_series=None, meta=None):
     """ Formats data for TimingTier as dict object
 
         Parameters
@@ -200,7 +201,7 @@ def time_tier_data(machine_time=None, nu_time=None, p_val=None, timing_series=No
 
     """
     keys = ['machine_time', 'neutrino_time', 'timing_series', 'p_val', 'meta']
-    values = [machine_time, nu_time, timing_series, p_val, meta]
+    values = [machine_time, neutrino_time, timing_series, p_val, meta]
     zip_iterator = zip(keys, values)
     time_tier_dict = dict(zip_iterator)
     return time_tier_dict
@@ -240,8 +241,7 @@ def retraction_data(machine_time=None, which_tier=None,
     return retraction_dict
 
 
-def heartbeat_data(machine_time=None,
-                   detector_status=None, meta=None):
+def heartbeat_data(machine_time=None, detector_status=None, meta=None):
     """ Formats data for Heartbeat as dict object
 
         Parameters
@@ -266,118 +266,73 @@ def heartbeat_data(machine_time=None,
     heartbeat_dict = dict(zip_iterator)
     return heartbeat_dict
 
-# TODO: still need it ???!
+# used in message schema display, keep for now
 def _check_aliases(tier):
-    tier = tier.lower()
-    coincidence_aliases = ['coincidence', 'c', 'coincidencetier', 'coinc']
-    significance_aliases = ['significance', 's', 'significancetier', 'sigtier']
-    timing_aliases = ['timing', 'time', 'timingtier', 'timetier', 't']
-    false_aliases = ['false', 'falseobs', 'retraction', 'retract', 'r', 'f']
+    tier  = tier.lower()
+    coincidence_aliases = ['coincidence','c','coincidencetier','coinc']
+    significance_aliases = ['significance','s','significancetier', 'sigtier']
+    timing_aliases = ['timing','time','timeingtier','timetier','t']
+    false_aliases = ['false', 'falseobs','reatraction','retract','r','f']
     heartbeat_aliases = ['heartbeat', 'hb']
 
-    if tier in coincidence_aliases:
-        tier = 'CoincidenceTier'
-    elif tier in significance_aliases:
-        tier = 'SigTier'
-    elif tier in timing_aliases:
-        tier = 'TimeTier'
-    elif tier in false_aliases:
-        tier = 'FalseOBS'
-    elif tier in heartbeat_aliases:
-        tier = 'Heartbeat'
+    if tier in coincidence_aliases:  tier = 'CoincidenceTier'
+    elif tier in significance_aliases: tier = 'SigTier'
+    elif tier in timing_aliases:    tier = 'TimeTier'
+    elif tier in false_aliases:     tier = 'FalseOBS'
+    elif tier in heartbeat_aliases: tier = 'Heartbeat'
     else:
         click.secho(f'"{tier}" <- not a valid argument!', fg='bright_red')
         sys.exit()
     return [tier]
 
 
-# def _check_cli_request(requested):
-#     """ check the requested tier in the CLI
-#
-#         Parameters
-#         ----------
-#         requested : `list`
-#             The list of requested tiers
-#
-#     """
-#     from .snews_pub import SNEWSTiers
-#
-#     valid_tiers_names = ['CoincidenceTier', 'SigTier', 'TimeTier']
-#     valid_tiers = [CoincidenceTier, SignificanceTier, TimingTier]
-#     tier_pairs = dict(zip(valid_tiers_names, valid_tiers))
-#     other_tiers_names = ['Heartbeat', 'FalseOBS']
-#     other_tiers = [Heartbeat, Retraction]
-#     other_pairs = dict(zip(other_tiers_names, other_tiers))
-#
-#     tier_name_pair = []
-#     click.secho('\nRequested tiers are; ', bold=True)
-#     for i, tier in enumerate(requested):
-#         tier = tier.lower()
-#         tiername = _check_aliases(tier)[0]
-#         if tiername in valid_tiers_names:
-#             tier_name_pair.append((tier_pairs[tiername], tiername))
-#         elif tiername in other_tiers_names:
-#             click.echo(click.style(f'\t\t> {tiername}\n', fg='yellow', bold=True) +
-#                        '\t\t    has its own separate function !\n'
-#                        f'\t\t    See ' + click.style(f'{other_pairs[tiername]}', fg='yellow'))
-#             if i == len(requested): return None
-#         else:
-#             return None
-#
-#     tiers_unique, names_unique = [], []
-#     for Tier, name in tier_name_pair:
-#         if name not in names_unique:
-#             names_unique.append(name)
-#             tiers_unique.append(Tier)
-#             click.secho(f'\t\t> {name}', fg='cyan')
-#     return tiers_unique, names_unique
-
-
-def _tier_decider(data:dict) -> tuple:
+def _tier_decider(data:dict, env_file=None) -> tuple:
     """ Decide on the tier(s) or commands (Heartbeat/Retraction)
         Based on the content of the message
 
     """
-    from .snews_pub import SNEWSTiers
-    from inspect import signature
+    # this import has to be here, otherwise crashes due to circular import
     from .message_schema import Message_Schema
 
-    detector_name = data.get('detector_name', os.getenv("DETECTOR_NAME"))
-    is_pre_sn = bool(data.get('is_pre_sn', 'False'))
-    schema = Message_Schema(detector_key=detector_name, is_pre_sn=is_pre_sn)
 
-    keys_valid = list(signature(SNEWSTiers).parameters.keys())
-    keys_valid.remove('kwargs')
+    # set environment and assign detector name & pre SN flag
+    set_env(env_file)
+    data["is_pre_sn"] = data.get("is_pre_sn", False)
+    data['detector_name'] = data.get("detector_name", os.getenv('DETECTOR_NAME'))
+    schema = Message_Schema(detector_key=data['detector_name'] , is_pre_sn=data['is_pre_sn'] )
+    valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series", "which_tier",
+                  "n_retract_latest", "retraction_reason", "detector_status", "is_pre_sn",]
 
     # if there are keys that wouldn't belong to any tier/command pass them as meta
     meta_keys = [key for key,value in data.items() if sys.getsizeof(value) < 2048]
-    meta_data = {k:data[k] for k in meta_keys}
-
+    meta_data = {k:data[k] for k in meta_keys if k not in valid_keys}
     messages, tiernames = [], []
+
     def _append_messages(tier_function, name):
         tier_keys = list(signature(tier_function).parameters.keys())
         data_for_tier = {k: v for k, v in data.items() if k in tier_keys}
-        if name not in ['Retraction','Heartbeat']:
+        data_for_tier = tier_function(**data_for_tier)
+        if name not in ['Retraction', 'Heartbeat']:
             data_for_tier['meta'] = meta_data
-        msg =  schema.get_schema(tier=name, data=data_for_tier, )
-        messages.append(tier_function(**msg))
+        msg = schema.get_schema(tier=name, data=data_for_tier, )
         tiernames.append(name)
+        messages.append(msg)
 
     # if is_pre_sn:
     #     print('This is a pre-supernova message')
     #     _append_messages(time_tier_data, 'TimingTier')
 
-    # CoincidenceTier if it has p_value
-    if type(data.get('p_val', False))==float:
+    # CoincidenceTier if it has nu time
+    if type(data.get('neutrino_time', False)) == str:
         _append_messages(coincidence_tier_data,'CoincidenceTier')
 
     # SignificanceTier if it has p_values
     if data.get('p_values', False):
-        _append_messages(sig_tier_data,'SignificanceTier')
+        _append_messages(sig_tier_data,'SigTier')
 
     # TimingTier if timing_series exists (@Seb why do we need p_value to be float?)
     if data.get('timing_series', False):
-        _append_messages(time_tier_data, 'SignificanceTier')
+        _append_messages(time_tier_data, 'TimeTier')
 
     # asking which tier doesn't make sense if the user doesn't know the tiers
     if data.get('n_retract_latest', False):
@@ -385,7 +340,7 @@ def _tier_decider(data:dict) -> tuple:
 
     if data.get('detector_status', False):
         _append_messages(heartbeat_data, 'Heartbeat')
-    return tiernames, messages
+    return messages, tiernames
 
 
 def _parse_file(filename):

@@ -1,4 +1,4 @@
-from .snews_pt_utils import TimeStuff, get_detector
+from .snews_pt_utils import get_detector, TimeStuff
 from ._version import version as __version__
 
 
@@ -18,7 +18,7 @@ class Message_Schema:
     """
 
     def __init__(self, env_path=None, detector_key='TEST', is_pre_sn=False):
-        self.times = TimeStuff(env_path)
+        self.times = TimeStuff(env_path) # never used actually
         self.detector = get_detector(detector_key)
         self.detector_name = self.detector.name
         self.is_pre_sn = is_pre_sn
@@ -94,7 +94,7 @@ class Message_Schema:
 
         if tier == 'CoincidenceTier':
             message['neutrino_time'] = data['neutrino_time']
-            message['p_value'] = data['p_value']
+            message['p_val'] = data['p_val']
             message['meta'] = data['meta']
 
         if tier == 'Retraction':

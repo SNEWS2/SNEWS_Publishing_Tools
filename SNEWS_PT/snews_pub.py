@@ -60,6 +60,8 @@ class Publisher:
             list containing observation message.
 
         """
+        if type(messages)==dict:
+            messages = list(messages)
         for message in messages:
             self.stream.write(message)
             self.display_message(message)
@@ -76,91 +78,36 @@ class Publisher:
 
 
 class SNEWSTiersPublisher:
-    def __init__(self, detector_name=None, machine_time=None, nu_time=None, p_value=None,
-                 p_values=None, timing_series=None, which_tier=None,
-                 n_retract_latest=0, retraction_reason=None, detector_status=None, is_pre_sn=False, **kwargs):
-        self.machine_time = machine_time
-        self.nu_time = nu_time
-        self.p_value = p_value
-        self.p_values = p_values
-        self.timing_series = timing_series
-        self.which_tier = which_tier
-        self.n_retract_latest = n_retract_latest
-        self.retraction_reason = retraction_reason
-        self.detector_status = detector_status
-        self.is_pre_sn = is_pre_sn
-        self.detector_name = detector_name
-        if detector_name is None:
-            self.detector_name = os.getenv('DETECTOR_NAME')
-        self.kwargs = dict(kwargs)
-        self.schema = Message_Schema(detector_key=self.detector_name, is_pre_sn=is_pre_sn)
+    """
+    To use a json file call SNEWSTiersPublisher().from_json(<filename>)
+    Else, the following keys and more kwargs can be passed
+      `detector_name`
+      `machine_time`
+      `neutrino_time`
+      `p_val`
+      `p_values`
+      `timing_series`
+      `which_tier`
+      `n_retract_latest`
+      `retraction_reason`
+      `detector_status`
+      `is_pre_sn`
+    """
+    def __init__(self, env_file=None, **kwargs):
+        self.args_dict = dict(**kwargs)
+        self.env_file = env_file
+        self.messages, self.tiernames = snews_pt_utils._tier_decider(self.args_dict, env_file)
 
-    def _make_tier_messages(self, ):
-        messages = []
-        meta = {k: v for k, v in self.kwargs.items() if sys.getsizeof(v) < 2048}
-        if len(meta):
-            click.echo(
-                click.style('\t"' + '; '.join(meta.keys()) + '"', fg='magenta', bold=True) + ' are passed as meta data')
+    @classmethod
+    def from_json(cls, jsonfile, env_file=None, **kwargs):
+        """ Read the data from a json file
+            Additional data / overwrite is allowed
 
-        if self.is_pre_sn and type(self.timing_series) == list:
-            data = snews_pt_utils.time_tier_data(machine_time=self.machine_time,
-                                                 nu_time=self.nu_time,
-                                                 timing_series=self.timing_series,
-                                                 p_val=self.p_value,
-                                                 meta=meta
-                                                 )
-
-            time_message = self.schema.get_schema(tier='TimeTier', data=data, )
-            messages.append(time_message)
-            return messages
-        # TODO: 16/02 ask about p val in CT
-        # CoincidenceTier if it has p_value and nu time
-        if type(self.p_value) == float and type(self.nu_time) == str:
-            data = snews_pt_utils.coincidence_tier_data(machine_time=self.machine_time, p_val=self.p_value,
-                                                        nu_time=self.nu_time, meta=meta)
-            coincidence_message = self.schema.get_schema(tier='CoincidenceTier', data=data, )
-            messages.append(coincidence_message)
-
-        # SignificanceTier if it has p_values
-        if type(self.p_values) == list:
-            data = snews_pt_utils.sig_tier_data(machine_time=self.machine_time,
-                                                nu_time=self.nu_time,
-                                                p_values=self.p_values,
-                                                meta=meta,
-                                                )
-            sig_message = self.schema.get_schema(tier='SigTier', data=data, )
-            messages.append(sig_message)
-
-        # TimingTier if timing_series exists (@Seb why do we need p_value to be float?)
-        if type(self.timing_series) == list and type(self.p_value) == float:
-            data = snews_pt_utils.time_tier_data(machine_time=self.machine_time,
-                                                 nu_time=self.nu_time,
-                                                 timing_series=self.timing_series,
-                                                 p_val=self.p_value,
-                                                 meta=meta
-                                                 )
-
-            time_message = self.schema.get_schema(tier='TimeTier', data=data, )
-            messages.append(time_message)
-
-        # Retraction Command if retraction field is passed
-        if self.n_retract_latest != 0 and type(self.which_tier) == str:
-            data = snews_pt_utils.retraction_data(machine_time=self.machine_time,
-                                                  which_tier=self.which_tier, n_retract_latest=self.n_retract_latest,
-                                                  retraction_reason=self.retraction_reason, meta=meta)
-            retraction_message = self.schema.get_schema(tier='Retraction', data=data, )
-            messages.append(retraction_message)
-
-        # Heartbeat if detector status passed (and maybe other==None ?)
-        # they can also set status=ON when they submit coincidence, do we want to publish also a HB at the same time?
-        if type(self.detector_status) == str and type(self.machine_time) == str:
-            data = snews_pt_utils.heartbeat_data(detector_status=self.detector_status, machine_time=self.machine_time)
-            heartbeat_message = self.schema.get_schema(tier='Heartbeat', data=data, )
-            messages.append(heartbeat_message)
-
-        return messages
+        """
+        input_json = snews_pt_utils._parse_file(jsonfile)
+        output_data = {**input_json, **kwargs}
+        return cls(env_file=env_file, **output_data)
 
     def send_to_snews(self):
-        messages = self._make_tier_messages()
         with Publisher() as pub:
-            pub.send(messages)
+            pub.send(self.messages)
