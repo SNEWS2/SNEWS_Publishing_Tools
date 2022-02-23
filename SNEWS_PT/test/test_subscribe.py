@@ -15,3 +15,4 @@ def test_subscribe():
     os.killpg(os.getpgid(p.pid), signal.SIGTERM) 
 
     assert echos[0] == b'You are subscribing to ALERT\n'
+    assert echos[1] == b'Broker:kafka://kafka.scimma.org/snews.alert-test\n'
