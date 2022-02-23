@@ -3,7 +3,7 @@ from SNEWS_PT.snews_pub import SNEWSTiersPublisher
 
 def test_significance_expected():
     """Test with example of expected message type."""
-    # Create coincidence tier message.
+    # Create significance tier message.
     sign = SNEWSTiersPublisher(detector_name='DS-20K', neutrino_times=['12/06/09 15:31:08:1098', '12/06/09 15:33:07:8910'], p_values=[0.4, 0.5])
 
     # Check that message has expected structure.

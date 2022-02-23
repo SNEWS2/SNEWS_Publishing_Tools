@@ -1,9 +1,9 @@
-"""Test publishing timesificane tier messages."""
+"""Test publishing timing tier messages."""
 from SNEWS_PT.snews_pub import SNEWSTiersPublisher
 
-def test_timesificance_expected():
+def test_timing_expected():
     """Test with example of expected message type."""
-    # Create coincidence tier message.
+    # Create timing tier message.
     tims = SNEWSTiersPublisher(detector_name='XENONnT', neutrino_time='12/06/09 15:31:08:1098', timing_series=['12/06/09 15:31:08:1098', '12/06/09 15:33:07:8910'])
 
     # Check that message has expected structure.
