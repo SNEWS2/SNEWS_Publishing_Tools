@@ -3,8 +3,7 @@ name: testing
 on:
   push:
     branches: 
-      - main
-      - 'origin/*'
+      - '**'
       
   pull_request:
     branches:
