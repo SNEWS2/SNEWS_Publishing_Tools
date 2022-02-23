@@ -1,7 +1,5 @@
 """Test publishing coincidence tier messages."""
-from SNEWS_PT.snews_pt_utils import coincidence_tier_data
 from SNEWS_PT.snews_pub import SNEWSTiersPublisher
-from hop import stream
 
 def test_coincidence_expected():
     """Test with example of expected message type."""
