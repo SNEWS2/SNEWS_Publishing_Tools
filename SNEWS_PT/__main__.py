@@ -77,20 +77,20 @@ def subscribe(ctx):
 @click.option('--machine_time','-mt', type=str, default=None, help='`str`, optional  Time when the status was fetched')
 @click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
 @click.pass_context
-def heartbeat(ctx, status, machine_time, verbose):
-    """
-    Publish heartbeat messages. Recommended frequency is
-    every 3 minutes.
-    machine_time is optional, and each message is appended with a `sent_time`
-    passing machine_time allows for latency studies.
+# def heartbeat(ctx, status, machine_time, verbose):
+#     """
+#     Publish heartbeat messages. Recommended frequency is
+#     every 3 minutes.
+#     machine_time is optional, and each message is appended with a `sent_time`
+#     passing machine_time allows for latency studies.
 
-    USAGE: snews_pt heartbeat ON -mt '22/01/01 19:16:14'
+#     USAGE: snews_pt heartbeat ON -mt '22/01/01 19:16:14'
 
-    """
-    click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
-    message = Heartbeat(detector_name=ctx.obj['DETECTOR_NAME'], status=status, machine_time=machine_time).message()
-    pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-    pub.send(message)
+#     """
+#     click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
+#     message = Heartbeat(detector_name=ctx.obj['DETECTOR_NAME'], status=status, machine_time=machine_time).message()
+#     pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
+#     pub.send(message)
 
 
 # TODO: add retraction
