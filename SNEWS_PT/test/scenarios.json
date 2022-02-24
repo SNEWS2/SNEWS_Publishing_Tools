@@ -122,5 +122,42 @@
       "neutrino_time": "22/01/01 12:30:18:678999",
       "p_val": 0.98
     }
+  ],
+  "msgs at 10, 19, 21, 22, 20, 29, 18 seconds": [
+    {
+      "detector_name": "Borexino",
+      "neutrino_time": "22/01/01 12:30:10:678999",
+      "p_value": 0.98
+    },
+    {
+      "detector_name": "ICE",
+      "neutrino_time": "22/01/01 12:30:19:678999",
+      "p_value": 0.98
+    },
+    {
+      "detector_name": "NOvA",
+      "neutrino_time": "22/01/01 12:30:21:678999",
+      "p_value": 0.98
+    },
+    {
+      "detector_name": "DS-20K",
+      "neutrino_time": "22/01/01 12:30:22:678999",
+      "p_value": 0.98
+    },
+    {
+      "detector_name": "HALO",
+      "neutrino_time": "22/01/01 12:30:20:678999",
+      "p_value": 0.98
+    },
+    {
+      "detector_name": "XENONnT",
+      "neutrino_time": "22/01/01 12:30:29:678999",
+      "p_value": 0.98
+    },
+    {
+      "detector_name": "JUNO",
+      "neutrino_time": "22/01/01 12:30:18:678999",
+      "p_value": 0.98
+    }
   ]
 }
