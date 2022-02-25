@@ -9,13 +9,11 @@
 
 from . import __version__
 from . import snews_pt_utils
-from .snews_pub import Publisher, Heartbeat, Retraction
+from .snews_pub import Publisher
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
 import click
-import os
-import inspect
-
+import os, sys
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
@@ -35,12 +33,14 @@ def main(ctx, env):
     ctx.obj['DETECTOR_NAME'] = os.getenv("DETECTOR_NAME")
 
 @main.command()
-@click.argument('tiers', nargs=-1)
 @click.option('--verbose','-v', type=bool, default=True)
-@click.option('--file','-f', type=str, default="", show_default='data file')
+@click.argument('file', nargs=-1)
 @click.pass_context
-def publish(ctx, tiers, file, verbose):
-    """ Publish a message using snews_pub
+def publish(ctx, file, verbose):
+    """ Publish a message using snews_pub, multiple files are allowed
+    Examples
+    --------
+    $: snews_pt publish my_json_message.json
 
     Notes
     -----
@@ -48,29 +48,16 @@ def publish(ctx, tiers, file, verbose):
     If no file is given it can still submit dummy messages with default values
     """
     click.clear()
-    tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
-                       'SigTier':snews_pt_utils.sig_tier_data(),
-                       'TimeTier':snews_pt_utils.time_tier_data(),
-                       'FalseOBS':snews_pt_utils.retraction_data(),
-                       'Heartbeat':snews_pt_utils.heartbeat_data()}
+    for f in file:
+        if f.endswith('.json'):
+            data = snews_pt_utils._parse_file(f)
+        else:
+            click.secho(f"Expected json file with .json format! Got {f}", fg='red', bold=True)
+            sys.exit()
 
-    tiers_list, names_list = snews_pt_utils._check_cli_request(tiers)
-    for Tier, name in zip(tiers_list, names_list):
-        click.secho(f'\nPublishing to {name}; ', bold=True, fg='bright_cyan')
-        # look for the data
-        if file != "":
-            data = snews_pt_utils._parse_file(file)
-        else:
-            # get default data for tier
-            data = tier_data_pairs[name]
-        if 'detector_name' in data.keys():
-            detector = data['detector_name']
-        else:
-            detector = ctx.obj['DETECTOR_NAME']
-        data['detector_name'] = detector
-        message = Tier(**data).message()
+        messages, names_list = snews_pt_utils._tier_decider(data)
         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-        pub.send(message)
+        pub.send(messages)
 
 
 @main.command()
@@ -87,45 +74,46 @@ def subscribe(ctx):
 
 @main.command()
 @click.argument('status', nargs=1)
-@click.option('--machine_time','-mt', type=str, help='`str`, optional  Time when the status was fetched')
+@click.option('--machine_time','-mt', type=str, default=None, help='`str`, optional  Time when the status was fetched')
 @click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
 @click.pass_context
-def heartbeat(ctx, status, machine_time, verbose):
-    """
-    Publish heartbeat messages. Recommended frequency is
-    every 3 minutes.
-    machine_time is optional, and each message is appended with a `sent_time`
-    passing machine_time allows for latency studies.
+# def heartbeat(ctx, status, machine_time, verbose):
+#     """
+#     Publish heartbeat messages. Recommended frequency is
+#     every 3 minutes.
+#     machine_time is optional, and each message is appended with a `sent_time`
+#     passing machine_time allows for latency studies.
 
-    USAGE: snews_pt heartbeat ON -mt '22/01/01 19:16:14'
+#     USAGE: snews_pt heartbeat ON -mt '22/01/01 19:16:14'
 
-    """
-    click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
-    message = Heartbeat(detector_name=ctx.obj['DETECTOR_NAME'], status=status, machine_time=machine_time).message()
-    pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-    pub.send(message)
+#     """
+#     click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
+#     message = Heartbeat(detector_name=ctx.obj['DETECTOR_NAME'], status=status, machine_time=machine_time).message()
+#     pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
+#     pub.send(message)
 
 
-@main.command()
-@click.option('--tier','-t', nargs=1, help='Name of tier you want to retract from')
-@click.option('--number','-n', type=int, default=1, help='Number of most recent message you want to retract')
-@click.option('--reason','-r', type=str, default='', help='Retraction reason')
-@click.option('--false_id', type=str, default='', help='Specific message ID to retract')
-@click.option('--verbose','-v', type=bool, default=True)
-@click.pass_context
-def retract(ctx, tier, number, reason, false_id, verbose):
-    """ Retract N latest message
-    """
-    _, name = snews_pt_utils._check_cli_request(tier)
-    tier = name[0]
-    click.secho(f'\nRetracting from {tier}; ', bold=True, fg='bright_magenta')
-    message = Retraction(detector_name=ctx.obj['DETECTOR_NAME'],
-                         which_tier=tier,
-                         n_retract_latest=number,
-                         false_mgs_id=false_id,
-                         retraction_reason=reason).message()
-    pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-    pub.send(message)
+# TODO: add retraction
+# @main.command()
+# @click.option('--tier','-t', nargs=1, help='Name of tier you want to retract from')
+# @click.option('--number','-n', type=int, default=1, help='Number of most recent message you want to retract')
+# @click.option('--reason','-r', type=str, default='', help='Retraction reason')
+# @click.option('--false_id', type=str, default='', help='Specific message ID to retract')
+# @click.option('--verbose','-v', type=bool, default=True)
+# @click.pass_context
+# def retract(ctx, tier, number, reason, false_id, verbose):
+#     """ Retract N latest message
+#     """
+#     _, name = snews_pt_utils._check_cli_request(tier)
+#     tier = name[0]
+#     click.secho(f'\nRetracting from {tier}; ', bold=True, fg='bright_magenta')
+#     message = Retraction(detector_name=ctx.obj['DETECTOR_NAME'],
+#                          which_tier=tier,
+#                          n_retract_latest=number,
+#                          false_mgs_id=false_id,
+#                          retraction_reason=reason).message()
+#     pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
+#     pub.send(message)
 
 @main.command()
 @click.argument('tier', nargs=1, default='all')
@@ -135,7 +123,7 @@ def message_schema(tier):
     Notes
     TODO: For some reason, the displayed keys are missing
     """
-    tier_data_pairs = {'CoincidenceTier':snews_pt_utils.coincidence_tier_data(),
+    tier_data_pairs = {'CoincidenceTier': snews_pt_utils.coincidence_tier_data(),
                        'SigTier':snews_pt_utils.sig_tier_data(),
                        'TimeTier':snews_pt_utils.time_tier_data(),
                        'FalseOBS':snews_pt_utils.retraction_data(),
@@ -152,7 +140,7 @@ def message_schema(tier):
     msg = msg_schema()
     for t in tier:
         data = tier_data_pairs[t]
-        all_data = msg.get_schema(t, data, 'foo')
+        all_data = msg.get_schema(t, data)
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
         for k, v in all_data.items():
             if k not in data.keys():

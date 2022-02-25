@@ -1,5 +1,6 @@
+from .snews_pt_utils import get_detector
+from ._version import version as __version__
 
-from .snews_pt_utils import TimeStuff, get_detector
 
 class Message_Schema:
     """ The Message scheme for the alert and observations
@@ -16,12 +17,12 @@ class Message_Schema:
 
     """
 
-    def __init__(self, env_path=None, detector_key='TEST'):
-        self.times = TimeStuff(env_path)
+    def __init__(self, env_path=None, detector_key='TEST', is_pre_sn=False):
         self.detector = get_detector(detector_key)
         self.detector_name = self.detector.name
+        self.is_pre_sn = is_pre_sn
 
-    def id_format(self, topic_type):
+    def id_format(self, tier, machine_time):
         """ Returns formatted message ID
             time format should always be same for all detectors.
             The heartbeats and observation messages have the 
@@ -31,37 +32,40 @@ class Message_Schema:
         ----------
         topic_state : `str`
             Can either be 'OBS', or  'ALERT'
-        topic_type : `str`
+        tier : `str`
             type of the message to be published. Can be;
             'TimeTier', 'SigTier', 'CoincidenceTier' for
             observation messages and, 'HeartBeat' for 
             heartbeat messages, and 'FalseOBS' for false
             observations.
+        is_pre_sn : 'bool'
+            Tell SNEWS whether signal is pre supernova
+        time_received :
 
         Returns
             :`str`
                 The formatted id as a string
 
         """
-        date_time = self.times.get_snews_time(fmt="%y/%m/%d_%H:%M:%S:%f")
+        if self.is_pre_sn:
+            return f'{self.detector.id}_PRE-SN_{tier}_{machine_time}'
+        else:
+            return f'{self.detector.id}_{tier}_{machine_time}'
 
-        return f'{self.detector.id}_{topic_type}_{date_time}'
-
-    def get_schema(self, message_type, data, sent_time):
+    def get_schema(self, tier, data, version=__version__):
         """ Create a message schema for given topic type.
             Internally called in hop_pub
 
             Parameters
             ----------
-            message_type : `str`
+            tier : `str`
                 type of the message to be published. Can be;
                 'TimeTier', 'SigTier', 'CoincidenceTier' for
                 observation messages and, 'HeartBeat' for
                 heartbeat messages
             data      : dict
                 dict object that contains message information.
-            sent_time : `str`
-                time as a string
+
 
             Returns
             -------
@@ -69,34 +73,32 @@ class Message_Schema:
                 message with the correct scheme 
 
         """
-        message = {"_id": self.id_format(topic_type=message_type),
+        message = {"_id": self.id_format(tier=tier, machine_time=data['machine_time']),
                    "detector_name": self.detector_name,
-                   "sent_time": sent_time,
                    "machine_time": data['machine_time'],
+                   "schema_version": version
                    }
-        if message_type == 'Heartbeat':
+        if tier == 'Heartbeat':
             message['detector_status'] = data['detector_status']
 
-        if message_type == 'TimeTier':
+        if tier == 'TimeTier':
             message['neutrino_time'] = data['neutrino_time']
             message['timing_series'] = data['timing_series']
             message['meta'] = data['meta']
 
-        if message_type == 'SigTier':
+        if tier == 'SigTier':
             message['neutrino_time'] = data['neutrino_time']
             message['p_values'] = data['p_values']
             message['meta'] = data['meta']
 
-        if message_type == 'CoincidenceTier':
+        if tier == 'CoincidenceTier':
             message['neutrino_time'] = data['neutrino_time']
-            message['p_value'] = data['p_value']
+            message['p_val'] = data['p_val']
             message['meta'] = data['meta']
 
-        if message_type == 'FalseOBS':
-            message['false_id'] = data['false_id']
+        if tier == 'Retraction':
             message['which_tier'] = data['which_tier']
             message['N_retract_latest'] = data['N_retract_latest']
-            message['which_tier'] = data['which_tier']
             message['retraction_reason'] = data['retraction_reason']
 
         if len(data.keys()) > len(message.keys()):
