@@ -119,11 +119,13 @@ def subscribe(ctx):
 
 @main.command()
 @click.argument('requested_tier', nargs=-1, default='all')
-def message_schema(tier):
+@click.pass_context
+def message_schema(ctx, requested_tier):
     """ Display the message format for `tier`, default 'all'
 
     """
-    snews_sets = ["_id", "detector_name", "schema_version"]
+    detector = ctx.obj['DETECTOR_NAME']
+    detector_str = click.style(detector, fg='yellow')
     tier_data_pairs = {'CoincidenceTier': (coincidence_tier_data, 'neutrino_time'),
                        'SigTier': (sig_tier_data, 'p_values'),
                        'TimeTier': (time_tier_data, 'timing_series'),
@@ -148,7 +150,7 @@ def message_schema(tier):
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
         click.secho(f"{'_id':<20s}:(SNEWS SETS)", fg='bright_red')
         click.secho(f"{'schema_version':<20s}:(SNEWS SETS)", fg='bright_red')
-        click.secho(f"{'detector_name':<20s}:(FETCHED FROM ENV/Mutable)", fg='red')
+        click.echo(click.style(f"{'detector_name':<20s}:(FETCHED FROM ENV {detector_str})", fg='red')
         for key in tier_keys.pop('meta'):
             if key == must_key:
                 click.secho(f'{key:<20s}:(User Input*)', fg='bright_cyan')
