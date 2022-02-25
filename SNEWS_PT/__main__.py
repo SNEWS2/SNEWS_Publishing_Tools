@@ -74,7 +74,7 @@ def subscribe(ctx):
 
 
 @main.command()
-@click.argument('requested_tier', nargs=-1, default='all')
+@click.argument('requested_tier', nargs=-1, default=['all'])
 @click.pass_context
 def message_schema(ctx, requested_tier):
     """ Display the message format for `tier`, default 'all'
@@ -93,12 +93,12 @@ def message_schema(ctx, requested_tier):
         for t in requested_tier:
             tier.append(snews_pt_utils._check_aliases(requested_tier))
     else:
-        if requested_tier.lower()=='all':
+        if requested_tier[0].lower()=='all':
             # display all formats
             tier = list(tier_data_pairs.keys())
         else:
             # check for aliases e.g. coinc = coincidence = CoinCideNceTier
-            tier = snews_pt_utils._check_aliases(requested_tier)
+            tier = snews_pt_utils._check_aliases(requested_tier[0])
 
     for t in tier:
         tier_keys = list(signature(tier_data_pairs[t][0]).parameters.keys()).pop('meta')
