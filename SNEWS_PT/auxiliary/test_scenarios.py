@@ -33,5 +33,5 @@ try:
         except KeyboardInterrupt:
             sys.exit()
 except Exception as e:
-        print("Something went wrong\n", e, "Try manually submitting messages :/")
-    pass
+    print("Something went wrong\n", e, "Try manually submitting messages :/")
+    
