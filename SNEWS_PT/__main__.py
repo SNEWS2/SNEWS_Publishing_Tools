@@ -100,13 +100,13 @@ def message_schema(ctx, requested_tier):
             tier = snews_pt_utils._check_aliases(requested_tier)
 
     for t in tier:
-        tier_keys = list(signature(tier_data_pairs[t][0]).parameters.keys())
+        tier_keys = list(signature(tier_data_pairs[t][0]).parameters.keys()).pop('meta')
         must_key = tier_data_pairs[t][1]
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
         click.secho(f"{'_id':<20s}:(SNEWS SETS)", fg='bright_red')
         click.secho(f"{'schema_version':<20s}:(SNEWS SETS)", fg='bright_red')
         click.echo(click.style(f"{'detector_name':<20s}:(FETCHED FROM ENV {detector_str})", fg='red')
-        for key in tier_keys.pop('meta'):
+        for key in tier_keys:
             if key == must_key:
                 click.secho(f'{key:<20s}:(User Input*)', fg='bright_cyan')
             else:
