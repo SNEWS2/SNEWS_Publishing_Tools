@@ -105,7 +105,7 @@ def message_schema(ctx, requested_tier):
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
         click.secho(f"{'_id':<20s}:(SNEWS SETS)", fg='bright_red')
         click.secho(f"{'schema_version':<20s}:(SNEWS SETS)", fg='bright_red')
-        click.echo(click.style(f"{'detector_name':<20s}:(FETCHED FROM ENV {detector_str})", fg='red')
+        click.echo(click.style(f"{'detector_name':<20s}:(FETCHED FROM ENV {detector_str})", fg='red'))
         for key in tier_keys:
             if key == must_key:
                 click.secho(f'{key:<20s}:(User Input*)', fg='bright_cyan')
