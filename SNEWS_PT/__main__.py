@@ -13,6 +13,7 @@ from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
 from .snews_pt_utils import retraction_data, heartbeat_data
 import click
 import os, sys
+from inspect import signature
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
