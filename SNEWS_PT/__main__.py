@@ -12,6 +12,8 @@ from . import snews_pt_utils
 from .snews_pub import Publisher
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
+from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
+from .snews_pt_utils import retraction_data, heartbeat_data
 import click
 import os, sys
 
@@ -72,11 +74,11 @@ def subscribe(ctx):
         pass
 
 
-@main.command()
-@click.argument('status', nargs=1)
-@click.option('--machine_time','-mt', type=str, default=None, help='`str`, optional  Time when the status was fetched')
-@click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
-@click.pass_context
+# @main.command()
+# @click.argument('status', nargs=1)
+# @click.option('--machine_time','-mt', type=str, default=None, help='`str`, optional  Time when the status was fetched')
+# @click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
+# @click.pass_context
 # def heartbeat(ctx, status, machine_time, verbose):
 #     """
 #     Publish heartbeat messages. Recommended frequency is
@@ -116,38 +118,44 @@ def subscribe(ctx):
 #     pub.send(message)
 
 @main.command()
-@click.argument('tier', nargs=1, default='all')
+@click.argument('requested_tier', nargs=-1, default='all')
 def message_schema(tier):
     """ Display the message format for `tier`, default 'all'
 
-    Notes
-    TODO: For some reason, the displayed keys are missing
     """
-    tier_data_pairs = {'CoincidenceTier': snews_pt_utils.coincidence_tier_data(),
-                       'SigTier':snews_pt_utils.sig_tier_data(),
-                       'TimeTier':snews_pt_utils.time_tier_data(),
-                       'FalseOBS':snews_pt_utils.retraction_data(),
-                       'Heartbeat':snews_pt_utils.heartbeat_data()}
+    snews_sets = ["_id", "detector_name", "schema_version"]
+    tier_data_pairs = {'CoincidenceTier': (coincidence_tier_data, 'neutrino_time'),
+                       'SigTier': (sig_tier_data, 'p_values'),
+                       'TimeTier': (time_tier_data, 'timing_series'),
+                       'FalseOBS': (retraction_data, 'n_retract_latest'),
+                       'Heartbeat': (heartbeat_data, 'detector_status')}
 
-    if tier.lower()=='all':
-        # display all formats
-        tier = list(tier_data_pairs.keys())
+    if len(requested_tier)>1:
+        tier = []
+        for t in requested_tier:
+            tier.append(snews_pt_utils._check_aliases(requested_tier))
     else:
-        # check for aliases e.g. coinc = coincidence = CoinCideNceTier
-        tier = snews_pt_utils._check_aliases(tier)
+        if requested_tier.lower()=='all':
+            # display all formats
+            tier = list(tier_data_pairs.keys())
+        else:
+            # check for aliases e.g. coinc = coincidence = CoinCideNceTier
+            tier = snews_pt_utils._check_aliases(requested_tier)
 
-    # get message format for given tier(s)
-    msg = msg_schema()
     for t in tier:
-        data = tier_data_pairs[t]
-        all_data = msg.get_schema(t, data)
+        tier_keys = list(signature(tier_data_pairs[t][0]).parameters.keys())
+        must_key = tier_data_pairs[t][1]
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
-        for k, v in all_data.items():
-            if k not in data.keys():
-                click.secho(f'{k:<20s}:(SNEWS SETS)', fg='bright_red')
+        click.secho(f"{'_id':<20s}:(SNEWS SETS)", fg='bright_red')
+        click.secho(f"{'schema_version':<20s}:(SNEWS SETS)", fg='bright_red')
+        click.secho(f"{'detector_name':<20s}:(FETCHED FROM ENV/Mutable)", fg='red')
+        for key in tier_keys.pop('meta'):
+            if key == must_key:
+                click.secho(f'{key:<20s}:(User Input*)', fg='bright_cyan')
             else:
-                click.secho(f'{k:<20s}:(User Input)', fg='bright_cyan')
-        click.echo()
+                click.secho(f'{key:<20s}:(User Input)', fg='bright_cyan')
+        click.secho(f"{'**kwargs':<20s}:(APPENDED AS 'META')\n", fg='red')
+        
 
 @main.command()
 def run_scenarios():

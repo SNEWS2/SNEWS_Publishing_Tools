@@ -294,7 +294,6 @@ def _tier_decider(data:dict, env_file=None) -> tuple:
     # this import has to be here, otherwise crashes due to circular import
     from .message_schema import Message_Schema
 
-
     # set environment and assign detector name & pre SN flag
     set_env(env_file)
     data["is_pre_sn"] = data.get("is_pre_sn", False)
