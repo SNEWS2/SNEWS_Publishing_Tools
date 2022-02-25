@@ -58,7 +58,7 @@ setup(
     description='An alert application for observing supernovas.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/SNEWS2/SNEWS_PT',
+    url='https://github.com/SNEWS2/SNEWS_Publishing_Tools',
     author='Sebastian Torres-Lara, Melih Kara',
     author_email='sebastiantorreslara17@gmail.com, karamel.itu@gmail.com',
     license='BSD 3-Clause',
