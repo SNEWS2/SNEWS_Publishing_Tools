@@ -76,7 +76,6 @@ class Message_Schema:
         message = {"_id": self.id_format(tier=tier, machine_time=data['machine_time']),
                    "detector_name": self.detector_name,
                    "machine_time": data['machine_time'],
-                   "schema_version": version
                    }
         if tier == 'Heartbeat':
             message['detector_status'] = data['detector_status']
@@ -105,5 +104,7 @@ class Message_Schema:
             for key in data.keys():
                 if key not in message.keys():
                     message['_extra_' + key] = data[key]
+
+        message["schema_version"] = version
 
         return message
