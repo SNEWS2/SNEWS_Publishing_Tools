@@ -32,13 +32,6 @@ try:
 
         except KeyboardInterrupt:
             sys.exit()
-except:
-#     print('Something went wrong')
-    # with Publisher() as pub:
-    #     for i, (scenario, dicts) in enumerate(data.items()):
-    #         input('Hit enter to run next scenario')
-    #         click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
-    #         for msg in dicts:
-    #             message = CoincidenceTier(**msg).message()
-    #             pub.send(message)
-    pass
+except Exception as e:
+    print("Something went wrong\n", e, "Try manually submitting messages :/")
+    

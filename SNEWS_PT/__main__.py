@@ -1,9 +1,6 @@
 """ CLI for snews_pt
-    Right now publish method does not allow extra arguments.
-    While this might be the desired use. I think it should not fail to publish, rather
-    - either mark the extra columns and publish, or
-    - split these columns, publish the fixed template, and report back to user.
-    Manipulations in the publish class can be made see
+    
+    Notes to dev team
     https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
 """
 
@@ -12,8 +9,11 @@ from . import snews_pt_utils
 from .snews_pub import Publisher
 from .snews_sub import Subscriber
 from .message_schema import Message_Schema as msg_schema
+from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
+from .snews_pt_utils import retraction_data, heartbeat_data
 import click
 import os, sys
+from inspect import signature
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
@@ -31,6 +31,7 @@ def main(ctx, env):
     snews_pt_utils.set_env(env_path)
     ctx.obj['env'] = env
     ctx.obj['DETECTOR_NAME'] = os.getenv("DETECTOR_NAME")
+
 
 @main.command()
 @click.option('--verbose','-v', type=bool, default=True)
@@ -73,10 +74,67 @@ def subscribe(ctx):
 
 
 @main.command()
-@click.argument('status', nargs=1)
-@click.option('--machine_time','-mt', type=str, default=None, help='`str`, optional  Time when the status was fetched')
-@click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
+@click.argument('requested_tier', nargs=-1)
 @click.pass_context
+def message_schema(ctx, requested_tier):
+    """ Display the message format for `tier` if 'all'
+        displays everything
+
+    """
+    detector = ctx.obj['DETECTOR_NAME']
+    detector_str = click.style(detector, fg='yellow')
+    tier_data_pairs = {'CoincidenceTier': (coincidence_tier_data, 'neutrino_time'),
+                       'SigTier': (sig_tier_data, 'p_values'),
+                       'TimeTier': (time_tier_data, 'timing_series'),
+                       'FalseOBS': (retraction_data, 'n_retract_latest'),
+                       'Heartbeat': (heartbeat_data, 'detector_status')}
+
+    if len(requested_tier)>1:
+        tier = []
+        for t in requested_tier:
+            tier.append(snews_pt_utils._check_aliases(requested_tier))
+    else:
+        if requested_tier[0].lower()=='all':
+            # display all forma
+            tier = list(tier_data_pairs.keys())
+        else:
+            # check for aliases e.g. coinc = coincidence = CoinCideNceTier
+            tier = snews_pt_utils._check_aliases(requested_tier[0])
+
+    for t in tier:
+        tier_keys = list(signature(tier_data_pairs[t][0]).parameters.keys()).pop('meta')
+        must_key = tier_data_pairs[t][1]
+        click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
+        click.secho(f"{'_id':<20s}:(SNEWS SETS)", fg='bright_red')
+        click.secho(f"{'schema_version':<20s}:(SNEWS SETS)", fg='bright_red')
+        click.echo(click.style(f"{'detector_name':<20s}:(FETCHED FROM ENV {detector_str})", fg='red'))
+        for key in tier_keys:
+            if key == must_key:
+                click.secho(f'{key:<20s}:(User Input*)', fg='bright_cyan')
+            else:
+                click.secho(f'{key:<20s}:(User Input)', fg='bright_cyan')
+        click.secho(f"{'**kwargs':<20s}:(APPENDED AS 'META')\n", fg='red')
+        
+
+@main.command()
+def run_scenarios():
+    """
+    """
+    base = os.path.dirname(os.path.realpath(__file__))
+    path = os.path.join(base, 'auxiliary/test_scenarios.py')
+    os.system(f'python3 {path}')
+
+if __name__ == "__main__":
+    main()
+
+
+# `publish` method can handle both heartbeat and retraction. 
+# Not sure if we need another convenience method
+# @main.command()
+# @click.argument('status', nargs=1)
+# @click.option('--machine_time','-mt', type=str, default=None, help='`str`, optional  Time when the status was fetched')
+# @click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
+# @click.pass_context
 # def heartbeat(ctx, status, machine_time, verbose):
 #     """
 #     Publish heartbeat messages. Recommended frequency is
@@ -93,7 +151,6 @@ def subscribe(ctx):
 #     pub.send(message)
 
 
-# TODO: add retraction
 # @main.command()
 # @click.option('--tier','-t', nargs=1, help='Name of tier you want to retract from')
 # @click.option('--number','-n', type=int, default=1, help='Number of most recent message you want to retract')
@@ -114,48 +171,3 @@ def subscribe(ctx):
 #                          retraction_reason=reason).message()
 #     pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
 #     pub.send(message)
-
-@main.command()
-@click.argument('tier', nargs=1, default='all')
-def message_schema(tier):
-    """ Display the message format for `tier`, default 'all'
-
-    Notes
-    TODO: For some reason, the displayed keys are missing
-    """
-    tier_data_pairs = {'CoincidenceTier': snews_pt_utils.coincidence_tier_data(),
-                       'SigTier':snews_pt_utils.sig_tier_data(),
-                       'TimeTier':snews_pt_utils.time_tier_data(),
-                       'FalseOBS':snews_pt_utils.retraction_data(),
-                       'Heartbeat':snews_pt_utils.heartbeat_data()}
-
-    if tier.lower()=='all':
-        # display all formats
-        tier = list(tier_data_pairs.keys())
-    else:
-        # check for aliases e.g. coinc = coincidence = CoinCideNceTier
-        tier = snews_pt_utils._check_aliases(tier)
-
-    # get message format for given tier(s)
-    msg = msg_schema()
-    for t in tier:
-        data = tier_data_pairs[t]
-        all_data = msg.get_schema(t, data)
-        click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
-        for k, v in all_data.items():
-            if k not in data.keys():
-                click.secho(f'{k:<20s}:(SNEWS SETS)', fg='bright_red')
-            else:
-                click.secho(f'{k:<20s}:(User Input)', fg='bright_cyan')
-        click.echo()
-
-@main.command()
-def run_scenarios():
-    """
-    """
-    base = os.path.dirname(os.path.realpath(__file__))
-    path = os.path.join(base, 'test/test_scenarios.py')
-    os.system(f'python3 {path}')
-
-if __name__ == "__main__":
-    main()
