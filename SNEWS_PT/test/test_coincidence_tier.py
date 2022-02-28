@@ -7,8 +7,8 @@ def test_coincidence_expected():
     coin = SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time='12/06/09 15:31:08:1098', p_value=0.4)
     # Check that message has expected structure.
     assert coin.tiernames == ['CoincidenceTier']
-    assert coin.args_dict == {'detector_name': 'KamLAND', 'neutrino_time': '12/06/09 15:31:08:1098', 'p_value': 0.4, 'is_pre_sn': False}
-    assert coin.messages == [{'_id': '4_CoincidenceTier_None', 'detector_name': 'KamLAND', 'machine_time': None, 'schema_version': '1.0.1', 'neutrino_time': '12/06/09 15:31:08:1098', 'p_val': None, 'meta': {'p_value': 0.4}}]
+    assert coin.message_data == {'detector_name': 'KamLAND', 'machine_time': None, 'neutrino_time': '12/06/09 15:31:08:1098', 'p_val': None, 'p_values': None, 'timing_series': None, 'which_tier': None, 'n_retract_latest': None, 'retraction_reason': None, 'detector_status': None, 'is_pre_sn': False, 'p_value': 0.4}
+    assert coin.messages == [{'_id': '4_CoincidenceTier_None', 'detector_name': 'KamLAND', 'machine_time': None, 'neutrino_time': '12/06/09 15:31:08:1098', 'p_val': None, 'meta': {'p_value': 0.4}, 'schema_version': '1.0.1'}]
     assert coin.env_file == None
     # Try to send message to SNEWS 2.0 server.
     try:
