@@ -39,7 +39,7 @@ detector_name     (user input)
 sent_time           
 machine_time      (user input)    
 neutrino_time     (user input)     
-p_value           (user input)    
+p_val             (user input)    
 ````
 
 ### Significance Tier
@@ -84,25 +84,31 @@ First you need to import Publisher and your desired Observation class:
 
 ````Python
 # Import the constructor for SNEWS Tiers and Publisher class
-from SNEWS_PT.snews_pub import Publisher, SNEWSTiers
+from SNEWS_PT.snews_pub import SNEWSTiersPublisher
 ````
-
+### Passing Message Parameters as Arguments. 
 To send a message you need initialize the ``Publisher``, construct your message by initializing ``SNEWSTiers`` and
 passing your parameters of choice. The backend will parse your arguments, check their data types and determine which
 tiers you can send a message to (see **Publishing Protocols**). If you pass multiple parameters (_see code bellow_) the
 sender will send a message *all* the appropriate tiers.
 
 ```Python
-with Publisher() as pub:
-    messages = SNEWSTiers(detector_name='KamLAND', timing_series=['4:31:05:565', '4:31:05:575', '4:31:05:585'],
-                          p_value=0.000007, machine_time='22/02/08 4:31:08:565', ).determine_tier()
-    pub.send(messages)
+
+SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time='22/02/28 4:31:08:565',
+                        timing_series=['22/02/28 4:31:08:565', '22/02/28 4:31:08:765', '22/02/28 4:31:09:001'],
+                        p_val=0.000007, machine_time='22/02/28 4:31:08:565', 
+                        ).send_to_snews()
 ```
 
-This instance has parameters for **CoincidenceTier** and **TimingTier**, thus it will send a message to both. The output should look like this:
-![img_1.png](img_1.png)
+This instance has parameters for **CoincidenceTier** and **TimingTier**, thus it will send a message to both. The output
+should look like this:
+![img.png](img.png)!
 
-See this [`examples notebook`](./examples.ipynb) for more tutorial scripts
+
+### Passing Message Parameters from JSON File.
+
+
+***See this [`examples notebook`](./examples.ipynb) for more tutorial scripts***
 
 ### Publishing Protocols
 
@@ -124,6 +130,7 @@ See this [`examples notebook`](./examples.ipynb) for more tutorial scripts
     * ``timing_series`` must be a ``list (string)``, format: ``'%y/%m/%d %H:%M:%S'``
 
 **Retraction**
+
 * ``n_retract_latest`` and ``which`` need to be passed.
     * ``n_retract_latest`` must be a ``int (and >0 )``. You can also pass it as a ``'ALL'``.
     * ``which_tier`` must be a ``which_tier``, format: ``'%y/%m/%d %H:%M:%S'``
