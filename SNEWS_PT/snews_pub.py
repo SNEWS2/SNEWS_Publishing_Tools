@@ -130,7 +130,7 @@ class SNEWSTiersPublisher:
                 'ON'
                 'OFF'
          is_pre_sn: bool
-            Set to True if your detector saw a pre-SN event, defaults to False. 
+            Set to True if your detector saw a pre-SN event, defaults to False.
          kwargs:
             extra stuff you want to send to SNEWS
         """
