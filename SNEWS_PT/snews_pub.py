@@ -134,7 +134,7 @@ class SNEWSTiersPublisher:
          kwargs:
             extra stuff you want to send to SNEWS
         """
-        self.params = {'detector_name': detector_name, 'machine_time': machine_time,
+        self.message_data = {'detector_name': detector_name, 'machine_time': machine_time,
                        'neutrino_time': neutrino_time,
                        'p_val': p_val,
                        'p_values': p_values,
@@ -145,7 +145,7 @@ class SNEWSTiersPublisher:
                        'detector_status': detector_status,
                        'is_pre_sn': is_pre_sn, }
         self.meta = dict(**kwargs)
-        self.message_data = {**self.params, **self.meta}
+        self.message_data['meta'] = self.meta
         self.env_file = env_file
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, env_file)
 
