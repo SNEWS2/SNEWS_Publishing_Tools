@@ -80,7 +80,7 @@ sent_time
 
 Before we get started, right now the publishing method will send your message to the test kafka server.
 
-First you need to import Publisher and your desired Observation class:
+First you need to import your Publisher:
 
 ````Python
 # Import the constructor for SNEWS Tiers and Publisher class
@@ -95,9 +95,9 @@ sender will send a message *all* the appropriate tiers.
 ```Python
 
 SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time='22/02/28 4:31:08:565',
-                        timing_series=['22/02/28 4:31:08:565', '22/02/28 4:31:08:765', '22/02/28 4:31:09:001'],
-                        p_val=0.000007, machine_time='22/02/28 4:31:08:565', 
-                        ).send_to_snews()
+                    timing_series=['22/02/28 4:31:08:565', '22/02/28 4:31:08:765', '22/02/28 4:31:09:001'],
+                    p_val=0.000007, machine_time='22/02/28 4:31:08:565', 
+                    ).send_to_snews()
 ```
 
 This instance has parameters for **CoincidenceTier** and **TimingTier**, thus it will send a message to both. The output
@@ -106,6 +106,21 @@ should look like this:
 
 
 ### Passing Message Parameters from JSON File.
+
+You can also pass your input from a json file, and make modifications on the spot. Let's first create an `observation` object this time before sending it to snews;
+
+```
+observation = SNEWSTiersPublisher.from_json('my_input_asjson.json', 
+                                            detector_name='XENONnT', 
+                                            comment="This is submitted from a json file")
+```
+Here, we read the content from the `'my_input_asjson.json'` file, and overwrite `detector_name` and also add a comment field (which will be accepted as a meta data). Notice we still haven't sent it to snews yet. You can display, and modify the _parsed messages_ after you create the object instance. Depending on the fields you provided `SNEWSTierPublisher` will decide where to submit your data (see above). You can see these tier(s) and the individual message contents. See, `observation.tiernames` to get names of the tiers that your input message belongs, and `observation.messages` to display their content, and modify if desired.
+
+Once you are done, you can just send that `observation` object to snews.
+
+```
+observation.send_to_snews()
+```
 
 
 ***See this [`examples notebook`](./examples.ipynb) for more tutorial scripts***
@@ -140,6 +155,8 @@ should look like this:
 * ``is_pre_sn`` and ``timing_series`` need to be passed.
     * ``is_pre_sn`` must be a ``bool``.
     * ``timing_series`` must be a ``list (string)``, format: ``'%y/%m/%d %H:%M:%S'``
+
+Notice that your message can contain fields that corresponds to several tiers e.g. if you have ``p_value``, ``neutrino_time``, and ``p_values`` we submit two separate messages to _Coincidence_ and _Significance_ tiers by selecting the relevant fields from your input.
 
 ## How to Subscribe
 
