@@ -53,8 +53,7 @@ def publish(ctx, file, verbose):
         if f.endswith('.json'):
             data = snews_pt_utils._parse_file(f)
         else:
-            click.secho(f"Expected json file with .json format! Got {f}", fg='red', bold=True)
-            sys.exit()
+            raise TypeError(f"Expected json file with .json format! Got {f}")
 
         messages, names_list = snews_pt_utils._tier_decider(data)
         pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))

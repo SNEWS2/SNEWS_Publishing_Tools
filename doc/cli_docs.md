@@ -15,10 +15,8 @@ Options:
   --help      Show this message and exit.
 
 Commands:
-  heartbeat       Publish heartbeat messages.
   message-schema  Display the message format for `tier`, default 'all'
   publish         Publish a message using snews_pub
-  retract         Retract N latest message
   subscribe       Subscribe to Alert topic 
 ```
 The main command `snews_pt` serves an entry point. It is also possible to set an _environment_ by passing it to this with any other command. 
@@ -56,32 +54,24 @@ or you can simply call `snews_pt message-schema` without any positional argument
 ---
 
 ## Publishing Observation Messages
-User can publish observation messages to one of the 'CoincidenceTier', 'TimeTier', or 'SigTier'. It is also possible to publish _Heartbeat_ and _Retraction_ messages, see respective section below.
+User can publish json format observation messages to 'CoincidenceTier', 'TimeTier', or 'SigTier'. It is also possible to publish _Heartbeat_ and _Retraction_ messages.
+The tiers are decided based on the content of the input. Several `json` files are allowed
 
-To publish one or more tier user can request arbitrary number of tiers in one line
 ```bash
-(venv) User$: snews_pt publish coincidence time time significance s
+(venv) User$: snews_pt publish "myjsonfile.json" "mysecondfile.json"
 ```
-The `publish` tool takes all the request and queries known aliases e.g. `s` is accepted as `SignificanceTier`, and returns a list of unique requested tiers.<br>
-Without any additional _options_ this by default publishes a dummy observation to each of the requested tiers with their required data fields.
+The `publish` tool takes these json files and passed them to the `SNEWSTierPublisher` instance from the `snews_pub` module. As a result, the input file(s) are parsed and the tiers are determined. Next, the message content is created for these respective tier(s) and sent to snews subsequently. 
 
-For a more realistic case, we would want to submit a message that is saved by our experiment as a _json_ file. This can be passed with a `--file` (or `-f`) flag.
-```bash
-(venv) User$: snews_pt publish coincidence -f my_coincidence_message.json
-```
-There are several dummy examples [here](../test/) that can be used as a reference. In principle, SNEWS only accept specific fields (see `snews_pt message-schema`), however the tools does not fail if you provide additional arguments. It kindly warns you about them and publishes the remaining parts.
+There are several dummy json examples [here](../test/) that can be used as a reference. Should you have key-value pairs that do not belong to any tier (see `snews_pt message-schema`), these are passed under `meta` field.
 
 Try publishing the following file which contains an `extra_key` field.
 ```bash
-(venv) User$: snews_pt publish coincidence -f SNEWS_PT/test/test_coincidence_tier_message.json
+(venv) User$: snews_pt publish SNEWS_PT/test/test_coincidence_tier_message.json
 ```
 
 It should give the following
 ```bash
-Requested tiers are;
-                > CoincidenceTier
 Publishing to CoincidenceTier;
-extra_key not a valid key for CoincidenceTier
 ---------------------------------------------------------
 _id                 :0_CoincidenceTier_22/01/01_20:19:06:356690
 detector_name       :TEST
@@ -89,29 +79,20 @@ sent_time           :22/01/01 20:19:06
 machine_time        :test machine time
 neutrino_time       :test nu time
 p_value             :test p-values 
+meta                :{'extra_key':'extra_value'}
 ```
 ----
 
-## Publishing Heartbeat messages
+## Publishing Heartbeat and Retraction messages
 
-`snews_pt heartbeat`  can be used to publish heartbeat messages. It is up to the user to invoke this function with a desired frequency, however it is recommended to publish heartbeats consistently and with couple of minutes intervals.
+Similar to the observation messages heartbeat and retraction messages can be passed using a json file with the `snews_pt publish` command. In the next version, we are planning to provide more convenient tools for them.
 
-The `heartbeat` command takes a `status` argument which can either be 'ON' or 'OFF'. 
-Additionaly, `machine_time` can be passed using `--machine_time` (`-mt`) flag as a string. Each heartbeat message is appended with a `sent_time`, if machine time is also provided, the latency can be tracked.
+## Run Scenarios (Testing Only)
 
-```bash
-(venv) User$: snews_pt heartbeat ON -mt '22/01/01 20:19:06' --verbose False
-```
----
+We also have a simple interface to invoke several different coincidences using `snews_pt run-scenarios` command. When executed, it prompts a screen with several pre-designed coincidence scenarios from which user can select by clicking _right arrow key_ when on the scenario, and entering. This will submit the messages within that scenario and then clear the cache. If the coincidence system is running in the given test topic, these scenarios should trigger different types of alerts, and these alerts should be received in the _subscribed_ terminal. 
 
-## Retraction Messages
+Notice that this is only for development and testing purposes and clears the cache after each scenario execution. This will not be a part of the actual snews topic.
 
-It can happen that user publishes a message by accident or with wrong input. In these cases `snews_pt` allows for retraction messages. <br>
-While the specific message id can be passed, it is also possible to publish a retraction message for the last `n` number of messages. This
-
-```bash
-(venv) User$: snews_pt retract --tier Coinc -n 3 --reason 'daq failure' 
-```
 
 
 

@@ -9,8 +9,7 @@ Options:
   --help      Show this message and exit.
 
 Commands:
-  heartbeat       Publish heartbeat messages.
   message-schema  Display the message format for `tier`, default 'all'
   publish         Publish a message using snews_pub
-  retract         Retract N latest message
   subscribe       Subscribe to Alert topic
+  run-scenarios   Test different coincidence scenarios 
