@@ -286,7 +286,7 @@ def _check_aliases(tier):
     return [tier]
 
 
-def _tier_decider(data:dict, env_file=None) -> tuple:
+def _tier_decider(data, env_file=None):
     """ Decide on the tier(s) or commands (Heartbeat/Retraction)
         Based on the content of the message
 
