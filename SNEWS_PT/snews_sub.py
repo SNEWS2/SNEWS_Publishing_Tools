@@ -97,5 +97,7 @@ class Subscriber:
                     display(message)
                     if _yield:
                         yield message
+                    else:
+                        continue
         except KeyboardInterrupt:
             click.secho('Done', fg='green')
