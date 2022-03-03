@@ -8,11 +8,10 @@ from . import __version__
 from . import snews_pt_utils
 from .snews_pub import Publisher
 from .snews_sub import Subscriber
-from .message_schema import Message_Schema as msg_schema
 from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
 from .snews_pt_utils import retraction_data, heartbeat_data
 import click
-import os, sys
+import os
 from inspect import signature
 
 @click.group(invoke_without_command=True)
@@ -101,10 +100,10 @@ def message_schema(ctx, requested_tier):
     if len(requested_tier)>1:
         tier = []
         for t in requested_tier:
-            tier.append(snews_pt_utils._check_aliases(requested_tier))
+            tier.append(snews_pt_utils._check_aliases(t))
     else:
         if requested_tier[0].lower()=='all':
-            # display all forma
+            # display all
             tier = list(tier_data_pairs.keys())
         else:
             # check for aliases e.g. coinc = coincidence = CoinCideNceTier
@@ -136,48 +135,3 @@ def run_scenarios():
 
 if __name__ == "__main__":
     main()
-
-
-# `publish` method can handle both heartbeat and retraction. 
-# Not sure if we need another convenience method
-# @main.command()
-# @click.argument('status', nargs=1)
-# @click.option('--machine_time','-mt', type=str, default=None, help='`str`, optional  Time when the status was fetched')
-# @click.option('--verbose','-v', type=bool, default=True, help='Whether to display the output, default is True')
-# @click.pass_context
-# def heartbeat(ctx, status, machine_time, verbose):
-#     """
-#     Publish heartbeat messages. Recommended frequency is
-#     every 3 minutes.
-#     machine_time is optional, and each message is appended with a `sent_time`
-#     passing machine_time allows for latency studies.
-
-#     USAGE: snews_pt heartbeat ON -mt '22/01/01 19:16:14'
-
-#     """
-#     click.secho(f'\nPublishing to Heartbeat; ', bold=True, fg='bright_cyan')
-#     message = Heartbeat(detector_name=ctx.obj['DETECTOR_NAME'], status=status, machine_time=machine_time).message()
-#     pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-#     pub.send(message)
-
-
-# @main.command()
-# @click.option('--tier','-t', nargs=1, help='Name of tier you want to retract from')
-# @click.option('--number','-n', type=int, default=1, help='Number of most recent message you want to retract')
-# @click.option('--reason','-r', type=str, default='', help='Retraction reason')
-# @click.option('--false_id', type=str, default='', help='Specific message ID to retract')
-# @click.option('--verbose','-v', type=bool, default=True)
-# @click.pass_context
-# def retract(ctx, tier, number, reason, false_id, verbose):
-#     """ Retract N latest message
-#     """
-#     _, name = snews_pt_utils._check_cli_request(tier)
-#     tier = name[0]
-#     click.secho(f'\nRetracting from {tier}; ', bold=True, fg='bright_magenta')
-#     message = Retraction(detector_name=ctx.obj['DETECTOR_NAME'],
-#                          which_tier=tier,
-#                          n_retract_latest=number,
-#                          false_mgs_id=false_id,
-#                          retraction_reason=reason).message()
-#     pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-#     pub.send(message)
