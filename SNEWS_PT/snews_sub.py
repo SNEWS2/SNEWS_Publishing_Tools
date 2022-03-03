@@ -95,5 +95,6 @@ class Subscriber:
                     save_message(message)
                     snews_pt_utils.display_gif()
                     display(message)
+                    yield message
         except KeyboardInterrupt:
             click.secho('Done', fg='green')

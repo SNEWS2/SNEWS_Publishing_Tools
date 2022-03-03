@@ -61,13 +61,21 @@ def publish(ctx, file, verbose):
 
 
 @main.command()
+@click.option('--plugin','-p', type='str', default="None")
 @click.pass_context
-def subscribe(ctx):
+def subscribe(ctx, plugin):
     """ Subscribe to Alert topic
+        Optionally, `plugin` script can be passed
+        The message content as a single dictionary will be passed to 
+        this script as a positional argument.
+        dictionary follows the snews_alert message schema
+
     """
     sub = Subscriber(ctx.obj['env'])
     try:
-        sub.subscribe()
+        alert_message = sub.subscribe()
+        if plugin != "None":
+            os.system(f"python {plugin} {alert_message}")
     except KeyboardInterrupt:
         pass
 
