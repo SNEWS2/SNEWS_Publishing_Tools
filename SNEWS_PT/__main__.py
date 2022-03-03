@@ -61,7 +61,7 @@ def publish(ctx, file, verbose):
 
 
 @main.command()
-@click.option('--plugin','-p', type='str', default="None")
+@click.option('--plugin', '-p', type=str, default="None")
 @click.pass_context
 def subscribe(ctx, plugin):
     """ Subscribe to Alert topic
