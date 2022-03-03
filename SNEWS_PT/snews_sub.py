@@ -75,7 +75,7 @@ class Subscriber:
         self.snews_time = lambda: self.times.get_snews_time()
 
 
-    def subscribe(self, _yield=False):
+    def subscribe(self):
         ''' Subscribe and listen to a given topic
 
         Parameters
@@ -99,7 +99,7 @@ class Subscriber:
             click.secho('Done', fg='green')
 
 
-    def subscribe_and_redirect_alert(self, _yield=False):
+    def subscribe_and_redirect_alert(self):
         ''' subscribe generator
         '''
         click.echo('You are subscribing to ' +
