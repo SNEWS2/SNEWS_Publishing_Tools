@@ -102,7 +102,7 @@ def message_schema(ctx, requested_tier):
 
     for t in tier:
         tier_keys = list(signature(tier_data_pairs[t][0]).parameters.keys())
-        tier_keys.pop(tier_keys('meta'))
+        tier_keys.pop(tier_keys.index('meta'))
         must_key = tier_data_pairs[t][1]
         click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
         click.secho(f"{'_id':<20s}:(SNEWS SETS)", fg='bright_red')
