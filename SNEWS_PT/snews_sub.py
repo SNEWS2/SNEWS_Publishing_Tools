@@ -95,9 +95,25 @@ class Subscriber:
                     save_message(message)
                     snews_pt_utils.display_gif()
                     display(message)
-                    if _yield:
-                        yield message
-                    else:
-                        continue
+        except KeyboardInterrupt:
+            click.secho('Done', fg='green')
+
+
+    def subscribe_and_redirect_alert(self, _yield=False):
+        ''' subscribe generator
+        '''
+        click.echo('You are subscribing to ' +
+                   click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
+                   click.style(f'{ self.alert_topic}', bg='green'))
+
+        # Initiate hop_stream
+        stream = Stream(until_eos=False)
+        try:
+            with stream.open(self.alert_topic, "r") as s:
+                for message in s:
+                    save_message(message)
+                    snews_pt_utils.display_gif()
+                    display(message)
+                    yield message
         except KeyboardInterrupt:
             click.secho('Done', fg='green')

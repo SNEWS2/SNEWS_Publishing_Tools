@@ -73,11 +73,11 @@ def subscribe(ctx, plugin):
     """
     sub = Subscriber(ctx.obj['env'])
     try:
-        if plugin != "None":
-            for alert_message in sub.subscribe(_yield=True):
+        if plugin != "None":     
+            for alert_message in subscribe_and_redirect_alert():   
                 os.system(f"python {plugin} {alert_message}")
         else:
-            sub.subscribe()
+            sub.subscribe()             
     except KeyboardInterrupt:
         pass
 
