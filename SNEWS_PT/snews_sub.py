@@ -3,29 +3,27 @@ import os, json, click
 from hop import Stream
 from . import snews_pt_utils
 
+def make_file(outputfolder):
+    """ Get a proper json file name at a given folder
+    """
+    os.makedirs(outputfolder, exist_ok=True)
+    S = Subscriber()
+    file = os.path.join(outputfolder, f"0_{S.times.get_date()}_ALERTS.json")
+    # if file exists make a new
+    # TODO: do it properly
+    if os.path.isfile(file):
+        # i = file.split('/')[-1][0]
+        file = os.path.join(outputfolder, f"1_{S.times.get_date()}_ALERTS.json")
+    return file
 
-def save_message(message):
+def save_message(message, outputfolder):
     """ Save messages to a json file.
 
     """
-    S = Subscriber()
-    path = f'SNEWS_MSGs/{S.times.get_date()}/'
-    os.makedirs(path, exist_ok=True)
-    file = path + 'subscribed_messages.json'
-    # read the existing file
-    try:
-        data = json.load(open(file))
-        if not isinstance(data, dict):
-            print('Incompatible file format!')
-            return None
-        # TODO: deal with `list` type objects
-    except:
-        data = {}
-    # add new message with a current time stamp
-    current_time = S.snews_time()
-    data[current_time] = message
+    file = make_file(outputfolder)
     with open(file, 'w') as outfile:
-        json.dump(data, outfile, indent=4, sort_keys=True)
+        json.dump(message, outfile, indent=4, sort_keys=True)
+
 
 def display(message):
     """ Function to format output messages
@@ -39,12 +37,6 @@ def display(message):
             click.echo(f'{k:<20s}:{v:<45}')
         elif type(v) == list:
             v = [str(item) for item in v]
-#             _v = []                        # tmp fix, it crashes if there were None's in the list
-#             for item in v:
-#                 if type(item)==type(None):
-#                     _v.append('None')
-#                 else:
-#                     _v.append(item)
             items = '\t'.join(v)
             if k == 'detector_names':
                 click.echo(f'{k:<20s}' + click.style(f':{items:<45}', bg='blue'))
@@ -73,16 +65,22 @@ class Subscriber:
         self.hr = self.times.get_hour()
         self.date = self.times.get_date()
         self.snews_time = lambda: self.times.get_snews_time()
+        self.default_output = os.path.join(os.getcwd(), os.getenv("ALERT_OUTPUT"))
 
 
-    def subscribe(self):
-        ''' Subscribe and listen to a given topic
+    def subscribe(self, outputfolder=None):
+        """ Subscribe and listen to a given topic
 
         Parameters
         ----------
-            Whether to display the subscribed message content
+        outputfolder: `str`
+            where to save the alert messages, if None
+            creates a file based on env file
 
-        '''
+        """
+        outputfolder = outputfolder or self.default_output
+        # base = os.path.dirname(os.path.realpath(__file__))
+        # outputfolder = os.path.join(base, outputfolder)
         click.echo('You are subscribing to ' +
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
                    click.style(f'{ self.alert_topic}', bg='green'))
@@ -92,16 +90,19 @@ class Subscriber:
         try:
             with stream.open(self.alert_topic, "r") as s:
                 for message in s:
-                    save_message(message)
+                    save_message(message, outputfolder)
                     snews_pt_utils.display_gif()
                     display(message)
         except KeyboardInterrupt:
             click.secho('Done', fg='green')
 
 
-    def subscribe_and_redirect_alert(self):
-        ''' subscribe generator
-        '''
+    def subscribe_and_redirect_alert(self, outputfolder=None):
+        """ subscribe generator
+        """
+        outputfolder = outputfolder or self.default_output
+        # base = os.path.dirname(os.path.realpath(__file__))
+        # outputfolder = os.path.join(base, outputfolder)
         click.echo('You are subscribing to ' +
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
                    click.style(f'{ self.alert_topic}', bg='green'))
@@ -111,9 +112,10 @@ class Subscriber:
         try:
             with stream.open(self.alert_topic, "r") as s:
                 for message in s:
-                    save_message(message)
+                    save_message(message, outputfolder)
                     snews_pt_utils.display_gif()
                     display(message)
-                    yield message
+                    # jsonformat = json.dumps(message)
+                    yield make_file(outputfolder)
         except KeyboardInterrupt:
             click.secho('Done', fg='green')
