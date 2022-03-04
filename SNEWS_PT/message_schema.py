@@ -88,6 +88,7 @@ class Message_Schema:
         if tier == 'SigTier':
             message['neutrino_time'] = data['neutrino_time']
             message['p_values'] = data['p_values']
+            message['t_bin_width'] = data['t_bin_width']
             message['meta'] = data['meta']
 
         if tier == 'CoincidenceTier':

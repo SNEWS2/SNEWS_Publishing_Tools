@@ -21,7 +21,6 @@ from hop import Stream
 from . import snews_pt_utils
 
 
-
 class Publisher:
 
     def __init__(self, env_path=None, verbose=True, auth=True):
@@ -84,12 +83,14 @@ class SNEWSTiersPublisher:
                  neutrino_time=None,
                  p_val=None,
                  p_values=None,
+                 t_bin_width=None,
                  timing_series=None,
                  which_tier=None,
                  n_retract_latest=None,
                  retraction_reason=None,
                  detector_status=None,
-                 is_pre_sn=False, **kwargs):
+                 is_pre_sn=False,
+                 **kwargs):
         """
         Parameters
         ----------
@@ -109,17 +110,19 @@ class SNEWSTiersPublisher:
          p_values: list
             p values of possible neutrino observation(s),defaults to None.
             list of floats
-         timing_series: list
+        t_bin_width: float
+            width of time window,[ask Andrey] ,defaults to None.
+        timing_series: list
             defaults to None
             list of strings, format: '%y/%m/%d %H:%M:%S:%f'
-         which_tier: str
+        which_tier: str
             which tier are you trying to retract from, defaults to None.
             Options:
                 'CoincidenceTier'
                 'SigTier'
                 'TimingTier'
                 'ALL'
-         n_retract_latest: int
+        n_retract_latest: int
             how many of your last messages do you want to retract, defaults to None
          retraction_reason: str
             (optional) share with SNEWS what caused your false observation, defaults to None.
@@ -134,16 +137,18 @@ class SNEWSTiersPublisher:
          kwargs:
             extra stuff you want to send to SNEWS
         """
-        self.message_data = {'detector_name': detector_name, 'machine_time': machine_time,
-                       'neutrino_time': neutrino_time,
-                       'p_val': p_val,
-                       'p_values': p_values,
-                       'timing_series': timing_series,
-                       'which_tier': which_tier,
-                       'n_retract_latest': n_retract_latest,
-                       'retraction_reason': retraction_reason,
-                       'detector_status': detector_status,
-                       'is_pre_sn': is_pre_sn, }
+        self.message_data = {'detector_name': detector_name,
+                             'machine_time': machine_time,
+                             'neutrino_time': neutrino_time,
+                             'p_val': p_val,
+                             'p_values': p_values,
+                             't_bin_width': t_bin_width,
+                             'timing_series': timing_series,
+                             'which_tier': which_tier,
+                             'n_retract_latest': n_retract_latest,
+                             'retraction_reason': retraction_reason,
+                             'detector_status': detector_status,
+                             'is_pre_sn': is_pre_sn, }
         self.meta = dict(**kwargs)
         self.message_data['meta'] = self.meta
         self.env_file = env_file
