@@ -8,7 +8,7 @@ def test_subscribe_and_direct():
 
     # List for SNEWS_PT echos
     echos = []
-    for i in range(2):
+    for i in range(3):
         line = p.stdout.readline()
         echos.append(line)
     # Send 'ctrl + c' to process
