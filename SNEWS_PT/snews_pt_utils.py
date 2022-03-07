@@ -328,21 +328,21 @@ def _tier_decider(data, env_file=None):
     #     _append_messages(time_tier_data, 'TimingTier')
 
     # CoincidenceTier if it has nu time
-    if type(data.get('neutrino_time', False)) == str:
+    if type(data['neutrino_time']) == str:
         _append_messages(coincidence_tier_data, 'CoincidenceTier')
 
     # SignificanceTier if it has p_values
-    if type(data.get('p_values', False)) == list and type(data.get('t_bin_width', False)) == float:
+    if type(data['p_values']) == list and type(data['t_bin_width']) == float:
         _append_messages(sig_tier_data, 'SigTier')
     # TimingTier if timing_series exists (@Seb why do we need p_value to be float?)
-    if type(data.get('timing_series', False)) == list:
+    if type(data['timing_series']) == list:
         _append_messages(time_tier_data, 'TimeTier')
 
     # asking which tier doesn't make sense if the user doesn't know the tiers
-    if type(data.get('n_retract_latest', False)) == int:
+    if type(data['n_retract_latest']) == int:
         _append_messages(retraction_data, 'Retraction')
 
-    if type(data.get('detector_status', False)) == str:
+    if type(data['detector_status']) == str:
         _append_messages(heartbeat_data, 'Heartbeat')
     return messages, tiernames
 
