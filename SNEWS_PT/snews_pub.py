@@ -111,7 +111,7 @@ class SNEWSTiersPublisher:
             p values of possible neutrino observation(s),defaults to None.
             list of floats
         t_bin_width: float
-            width of time window,[ask Andrey] ,defaults to None.
+            width of time window [sec] ,defaults to None.
         timing_series: list
             defaults to None
             list of strings, format: '%y/%m/%d %H:%M:%S:%f'
