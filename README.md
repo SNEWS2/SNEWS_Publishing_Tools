@@ -169,11 +169,26 @@ from SNEWS_PT.snews_sub import Subscriber
 Subscriber().subscribe()
 ```
 
-Should there be an alert message, this will be both displayed on the screen and saved into your local machine
-as `SNEWS_MSGs/<today fmt="%y_%m_%d">/subscribed_messages.json` and if there are multiple messages in the same day e.g.
-hype-mode is on and for the same supernova you kept receiving alerts with every coincidence message, these will be
-appended in this file with the sent time as the first key. An example (partly missing) can be
+Should there be an alert message, this will be both displayed on the screen and saved into your local machine. The location can be passed as an argument `subscribe(outputfolder='folder/path')`, if not given, the default is used based on the `"ALERT_OUTPUT"` folder in the environment file. The message is then saved under this directory with a time stamp as `folder/0_<date>_ALERTS.json` and if there are multiple messages in the same day e.g. for the same supernova you kept receiving alerts with every coincidence message, the counter infront will be incremented. An example alert message (partly missing) can be
 found [here](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/doc/subscribed_messages.json)
+
+### Extension for follow-up plugins (only with CLI for now)
+`snews_pt subscribe` also allows for other scripts to be plugged in and act on alerts. The *CLI* command `snews_pt subscribe` takes the custom made script via `--plugin` (`-p`) option.
+
+```bash 
+user/home$: snews_pt subscribe -p custom_made_script.py
+```
+
+`snews_pt subscribe` saves the alert messages to a local JSON file with the date stamp of the received time. When a custom plugin is provided, as soon as an alert is received and JSON is created, the name of this unique-JSON file is passed to the script and executed.
+
+Therefore, all custom made scripts should contain the following two lines;
+
+```python
+import sys, json
+data = json.load(open(sys.argv[1]))
+```
+and do the follow-up work using the `data` dictionary as the alert message.
+
 
 ---
 
