@@ -184,10 +184,11 @@ user/home$: snews_pt subscribe -p custom_made_script.py
 Therefore, all custom made scripts should contain the following two lines;
 
 ```python
+# in "custom_made_script.py"
 import sys, json
 data = json.load(open(sys.argv[1]))
 ```
-and do the follow-up work using the `data` dictionary as the alert message.
+and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/plug-in-scripts/SNEWS_PT/test/random_plugin.py).
 
 
 ---
