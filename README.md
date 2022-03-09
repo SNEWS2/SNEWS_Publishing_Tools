@@ -109,7 +109,7 @@ should look like this:
 
 You can also pass your input from a json file, and make modifications on the spot. Let's first create an `observation` object this time before sending it to snews;
 
-```
+```python
 observation = SNEWSTiersPublisher.from_json('my_input_asjson.json', 
                                             detector_name='XENONnT', 
                                             comment="This is submitted from a json file")
