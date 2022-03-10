@@ -10,6 +10,15 @@ User's Guide
    user/installation
    user/quickstart
    user/message_schema
+   
+
+Tutorials
+------------
+
+.. toctree::
+   :maxdepth: 2
+
+   tutorials/subscribe_and_publish   
 
 
 API Reference
