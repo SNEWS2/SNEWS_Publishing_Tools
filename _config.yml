@@ -1,1 +1,3 @@
-theme: jekyll-theme-cayman
+theme: jekyll-theme-minimal
+title: SNEWS Publishing Tools
+description: SuperNova Early Warning System tools to publish observation messages and subscribe to alert channels
