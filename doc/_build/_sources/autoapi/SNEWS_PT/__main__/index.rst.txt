@@ -1,0 +1,82 @@
+:py:mod:`SNEWS_PT.__main__`
+===========================
+
+.. py:module:: SNEWS_PT.__main__
+
+.. autoapi-nested-parse::
+
+   CLI for snews_pt
+   Right now publish method does not allow extra arguments.
+   While this might be the desired use. I think it should not fail to publish, rather
+   - either mark the extra columns and publish, or
+   - split these columns, publish the fixed template, and report back to user.
+   Manipulations in the publish class can be made see
+   https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.__main__.main
+   SNEWS_PT.__main__.publish
+   SNEWS_PT.__main__.subscribe
+   SNEWS_PT.__main__.heartbeat
+   SNEWS_PT.__main__.retract
+   SNEWS_PT.__main__.message_schema
+
+
+
+.. py:function:: main(ctx, env)
+
+   User interface for snews_pt tools
+
+
+
+.. py:function:: publish(ctx, tiers, file, verbose)
+
+   Publish a message using snews_pub
+
+   .. rubric:: Notes
+
+   The topics are read from the defaults i.e. from auxiliary/test-config.env
+   If no file is given it can still submit dummy messages with default values
+
+
+.. py:function:: subscribe(ctx)
+
+   Subscribe to Alert topic
+
+
+
+.. py:function:: heartbeat(ctx, status, machine_time, verbose)
+
+   Publish heartbeat messages. Recommended frequency is
+   every 3 minutes.
+   machine_time is optional, and each message is appended with a `sent_time`
+   passing machine_time allows for latency studies.
+
+   USAGE: snews_pt heartbeat ON -mt '22/01/01 19:16:14'
+
+
+
+.. py:function:: retract(ctx, tier, number, reason, false_id, verbose)
+
+   Retract N latest message
+
+
+
+.. py:function:: message_schema(tier)
+
+   Display the message format for `tier`, default 'all'
+
+   Notes
+   TODO: For some reason, the displayed keys are missing
+
+

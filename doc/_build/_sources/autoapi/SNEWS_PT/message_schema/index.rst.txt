@@ -1,0 +1,71 @@
+:py:mod:`SNEWS_PT.message_schema`
+=================================
+
+.. py:module:: SNEWS_PT.message_schema
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.message_schema.Message_Schema
+
+
+
+
+.. py:class:: Message_Schema(env_path=None, detector_key='TEST')
+
+   The Message scheme for the alert and observations
+
+   :param env_path: The path containing the environment configuration file
+                    If None, uses the default file in '/auxiliary/test-config.env'
+   :type env_path: `str`, optional
+   :param detector_key: The name of the detector. If None, uses "TEST"
+   :type detector_key: `str`, optional
+   :param alert: True if the message is ALERT message. Default is False.
+   :type alert: `bool`, optional
+
+   .. py:method:: id_format(self, topic_type)
+
+      Returns formatted message ID
+          time format should always be same for all detectors.
+          The heartbeats and observation messages have the
+          same id format.
+
+      :param topic_state: Can either be 'OBS', or  'ALERT'
+      :type topic_state: `str`
+      :param topic_type: type of the message to be published. Can be;
+                         'TimeTier', 'SigTier', 'CoincidenceTier' for
+                         observation messages and, 'HeartBeat' for
+                         heartbeat messages, and 'FalseOBS' for false
+                         observations.
+      :type topic_type: `str`
+      :param Returns:
+                      :`str`
+                          The formatted id as a string
+
+
+   .. py:method:: get_schema(self, message_type, data, sent_time)
+
+      Create a message schema for given topic type.
+      Internally called in hop_pub
+
+      :param message_type: type of the message to be published. Can be;
+                           'TimeTier', 'SigTier', 'CoincidenceTier' for
+                           observation messages and, 'HeartBeat' for
+                           heartbeat messages
+      :type message_type: `str`
+      :param data: dict object that contains message information.
+      :type data: dict
+      :param sent_time: time as a string
+      :type sent_time: `str`
+
+      :returns: message with the correct scheme
+      :rtype: `dict`
+
+
+

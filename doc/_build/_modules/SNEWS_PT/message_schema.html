@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNEWS_PT.message_schema &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html">
+            <img src="../../_static/snews_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/quickstart.html#command-line-interface-cli">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/message_schema.html">Message Schemas</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">snews API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>SNEWS_PT.message_schema</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for SNEWS_PT.message_schema</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">.snews_pt_utils</span> <span class="kn">import</span> <span class="n">TimeStuff</span><span class="p">,</span> <span class="n">get_detector</span>
+
+<div class="viewcode-block" id="Message_Schema"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/message_schema/index.html#SNEWS_PT.message_schema.Message_Schema">[docs]</a><span class="k">class</span> <span class="nc">Message_Schema</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; The Message scheme for the alert and observations</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    env_path : `str`, optional</span>
+<span class="sd">        The path containing the environment configuration file</span>
+<span class="sd">        If None, uses the default file in &#39;/auxiliary/test-config.env&#39;</span>
+<span class="sd">    detector_key : `str`, optional</span>
+<span class="sd">        The name of the detector. If None, uses &quot;TEST&quot;</span>
+<span class="sd">    alert : `bool`, optional</span>
+<span class="sd">        True if the message is ALERT message. Default is False.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">detector_key</span><span class="o">=</span><span class="s1">&#39;TEST&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">TimeStuff</span><span class="p">(</span><span class="n">env_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="n">get_detector</span><span class="p">(</span><span class="n">detector_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detector_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">detector</span><span class="o">.</span><span class="n">name</span>
+
+<div class="viewcode-block" id="Message_Schema.id_format"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/message_schema/index.html#SNEWS_PT.message_schema.Message_Schema.id_format">[docs]</a>    <span class="k">def</span> <span class="nf">id_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns formatted message ID</span>
+<span class="sd">            time format should always be same for all detectors.</span>
+<span class="sd">            The heartbeats and observation messages have the </span>
+<span class="sd">            same id format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        topic_state : `str`</span>
+<span class="sd">            Can either be &#39;OBS&#39;, or  &#39;ALERT&#39;</span>
+<span class="sd">        topic_type : `str`</span>
+<span class="sd">            type of the message to be published. Can be;</span>
+<span class="sd">            &#39;TimeTier&#39;, &#39;SigTier&#39;, &#39;CoincidenceTier&#39; for</span>
+<span class="sd">            observation messages and, &#39;HeartBeat&#39; for </span>
+<span class="sd">            heartbeat messages, and &#39;FalseOBS&#39; for false</span>
+<span class="sd">            observations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">            :`str`</span>
+<span class="sd">                The formatted id as a string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">date_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="o">.</span><span class="n">get_snews_time</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;%y/%m/</span><span class="si">%d</span><span class="s2">_%H:%M:%S:</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">detector</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">topic_type</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">date_time</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+<div class="viewcode-block" id="Message_Schema.get_schema"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/message_schema/index.html#SNEWS_PT.message_schema.Message_Schema.get_schema">[docs]</a>    <span class="k">def</span> <span class="nf">get_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_type</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">sent_time</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create a message schema for given topic type.</span>
+<span class="sd">            Internally called in hop_pub</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            message_type : `str`</span>
+<span class="sd">                type of the message to be published. Can be;</span>
+<span class="sd">                &#39;TimeTier&#39;, &#39;SigTier&#39;, &#39;CoincidenceTier&#39; for</span>
+<span class="sd">                observation messages and, &#39;HeartBeat&#39; for</span>
+<span class="sd">                heartbeat messages</span>
+<span class="sd">            data      : dict</span>
+<span class="sd">                dict object that contains message information.</span>
+<span class="sd">            sent_time : `str`</span>
+<span class="sd">                time as a string</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">               :`dict`</span>
+<span class="sd">                message with the correct scheme </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_format</span><span class="p">(</span><span class="n">topic_type</span><span class="o">=</span><span class="n">message_type</span><span class="p">),</span>
+                   <span class="s2">&quot;detector_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">detector_name</span><span class="p">,</span>
+                   <span class="s2">&quot;sent_time&quot;</span><span class="p">:</span> <span class="n">sent_time</span><span class="p">,</span>
+                   <span class="s2">&quot;machine_time&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;machine_time&#39;</span><span class="p">],</span>
+                   <span class="p">}</span>
+        <span class="k">if</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s1">&#39;Heartbeat&#39;</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;detector_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;detector_status&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s1">&#39;TimeTier&#39;</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;neutrino_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;neutrino_time&#39;</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;timing_series&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;timing_series&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s1">&#39;SigTier&#39;</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;neutrino_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;neutrino_time&#39;</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;p_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_values&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s1">&#39;CoincidenceTier&#39;</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;neutrino_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;neutrino_time&#39;</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;p_value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_value&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">message_type</span> <span class="o">==</span> <span class="s1">&#39;FalseOBS&#39;</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;false_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;false_id&#39;</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;which_tier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;which_tier&#39;</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;N_retract_latest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;N_retract_latest&#39;</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;which_tier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;which_tier&#39;</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">[</span><span class="s1">&#39;retraction_reason&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;retraction_reason&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">message</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">message</span><span class="p">[</span><span class="s1">&#39;_extra_&#39;</span> <span class="o">+</span> <span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">message</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

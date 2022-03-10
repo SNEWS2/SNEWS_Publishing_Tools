@@ -1,0 +1,37 @@
+:py:mod:`SNEWS_PT.test`
+=======================
+
+.. py:module:: SNEWS_PT.test
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   snews_pt_test_suite/index.rst
+   test_pub_and_sub/index.rst
+   test_schema/index.rst
+   test_snews_pub/index.rst
+
+
+Package Contents
+----------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.test.runtests
+
+
+
+.. py:function:: runtests()
+
+   Run all tests in snewpy.test.test_*.
+
+
+

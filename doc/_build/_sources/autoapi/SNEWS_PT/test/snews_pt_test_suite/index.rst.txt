@@ -1,0 +1,38 @@
+:py:mod:`SNEWS_PT.test.snews_pt_test_suite`
+===========================================
+
+.. py:module:: SNEWS_PT.test.snews_pt_test_suite
+
+.. autoapi-nested-parse::
+
+   Taken from snewpy
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.test.snews_pt_test_suite.snews_pt_test_suite
+   SNEWS_PT.test.snews_pt_test_suite.runtests
+
+
+
+.. py:function:: snews_pt_test_suite()
+
+   Returns unittest.TestSuite of desiutil tests.
+      This is factored out separately from runtests() so that it can be used by
+   ``python setup.py test``.
+
+
+.. py:function:: runtests()
+
+   Run all tests in snewpy.test.test_*.
+
+
+

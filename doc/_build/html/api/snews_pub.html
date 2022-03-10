@@ -1,0 +1,550 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNEWS_PT.snews_pub &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SNEWS_PT.snews_sub" href="snews_sub.html" />
+    <link rel="prev" title="SNEWS_PT.generate" href="snews_pt_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/command_line_interface.html">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/protocol.html">SNEWS Protocols</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">snews API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="message_schema.html">SNEWS_PT.message_schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snews_pt_utils.html">SNEWS_PT.generate</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SNEWS_PT.snews_pub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snews_sub.html">SNEWS_PT.snews_sub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">snews API</a> &raquo;</li>
+      <li>SNEWS_PT.snews_pub</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/snews_pub.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-SNEWS_PT.snews_pub">
+<span id="snews-pt-snews-pub"></span><span id="snews-pub"></span><h1>SNEWS_PT.snews_pub<a class="headerlink" href="#module-SNEWS_PT.snews_pub" title="Permalink to this headline">¶</a></h1>
+<p>An interface for SNEWS member experiment
+to publish their observation and heartbeat messages.</p>
+<p>Created:
+August 2021
+Authors:
+Melih Kara
+Sebastian Torres-Lara</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.CoincidenceTier">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pub.</span></span><span class="sig-name descname"><span class="pre">CoincidenceTier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neutrino_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'CoincidenceTier'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#CoincidenceTier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.CoincidenceTier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container class for CoincidenceTier, takes in message info and sets up schema.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.CoincidenceTier.detector_name">
+<span class="sig-name descname"><span class="pre">detector_name</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.CoincidenceTier.detector_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of your detector.
+Use snews_pt_utils.retrieve_detectors() to see the available detector names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.CoincidenceTier.p_val">
+<span class="sig-name descname"><span class="pre">p_val</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.CoincidenceTier.p_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>p-value of nu signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.CoincidenceTier.nu_time">
+<span class="sig-name descname"><span class="pre">nu_time</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.CoincidenceTier.nu_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.CoincidenceTier.machine_time">
+<span class="sig-name descname"><span class="pre">machine_time</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.CoincidenceTier.machine_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.CoincidenceTier.message_type">
+<span class="sig-name descname"><span class="pre">message_type</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.CoincidenceTier.message_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of tier, used to format the schema</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str (default:’CoincidenceTier’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.CoincidenceTier.extra">
+<span class="sig-name descname"><span class="pre">extra</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.CoincidenceTier.extra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this in case you want to send extra information.
+Make sure it’s formatted as a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict (default: None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.CoincidenceTier.message">
+<span class="sig-name descname"><span class="pre">message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#CoincidenceTier.message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.CoincidenceTier.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats message structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>message as dict object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Heartbeat">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pub.</span></span><span class="sig-name descname"><span class="pre">Heartbeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'Heartbeat'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#Heartbeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.Heartbeat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish Heartbeat message.
+We recommend submitting messages every 3 minutes
+Ideally, this function should be called after fetching
+the status of the detector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>status</strong> (<cite>str</cite> (“ON”/”OFF”)) – status of the detector at the time of invocation</p></li>
+<li><p><strong>detector_name</strong> (<cite>str</cite>) – name of the detector</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Publisher">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pub.</span></span><span class="sig-name descname"><span class="pre">Publisher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#Publisher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.Publisher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class in charge of publishing messages to SNEWS-hop sever.
+This class acts as a context manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_path</strong> (<em>'str'</em>) – path to SNEWS env file, defaults to tes_config.env if None is passed.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Option to display message when publishing.</p></li>
+<li><p><strong>auth</strong> (<em>bool</em>) – Option to run hop-Stream without authentication. Pass False to do so</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Publisher.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#Publisher.send"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.Publisher.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method will set the sent_time and send the message to the hop broker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>dict</em>) – observation message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pub.</span></span><span class="sig-name descname"><span class="pre">Retraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">which_tier</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_retract_latest</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'FalseOBS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">false_mgs_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retraction_reason</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#Retraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container class for retraction messages.
+.. attribute:: which_tier</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Name of tier you want to retract from,</dt><dd><p>‘CoincidenceTier’
+‘SigTier’
+‘TimeTier’</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction.n_retract_latest">
+<span class="sig-name descname"><span class="pre">n_retract_latest</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction.n_retract_latest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of most recent message you want to retract</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction.detector_name">
+<span class="sig-name descname"><span class="pre">detector_name</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction.detector_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of your detector.
+Use snews_pt_utils.retrieve_detectors() to see the available detector names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction.message_type">
+<span class="sig-name descname"><span class="pre">message_type</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction.message_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set message type for schema</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str (default: ‘FalseOBS’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction.machine_time">
+<span class="sig-name descname"><span class="pre">machine_time</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction.machine_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str (default: None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction.false_mgs_id">
+<span class="sig-name descname"><span class="pre">false_mgs_id</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction.false_mgs_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>specific id of message you want to retract.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str (default: None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction.retraction_reason">
+<span class="sig-name descname"><span class="pre">retraction_reason</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction.retraction_reason" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reason why you are retracting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str (default: None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction.extra">
+<span class="sig-name descname"><span class="pre">extra</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction.extra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this in case you want to send extra information.
+Make sure it’s formatted as a dict!!!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict (default: None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.Retraction.message">
+<span class="sig-name descname"><span class="pre">message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#Retraction.message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.Retraction.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats message structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>message as dict object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.SignificanceTier">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pub.</span></span><span class="sig-name descname"><span class="pre">SignificanceTier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neutrino_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'SigTier'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#SignificanceTier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.SignificanceTier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container class for SignificanceTier, takes in message info and sets up schema.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.SignificanceTier.nu_time">
+<span class="sig-name descname"><span class="pre">nu_time</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.SignificanceTier.nu_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.SignificanceTier.p_values">
+<span class="sig-name descname"><span class="pre">p_values</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.SignificanceTier.p_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>p-values for a SN nu flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.SignificanceTier.detector_name">
+<span class="sig-name descname"><span class="pre">detector_name</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.SignificanceTier.detector_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of your detector.
+Use snews_pt_utils.retrieve_detectors() to see the available detector names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.SignificanceTier.machine_time">
+<span class="sig-name descname"><span class="pre">machine_time</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.SignificanceTier.machine_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.SignificanceTier.message_type">
+<span class="sig-name descname"><span class="pre">message_type</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.SignificanceTier.message_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of tier, used to format the schema</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str (default:’SigTier’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.SignificanceTier.extra">
+<span class="sig-name descname"><span class="pre">extra</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.SignificanceTier.extra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this in case you want to send extra information.
+Make sure it’s formatted as a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict (default: None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.SignificanceTier.message">
+<span class="sig-name descname"><span class="pre">message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#SignificanceTier.message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.SignificanceTier.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats message structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>message as dict object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.TimingTier">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pub.</span></span><span class="sig-name descname"><span class="pre">TimingTier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neutrino_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timing_series</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'TimeTier'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#TimingTier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.TimingTier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Timing Tier
+Container class for Timing Tier, takes in message info and sets up schema.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.TimingTier.nu_time">
+<span class="sig-name descname"><span class="pre">nu_time</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.TimingTier.nu_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.TimingTier.timing_series">
+<span class="sig-name descname"><span class="pre">timing_series</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.TimingTier.timing_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>nu arrival times. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.TimingTier.detector_name">
+<span class="sig-name descname"><span class="pre">detector_name</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.TimingTier.detector_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of your detector.
+Use snews_pt_utils.retrieve_detectors() to see the available detector names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.TimingTier.machine_time">
+<span class="sig-name descname"><span class="pre">machine_time</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.TimingTier.machine_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.TimingTier.message_type">
+<span class="sig-name descname"><span class="pre">message_type</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.TimingTier.message_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of tier, used to format the schema</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str (default:’SigTier’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.TimingTier.extra">
+<span class="sig-name descname"><span class="pre">extra</span></span><a class="headerlink" href="#SNEWS_PT.snews_pub.TimingTier.extra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this in case you want to send extra information.
+Make sure it’s formatted as a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict (default: None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pub.TimingTier.message">
+<span class="sig-name descname"><span class="pre">message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/snews_pub.html#TimingTier.message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pub.TimingTier.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats message structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>message as dict object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="snews_pt_utils.html" class="btn btn-neutral float-left" title="SNEWS_PT.generate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="snews_sub.html" class="btn btn-neutral float-right" title="SNEWS_PT.snews_sub" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

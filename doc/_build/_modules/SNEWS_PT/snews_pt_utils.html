@@ -1,0 +1,492 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNEWS_PT.snews_pt_utils &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html">
+            <img src="../../_static/snews_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/quickstart.html#command-line-interface-cli">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/message_schema.html">Message Schemas</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">snews API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>SNEWS_PT.snews_pt_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for SNEWS_PT.snews_pt_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility tools for SNEWS_PT</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">click</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<div class="viewcode-block" id="set_env"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.set_env">[docs]</a><span class="k">def</span> <span class="nf">set_env</span><span class="p">(</span><span class="n">env_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Set environment parameters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    env_path : `str`, (optional)</span>
+<span class="sd">        path for the environment file.</span>
+<span class="sd">        Use default settings if not given</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">default_env_path</span> <span class="o">=</span> <span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;/auxiliary/test-config.env&#39;</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">env_path</span> <span class="ow">or</span> <span class="n">default_env_path</span>
+    <span class="n">load_dotenv</span><span class="p">(</span><span class="n">env</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TimeStuff"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.TimeStuff">[docs]</a><span class="k">class</span> <span class="nc">TimeStuff</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39; SNEWS format datetime objects</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">set_env</span><span class="p">(</span><span class="n">env_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snews_t_format</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;TIME_STRING_FORMAT&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hour_fmt</span> <span class="o">=</span> <span class="s2">&quot;%H:%M:%S&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date_fmt</span> <span class="o">=</span> <span class="s2">&quot;%y_%m_</span><span class="si">%d</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_snews_time</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">fmt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">snews_t_format</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_hour</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">fmt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hour_fmt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_date</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">fmt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">date_fmt</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TimeStuff.str_to_datetime"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.TimeStuff.str_to_datetime">[docs]</a>    <span class="k">def</span> <span class="nf">str_to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu_time</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;%y/%m/</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; string to datetime object &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">nu_time</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TimeStuff.str_to_hr"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.TimeStuff.str_to_hr">[docs]</a>    <span class="k">def</span> <span class="nf">str_to_hr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu_time</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;%H:%M:%S:</span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; string to datetime hour object &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">nu_time</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="set_topic_state"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.set_topic_state">[docs]</a><span class="k">def</span> <span class="nf">set_topic_state</span><span class="p">(</span><span class="n">which_topic</span><span class="p">,</span> <span class="n">env_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Set the topic path based on which_topic</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    which_topic : `str`</span>
+<span class="sd">        single-letter string indicating the topic [O/H/A]</span>
+<span class="sd">        If an environment was defined, it uses the topics</span>
+<span class="sd">        specified in that environment. If not, it looks</span>
+<span class="sd">        for the env_path parameter</span>
+<span class="sd">    env_path : `str`</span>
+<span class="sd">        The path to the environment configuration file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ALERT_TOPIC&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> <span class="n">set_env</span><span class="p">(</span><span class="n">env_path</span><span class="p">)</span>
+    <span class="n">Topics</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Topics&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;topic_name&#39;</span><span class="p">,</span> <span class="s1">&#39;topic_broker&#39;</span><span class="p">])</span>
+    <span class="n">topics</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">Topics</span><span class="p">(</span><span class="s1">&#39;ALERT&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ALERT_TOPIC&quot;</span><span class="p">)),</span>
+        <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="n">Topics</span><span class="p">(</span><span class="s1">&#39;OBSERVATION&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;OBSERVATION_TOPIC&quot;</span><span class="p">)),</span>
+        <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="n">Topics</span><span class="p">(</span><span class="s1">&#39;HEARTBEAT&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;OBSERVATION_TOPIC&quot;</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">topics</span><span class="p">[</span><span class="n">which_topic</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="retrieve_detectors"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.retrieve_detectors">[docs]</a><span class="k">def</span> <span class="nf">retrieve_detectors</span><span class="p">(</span><span class="n">detectors_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/auxiliary/detector_properties.json&quot;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Retrieve the name-ID-location of the participating detectors.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        detectors_path : `str`, optional</span>
+<span class="sd">            path to detector proporties. File needs to be</span>
+<span class="sd">            in JSON format</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">detectors_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;python </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="si">}</span><span class="s1">/auxiliary/make_detector_file.py&#39;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">detectors_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">detectors</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+
+    <span class="c1"># make a namedtuple</span>
+    <span class="n">Detector</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Detector&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;location&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">detectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">detectors</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Detector</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">detectors</span></div>
+
+<div class="viewcode-block" id="get_detector"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.get_detector">[docs]</a><span class="k">def</span> <span class="nf">get_detector</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">detectors_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span>
+                                          <span class="s2">&quot;/auxiliary/detector_properties.json&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return the selected detector properties</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    detector : `str`</span>
+<span class="sd">        The name of the detector. Should be one of the predetermined detectors.</span>
+<span class="sd">        If the name is not in that list, returns TEST detector.</span>
+<span class="sd">    detectors_path : `str`</span>
+<span class="sd">        path for the json file with all detectors. By default this is</span>
+<span class="sd">        /auxiliary/detector_properties.json</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Detector</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Detector&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;location&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">Detector</span><span class="p">):</span> <span class="k">return</span> <span class="n">detector</span>  <span class="c1"># not needed?</span>
+    <span class="c1"># search for the detector name in `detectors`</span>
+    <span class="n">detectors</span> <span class="o">=</span> <span class="n">retrieve_detectors</span><span class="p">(</span><span class="n">detectors_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">detectors</span><span class="p">[</span><span class="n">detector</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">detector</span><span class="si">}</span><span class="s1"> is not a valid detector!&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">detectors</span><span class="p">[</span><span class="s1">&#39;TEST&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="coincidence_tier_data"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.coincidence_tier_data">[docs]</a><span class="k">def</span> <span class="nf">coincidence_tier_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nu_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Formats data for CoincidenceTier as dict object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        machine_time : `str`</span>
+<span class="sd">            The machine time at the time of execution of command</span>
+<span class="sd">        nu_time : `str`</span>
+<span class="sd">            The neutrino arrival time</span>
+<span class="sd">        p_value : `float`</span>
+<span class="sd">            If determined, the p value of the observation</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Any other key-value pair desired to be published. Notice,</span>
+<span class="sd">            these additional arguments will be prepended with ^.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            coincidence_tier_dict : `dict`</span>
+<span class="sd">                dictionary of the complete CoincidenceTier data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;machine_time&#39;</span><span class="p">,</span> <span class="s1">&#39;neutrino_time&#39;</span><span class="p">,</span> <span class="s1">&#39;p_value&#39;</span><span class="p">]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">nu_time</span><span class="p">,</span> <span class="n">p_value</span><span class="p">]</span>
+    <span class="c1"># allow for keyword-args</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">zip_iterator</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="n">coincidence_tier_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zip_iterator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">coincidence_tier_dict</span></div>
+
+<div class="viewcode-block" id="sig_tier_data"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.sig_tier_data">[docs]</a><span class="k">def</span> <span class="nf">sig_tier_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nu_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Formats data for SigTier as dict object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        machine_time : `str`</span>
+<span class="sd">            The machine time at the time of execution of command</span>
+<span class="sd">        nu_time : `str`</span>
+<span class="sd">            The neutrino arrival time</span>
+<span class="sd">        p_values : `list`</span>
+<span class="sd">            If determined, the p values of the observation</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Any other key-value pair desired to be published. Notice,</span>
+<span class="sd">            these additional arguments will be prepended with ^.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            sig_tier_dict : `dict`</span>
+<span class="sd">                dictionary of the complete observation data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;machine_time&#39;</span><span class="p">,</span> <span class="s1">&#39;neutrino_time&#39;</span><span class="p">,</span> <span class="s1">&#39;p_values&#39;</span><span class="p">]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">nu_time</span><span class="p">,</span> <span class="n">p_values</span><span class="p">]</span>
+    <span class="c1"># allow for keyword-args</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">zip_iterator</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="n">sig_tier_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zip_iterator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sig_tier_dict</span></div>
+
+<div class="viewcode-block" id="time_tier_data"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.time_tier_data">[docs]</a><span class="k">def</span> <span class="nf">time_tier_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nu_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timing_series</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Formats data for TimingTier as dict object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        machine_time : `str`</span>
+<span class="sd">            The machine time at the time of execution of command</span>
+<span class="sd">        nu_time : `str`</span>
+<span class="sd">            The neutrino arrival time</span>
+<span class="sd">        timing_series : `array-like`</span>
+<span class="sd">            Time series of the detected signal</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Any other key-value pair desired to be published. Notice,</span>
+<span class="sd">            these additional arguments will be prepended with ^.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            data_dict : `dict`</span>
+<span class="sd">                dictionary of the TimingTier data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;machine_time&#39;</span><span class="p">,</span> <span class="s1">&#39;neutrino_time&#39;</span><span class="p">,</span> <span class="s1">&#39;timing_series&#39;</span><span class="p">]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">nu_time</span><span class="p">,</span> <span class="n">timing_series</span><span class="p">]</span>
+    <span class="c1"># allow for keyword-args</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">zip_iterator</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="n">time_tier_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zip_iterator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">time_tier_dict</span></div>
+
+<div class="viewcode-block" id="retraction_data"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.retraction_data">[docs]</a><span class="k">def</span> <span class="nf">retraction_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">false_mgs_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">which_tier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">n_retract_latest</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">retraction_reason</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Formats data for Retraction as dict object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        machine_time : `str`</span>
+<span class="sd">            The machine time at the time of execution of command</span>
+<span class="sd">        false_mgs_id : `str`</span>
+<span class="sd">            The id of the message that is falsely published</span>
+<span class="sd">        which_tier : &#39;str&#39;</span>
+<span class="sd">            OBS type of false message [&#39;CoincidenceTier&#39;, &#39;SigTier&#39;, &#39;TimeTier, &#39;ALL&#39;]</span>
+<span class="sd">        n_retract_latest: &#39;int&#39; or &#39;str&#39;</span>
+<span class="sd">            Tells retraction methods to look for N  latest message sent by a detector. can also pass &#39;ALL&#39;</span>
+<span class="sd">            to retract all messages in a OBS tier.</span>
+<span class="sd">        retraction_reason: &#39;str&quot;</span>
+<span class="sd">            Reason for message(s) retraction</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Any other key-value pair desired to be published. Notice,</span>
+<span class="sd">            these additional arguments will be prepended with ^.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            retraction_dict : `dict`</span>
+<span class="sd">                dictionary of the retraction data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;machine_time&#39;</span><span class="p">,</span> <span class="s1">&#39;false_id&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;N_retract_latest&#39;</span><span class="p">,</span> <span class="s1">&#39;which_tier&#39;</span><span class="p">,</span> <span class="s1">&#39;retraction_reason&#39;</span><span class="p">]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">false_mgs_id</span><span class="p">,</span> <span class="n">n_retract_latest</span><span class="p">,</span>
+              <span class="n">which_tier</span><span class="p">,</span> <span class="n">retraction_reason</span><span class="p">]</span>
+    <span class="c1"># allow for keyword-args</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">zip_iterator</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="n">retraction_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zip_iterator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">retraction_dict</span></div>
+
+<div class="viewcode-block" id="heartbeat_data"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.heartbeat_data">[docs]</a><span class="k">def</span> <span class="nf">heartbeat_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">detector_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Formats data for Heartbeat as dict object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        machine_time : `str`</span>
+<span class="sd">            The machine time at the time of execution of command</span>
+<span class="sd">        detector_status : &#39;str&#39;</span>
+<span class="sd">            ON or OFF</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Any other key-value pair desired to be published. Notice,</span>
+<span class="sd">            these additional arguments will be prepended with ^.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            heartbeat_dict : `dict`</span>
+<span class="sd">                dictionary of the Heartbeat data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;machine_time&#39;</span><span class="p">,</span> <span class="s1">&#39;detector_status&#39;</span><span class="p">]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">detector_status</span><span class="p">]</span>
+    <span class="c1"># allow for keyword-args</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">zip_iterator</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="n">heartbeat_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zip_iterator</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">heartbeat_dict</span></div>
+
+<div class="viewcode-block" id="_check_aliases"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils._check_aliases">[docs]</a><span class="k">def</span> <span class="nf">_check_aliases</span><span class="p">(</span><span class="n">tier</span><span class="p">):</span>
+    <span class="n">tier</span>  <span class="o">=</span> <span class="n">tier</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">coincidence_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;coincidence&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;coincidencetier&#39;</span><span class="p">,</span><span class="s1">&#39;coinc&#39;</span><span class="p">]</span>
+    <span class="n">significance_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;significance&#39;</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">,</span><span class="s1">&#39;significancetier&#39;</span><span class="p">,</span> <span class="s1">&#39;sigtier&#39;</span><span class="p">]</span>
+    <span class="n">timing_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;timing&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;timeingtier&#39;</span><span class="p">,</span><span class="s1">&#39;timetier&#39;</span><span class="p">,</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>
+    <span class="n">false_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;false&#39;</span><span class="p">,</span> <span class="s1">&#39;falseobs&#39;</span><span class="p">,</span><span class="s1">&#39;reatraction&#39;</span><span class="p">,</span><span class="s1">&#39;retract&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;f&#39;</span><span class="p">]</span>
+    <span class="n">heartbeat_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;heartbeat&#39;</span><span class="p">,</span> <span class="s1">&#39;hb&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">tier</span> <span class="ow">in</span> <span class="n">coincidence_aliases</span><span class="p">:</span>  <span class="n">tier</span> <span class="o">=</span> <span class="s1">&#39;CoincidenceTier&#39;</span>
+    <span class="k">elif</span> <span class="n">tier</span> <span class="ow">in</span> <span class="n">significance_aliases</span><span class="p">:</span> <span class="n">tier</span> <span class="o">=</span> <span class="s1">&#39;SigTier&#39;</span>
+    <span class="k">elif</span> <span class="n">tier</span> <span class="ow">in</span> <span class="n">timing_aliases</span><span class="p">:</span>    <span class="n">tier</span> <span class="o">=</span> <span class="s1">&#39;TimeTier&#39;</span>
+    <span class="k">elif</span> <span class="n">tier</span> <span class="ow">in</span> <span class="n">false_aliases</span><span class="p">:</span>     <span class="n">tier</span> <span class="o">=</span> <span class="s1">&#39;FalseOBS&#39;</span>
+    <span class="k">elif</span> <span class="n">tier</span> <span class="ow">in</span> <span class="n">heartbeat_aliases</span><span class="p">:</span> <span class="n">tier</span> <span class="o">=</span> <span class="s1">&#39;Heartbeat&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">tier</span><span class="si">}</span><span class="s1">&quot; &lt;- not a valid argument!&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;bright_red&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">tier</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="_check_cli_request"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils._check_cli_request">[docs]</a><span class="k">def</span> <span class="nf">_check_cli_request</span><span class="p">(</span><span class="n">requested</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; check the requested tier in the CLI</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        requested : `list`</span>
+<span class="sd">            The list of requested tiers</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.snews_pub</span> <span class="kn">import</span> <span class="n">CoincidenceTier</span><span class="p">,</span> <span class="n">SignificanceTier</span><span class="p">,</span> <span class="n">TimingTier</span><span class="p">,</span> <span class="n">Retraction</span><span class="p">,</span> <span class="n">Heartbeat</span>
+
+    <span class="n">valid_tiers_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CoincidenceTier&#39;</span><span class="p">,</span><span class="s1">&#39;SigTier&#39;</span><span class="p">,</span> <span class="s1">&#39;TimeTier&#39;</span><span class="p">]</span>
+    <span class="n">valid_tiers</span> <span class="o">=</span> <span class="p">[</span><span class="n">CoincidenceTier</span><span class="p">,</span> <span class="n">SignificanceTier</span><span class="p">,</span> <span class="n">TimingTier</span><span class="p">]</span>
+    <span class="n">tier_pairs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">valid_tiers_names</span><span class="p">,</span> <span class="n">valid_tiers</span><span class="p">))</span>
+    <span class="n">other_tiers_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Heartbeat&#39;</span><span class="p">,</span> <span class="s1">&#39;FalseOBS&#39;</span><span class="p">]</span>
+    <span class="n">other_tiers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Heartbeat</span><span class="p">,</span> <span class="n">Retraction</span><span class="p">]</span>
+    <span class="n">other_pairs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">other_tiers_names</span><span class="p">,</span> <span class="n">other_tiers</span><span class="p">))</span>
+
+    <span class="n">tier_name_pair</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Requested tiers are; &#39;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tier</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">requested</span><span class="p">):</span>
+        <span class="n">tier</span> <span class="o">=</span> <span class="n">tier</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">tiername</span> <span class="o">=</span> <span class="n">_check_aliases</span><span class="p">(</span><span class="n">tier</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tiername</span> <span class="ow">in</span> <span class="n">valid_tiers_names</span><span class="p">:</span>
+            <span class="n">tier_name_pair</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">tier_pairs</span><span class="p">[</span><span class="n">tiername</span><span class="p">],</span><span class="n">tiername</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">tiername</span> <span class="ow">in</span> <span class="n">other_tiers_names</span><span class="p">:</span>
+            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&gt; </span><span class="si">{</span><span class="n">tiername</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">+</span>
+                       <span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">    has its own separate function !</span><span class="se">\n</span><span class="s1">&#39;</span>
+                      <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">    See &#39;</span><span class="o">+</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">other_pairs</span><span class="p">[</span><span class="n">tiername</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">requested</span><span class="p">):</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">tiers_unique</span><span class="p">,</span> <span class="n">names_unique</span> <span class="o">=</span> <span class="p">[],[]</span>
+    <span class="k">for</span> <span class="n">Tier</span><span class="p">,</span> <span class="n">name</span>  <span class="ow">in</span> <span class="n">tier_name_pair</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names_unique</span><span class="p">:</span>
+            <span class="n">names_unique</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">tiers_unique</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Tier</span><span class="p">)</span>
+            <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&gt; </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;cyan&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tiers_unique</span><span class="p">,</span> <span class="n">names_unique</span></div>
+
+<div class="viewcode-block" id="_parse_file"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils._parse_file">[docs]</a><span class="k">def</span> <span class="nf">_parse_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse the file to fetch the json data</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Infer Tier based on keys ?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="isnotebook"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.isnotebook">[docs]</a><span class="k">def</span> <span class="nf">isnotebook</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Tell if the script is running on a notebook</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="n">shell</span> <span class="o">==</span> <span class="s1">&#39;ZMQInteractiveShell&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># Jupyter notebook or qtconsole</span>
+        <span class="k">elif</span> <span class="n">shell</span> <span class="o">==</span> <span class="s1">&#39;TerminalInteractiveShell&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># Terminal running IPython</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># Other type (?)</span>
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># Probably standard Python interpreter</span></div>
+
+
+<div class="viewcode-block" id="display_gif"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/snews_pt_utils/index.html#SNEWS_PT.snews_pt_utils.display_gif">[docs]</a><span class="k">def</span> <span class="nf">display_gif</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Some fun method to display an alert gif</span>
+<span class="sd">        If running on notebook.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">isnotebook</span><span class="p">():</span>
+        <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">display</span>
+        <span class="n">giphy_snews</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/SNEWS2/hop-SNalert-app/snews2_dev/hop_comms/auxiliary/snalert.gif&quot;</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&lt;img src=</span><span class="si">{</span><span class="n">giphy_snews</span><span class="si">}</span><span class="s1">&gt;&#39;</span><span class="p">))</span></div>
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

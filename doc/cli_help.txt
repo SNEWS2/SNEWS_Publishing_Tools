@@ -1,0 +1,15 @@
+Usage: snews_pt [OPTIONS] COMMAND [ARGS]...
+
+  User interface for snews_pt tools
+
+Options:
+  --version   Show the version and exit.
+  --env TEXT  environment file containing the configurations  [default:
+              (auxiliary/test-config.env)]
+  --help      Show this message and exit.
+
+Commands:
+  message-schema  Display the message format for `tier`, default 'all'
+  publish         Publish a message using snews_pub
+  subscribe       Subscribe to Alert topic
+  run-scenarios   Test different coincidence scenarios 

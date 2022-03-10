@@ -1,0 +1,57 @@
+:py:mod:`SNEWS_PT.snews_sub`
+============================
+
+.. py:module:: SNEWS_PT.snews_sub
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.snews_sub.Subscriber
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.snews_sub.save_message
+   SNEWS_PT.snews_sub.display
+
+
+
+.. py:function:: save_message(message)
+
+   Save messages to a json file.
+
+
+
+
+.. py:function:: display(message)
+
+   Function to format output messages
+
+
+
+.. py:class:: Subscriber(env_path=None)
+
+   Class to subscribe ALERT message stream
+
+   :param env_path: path for the environment file.
+                    Use default settings if not given
+   :type env_path: `str`
+
+   .. py:method:: subscribe(self)
+
+      Subscribe and listen to a given topic
+
+      :param Whether to display the subscribed message content:
+
+
+

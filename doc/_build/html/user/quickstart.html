@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quickstart &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Architecture" href="architecture.html" />
+    <link rel="prev" title="Command Line Interface (CLI)" href="command_line_interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line_interface.html">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python-api">Python-Api</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subscribing-to-a-topic">Subscribing to a topic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publishing-to-a-topic">Publishing to a topic</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command Line Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subscribe">Subscribe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publish">Publish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publish-heartbeat">Publish Heartbeat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coincidence-decider">Coincidence Decider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simulation">Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retract">Retract</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="protocol.html">SNEWS Protocols</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/api.html">snews API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Quickstart</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/user/quickstart.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<p>The module allows you to <code class="docutils literal notranslate"><span class="pre">publish</span></code>, <code class="docutils literal notranslate"><span class="pre">subscribe</span></code>, <code class="docutils literal notranslate"><span class="pre">retract</span></code> and <code class="docutils literal notranslate"><span class="pre">simulate</span></code> observation messages among other things. For these to work an environment file specifying the related kafka and mongo servers is needed. While a default file (‘hop_comms/auxiliary/test-config.env’) comes with the package, it can also be set from the command line on-flight.</p>
+<p>Below, we present a quick start for the Supernova Early Warning System communication tools <a class="reference external" href="#Python-Api">Python API</a> using both <a class="reference external" href="#snews-on-jupyter-notebooks">Jupyter Notebooks</a>, and also the <a class="reference external" href="#command-line-interface">command line interface</a>(CLI).</p>
+<p>While can be called from terminal using a CLI, the package also allows jupyter notebook interactions as described in <a class="reference external" href="#Python-Api">Python API</a></p>
+<p><strong>Table of Contents</strong></p>
+<ol class="simple">
+<li><p><a class="reference external" href="#python-api">SNEWS on Jupyter Notebooks</a></p>
+<ol class="simple">
+<li><p><a class="reference external" href="#subscribing-to-a-topic">Subscribe</a></p></li>
+<li><p><a class="reference external" href="#publishing-to-a-topic">Publish</a></p></li>
+</ol>
+</li>
+<li><p><a class="reference external" href="#command-line-interface">Command Line Interface-(CLI)</a></p>
+<ol class="simple">
+<li><p><a class="reference external" href="#subscribe">Subscribe</a></p></li>
+<li><p><a class="reference external" href="#publish">Publish</a></p></li>
+<li><p><a class="reference external" href="#publish-heartbeat">Publish Heartbeat</a></p></li>
+<li><p><a class="reference external" href="#coincidence-decider">Coincidence Decider</a></p></li>
+<li><p><a class="reference external" href="#simulation">Simulate Observation</a></p></li>
+<li><p><a class="reference external" href="#retract">Retraction</a></p></li>
+</ol>
+</li>
+</ol>
+<section id="python-api">
+<h2>Python-Api<a class="headerlink" href="#python-api" title="Permalink to this headline">¶</a></h2>
+<p>The hop_comms modules are IPython friendly and can be executed in jupyter notebook environments. However, in order to execute different cells asynchronously, one need to invoke <code class="docutils literal notranslate"><span class="pre">ipyparallel</span></code> first. For this, launch a new linux terminal and eun the following commands;</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install ipyparallel
+ipcluster nbextension <span class="nb">enable</span> -n <span class="m">2</span>
+ipcluster start -n <span class="m">2</span>
+</pre></div>
+</div>
+<p>This enables the relevant notebook extension to executes multiple cells together. After setting this, go back to jupyter notebook and import <code class="docutils literal notranslate"><span class="pre">ipyparallel</span></code> and <code class="docutils literal notranslate"><span class="pre">hop_comms</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ipyparallel</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="n">rc</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="subscribing-to-a-topic">
+<h3>Subscribing to a topic<a class="headerlink" href="#subscribing-to-a-topic" title="Permalink to this headline">¶</a></h3>
+<p>To execute different cells together, a <em>jupyter magic command</em> has to be provided in the beginning of each cell</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">px</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">t</span> <span class="mi">0</span>
+<span class="kn">from</span> <span class="nn">hop_comms.hop_sub</span> <span class="kn">import</span> <span class="n">HopSubscribe</span>
+<span class="n">sub</span> <span class="o">=</span> <span class="n">HopSubscribe</span><span class="p">()</span>
+<span class="n">sub</span><span class="o">.</span><span class="n">subscribe</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">hop_comms.hop_sub.HopSubscribe().subscribe()</span></code> command subscribes to the <strong>observation</strong> topic that is set by the environment variable by default. The default environment configuration is provided by the package but can also be provided by the user.<br></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hop_comms.snews_utils</span> <span class="kn">import</span> <span class="n">set_env</span>
+<span class="n">set_env</span><span class="p">(</span><span class="o">&lt;</span><span class="n">THE</span> <span class="n">PATH</span> <span class="n">TO</span> <span class="n">YOUR</span> <span class="n">CONFIG</span> <span class="n">FILE</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="publishing-to-a-topic">
+<h3>Publishing to a topic<a class="headerlink" href="#publishing-to-a-topic" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">px</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">t</span> <span class="mi">1</span>
+<span class="kn">from</span> <span class="nn">hop_comms.hop_pub</span> <span class="kn">import</span> <span class="n">Publish_Tier_Obs</span>
+<span class="kn">from</span> <span class="nn">hop_comms.snews_utils</span> <span class="kn">import</span> <span class="n">data_obs</span>
+
+<span class="n">pub</span> <span class="o">=</span> <span class="n">Publish_Tier_Obs</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data_obs</span><span class="p">()</span> <span class="c1"># default values </span>
+<span class="n">pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="o">&lt;</span><span class="n">EXPERIMENT</span> <span class="n">NAME</span><span class="o">&gt;</span><span class="p">,</span> <span class="s2">&quot;CoincidenceTier&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>the <code class="docutils literal notranslate"><span class="pre">snews_utils.data_obs</span></code> provides the message template set by <code class="docutils literal notranslate"><span class="pre">hop_comms.hop_mgs_schema</span></code>, all values are default to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</section>
+</section>
+<section id="command-line-interface">
+<h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
+<p>Once build the program can also be called from the terminal</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms --help
+</pre></div>
+</div>
+<p>Displays the valid command and options.</p>
+<section id="subscribe">
+<h3>Subscribe<a class="headerlink" href="#subscribe" title="Permalink to this headline">¶</a></h3>
+<p>To simply subscribe to an observation topic that is either already set by the environment variables (i.e. <code class="docutils literal notranslate"><span class="pre">echo</span> <span class="pre">$OBSERVATION_TOPIC</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>),</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms subscribe O
+</pre></div>
+</div>
+<p>or to an explicit topic name e.g. “kafka://kafka.scimma.org/snews.experiments-test”.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms subscribe -b <span class="s2">&quot;kafka://kafka.scimma.org/snews.experiments-test&quot;</span>
+</pre></div>
+</div>
+<p>or an environment configuration file can also be given on the fly</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms subscribe -env <span class="s2">&quot;path/to/environment/config/file&quot;</span>
+</pre></div>
+</div>
+<p>One can also subscribe to alert messages using <code class="docutils literal notranslate"><span class="pre">A</span></code> argument instead of <code class="docutils literal notranslate"><span class="pre">O</span></code> in the first example. <br>
+<em>See also</em> <code class="docutils literal notranslate"><span class="pre">hop_comms</span> <span class="pre">subscribe</span> <span class="pre">--help</span></code></p>
+</section>
+<section id="publish">
+<h3>Publish<a class="headerlink" href="#publish" title="Permalink to this headline">¶</a></h3>
+<p>To publish messages directly from the terminal, one can simply call</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms publish
+</pre></div>
+</div>
+<p>In which case the application uses the <code class="docutils literal notranslate"><span class="pre">'TEST'</span></code> detector, and publishes a default dictionary with all values are set to <code class="docutils literal notranslate"><span class="pre">None</span></code> at the time of execution. <br></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sent_time</span></code> is always set to time of execution. One can provide <code class="docutils literal notranslate"><span class="pre">--no-bypass</span></code> key in which case the user is prompted with a text editor to make adjustments in the dictionary. <br></p>
+<p><strong>Note:</strong> publishing an observation message from a pre-saved file is not yet implemented. <br></p>
+<p>For other options see</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms publish --help
+</pre></div>
+</div>
+</section>
+<section id="publish-heartbeat">
+<h3>Publish Heartbeat<a class="headerlink" href="#publish-heartbeat" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms publish_heartbeat
+</pre></div>
+</div>
+</section>
+<section id="coincidence-decider">
+<h3>Coincidence Decider<a class="headerlink" href="#coincidence-decider" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms run-coincidence
+</pre></div>
+</div>
+</section>
+<section id="simulation">
+<h3>Simulation<a class="headerlink" href="#simulation" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms simulate
+</pre></div>
+</div>
+<p>Takes options <code class="docutils literal notranslate"><span class="pre">-r/--rate</span></code> for simulation rate, <code class="docutils literal notranslate"><span class="pre">-p/--alert_probability</span></code> to decide if a simulated observation message will be published or not.</p>
+</section>
+<section id="retract">
+<h3>Retract<a class="headerlink" href="#retract" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hop_comms retract
+</pre></div>
+</div>
+</section>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>In general, subscription is only possible for the <em>Alert</em> topics</p></li>
+<li><p>To publish and subscribe user needs necessary kafka credentials.</p></li>
+<li><p>For the moment, the coincidence decider needs to be called externally</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="command_line_interface.html" class="btn btn-neutral float-left" title="Command Line Interface (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="architecture.html" class="btn btn-neutral float-right" title="Architecture" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

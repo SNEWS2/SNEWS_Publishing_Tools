@@ -1,0 +1,14 @@
+:py:mod:`SNEWS_PT._version`
+===========================
+
+.. py:module:: SNEWS_PT._version
+
+
+Module Contents
+---------------
+
+.. py:data:: version
+   :annotation: = 0.0.2
+
+   
+

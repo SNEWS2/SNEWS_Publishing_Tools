@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNEWS_PT.__main__ &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html">
+            <img src="../../../_static/snews_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/quickstart.html#command-line-interface-cli">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/message_schema.html">Message Schemas</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/api.html">snews API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">SNEWS_PT.__main__</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/SNEWS_PT/__main__/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-SNEWS_PT.__main__">
+<span id="snews-pt-main"></span><h1><a class="reference internal" href="#module-SNEWS_PT.__main__" title="SNEWS_PT.__main__"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SNEWS_PT.__main__</span></code></a><a class="headerlink" href="#module-SNEWS_PT.__main__" title="Permalink to this headline">¶</a></h1>
+<p>CLI for snews_pt
+Right now publish method does not allow extra arguments.
+While this might be the desired use. I think it should not fail to publish, rather
+- either mark the extra columns and publish, or
+- split these columns, publish the fixed template, and report back to user.
+Manipulations in the publish class can be made see
+<a class="reference external" href="https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk">https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk</a></p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.__main__.main" title="SNEWS_PT.__main__.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>(ctx, env)</p></td>
+<td><p>User interface for snews_pt tools</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.__main__.publish" title="SNEWS_PT.__main__.publish"><code class="xref py py-obj docutils literal notranslate"><span class="pre">publish</span></code></a>(ctx, tiers, file, verbose)</p></td>
+<td><p>Publish a message using snews_pub</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.__main__.subscribe" title="SNEWS_PT.__main__.subscribe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subscribe</span></code></a>(ctx)</p></td>
+<td><p>Subscribe to Alert topic</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.__main__.heartbeat" title="SNEWS_PT.__main__.heartbeat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">heartbeat</span></code></a>(ctx, status, machine_time, verbose)</p></td>
+<td><p>Publish heartbeat messages. Recommended frequency is</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.__main__.retract" title="SNEWS_PT.__main__.retract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retract</span></code></a>(ctx, tier, number, reason, false_id, verbose)</p></td>
+<td><p>Retract N latest message</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.__main__.message_schema" title="SNEWS_PT.__main__.message_schema"><code class="xref py py-obj docutils literal notranslate"><span class="pre">message_schema</span></code></a>(tier)</p></td>
+<td><p>Display the message format for <cite>tier</cite>, default 'all'</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.__main__.main">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.__main__.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/__main__.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.__main__.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>User interface for snews_pt tools</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.__main__.publish">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.__main__.</span></span><span class="sig-name descname"><span class="pre">publish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/__main__.html#publish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.__main__.publish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish a message using snews_pub</p>
+<p class="rubric">Notes</p>
+<p>The topics are read from the defaults i.e. from auxiliary/test-config.env
+If no file is given it can still submit dummy messages with default values</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.__main__.subscribe">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.__main__.</span></span><span class="sig-name descname"><span class="pre">subscribe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/__main__.html#subscribe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.__main__.subscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subscribe to Alert topic</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.__main__.heartbeat">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.__main__.</span></span><span class="sig-name descname"><span class="pre">heartbeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/__main__.html#heartbeat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.__main__.heartbeat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish heartbeat messages. Recommended frequency is
+every 3 minutes.
+machine_time is optional, and each message is appended with a <cite>sent_time</cite>
+passing machine_time allows for latency studies.</p>
+<p>USAGE: snews_pt heartbeat ON -mt ‘22/01/01 19:16:14’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.__main__.retract">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.__main__.</span></span><span class="sig-name descname"><span class="pre">retract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">false_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/__main__.html#retract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.__main__.retract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retract N latest message</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.__main__.message_schema">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.__main__.</span></span><span class="sig-name descname"><span class="pre">message_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/__main__.html#message_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.__main__.message_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the message format for <cite>tier</cite>, default ‘all’</p>
+<p>Notes
+TODO: For some reason, the displayed keys are missing</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

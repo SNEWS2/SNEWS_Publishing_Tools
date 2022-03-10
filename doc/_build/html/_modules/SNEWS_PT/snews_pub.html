@@ -1,0 +1,453 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNEWS_PT.snews_pub &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html">
+            <img src="" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/command_line_interface.html">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/protocol.html">SNEWS Protocols</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">snews API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>SNEWS_PT.snews_pub</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for SNEWS_PT.snews_pub</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An interface for SNEWS member experiment </span>
+<span class="sd">to publish their observation and heartbeat messages.</span>
+
+<span class="sd">Created: </span>
+<span class="sd">August 2021</span>
+<span class="sd">Authors: </span>
+<span class="sd">Melih Kara</span>
+<span class="sd">Sebastian Torres-Lara</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">click</span>
+<span class="kn">from</span> <span class="nn">hop</span> <span class="kn">import</span> <span class="n">Stream</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">snews_pt_utils</span>
+<span class="kn">from</span> <span class="nn">.message_schema</span> <span class="kn">import</span> <span class="n">Message_Schema</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+
+<div class="viewcode-block" id="Publisher"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.Publisher">[docs]</a><span class="k">class</span> <span class="nc">Publisher</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class in charge of publishing messages to SNEWS-hop sever.</span>
+<span class="sd">    This class acts as a context manager.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    env_path: &#39;str&#39;</span>
+<span class="sd">        path to SNEWS env file, defaults to tes_config.env if None is passed.</span>
+<span class="sd">    verbose: bool</span>
+<span class="sd">        Option to display message when publishing.</span>
+<span class="sd">    auth: bool</span>
+<span class="sd">        Option to run hop-Stream without authentication. Pass False to do so</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">set_env</span><span class="p">(</span><span class="n">env_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_broker</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;OBSERVATION_TOPIC&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">TimeStuff</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">until_eos</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_broker</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Publisher.send"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.Publisher.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method will set the sent_time and send the message to the hop broker.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message: dict</span>
+<span class="sd">            observation message.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">display_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">57</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;bright_blue&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;FalseOBS&#39;</span><span class="p">:</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="s2">&quot;It&#39;s okay, we all make mistakes&quot;</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;magenta&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">message</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s1">&lt;20s</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoincidenceTier"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.CoincidenceTier">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">CoincidenceTier</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;CoincidenceTier</span>
+<span class="sd">    Container class for CoincidenceTier, takes in message info and sets up schema.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    detector_name:  str</span>
+<span class="sd">        Name of your detector.</span>
+<span class="sd">        Use snews_pt_utils.retrieve_detectors() to see the available detector names.</span>
+<span class="sd">    p_val: float</span>
+<span class="sd">        p-value of nu signal.</span>
+<span class="sd">    nu_time: str</span>
+<span class="sd">        nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</span>
+<span class="sd">    machine_time: str</span>
+<span class="sd">        time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</span>
+<span class="sd">    message_type: str (default:&#39;CoincidenceTier&#39;)</span>
+<span class="sd">        Name of tier, used to format the schema</span>
+<span class="sd">    extra: dict (default: None)</span>
+<span class="sd">        Use this in case you want to send extra information.</span>
+<span class="sd">        Make sure it&#39;s formatted as a dict.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p_value</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">neutrino_time</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">detector_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">)</span>
+    <span class="n">machine_time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">message_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;CoincidenceTier&#39;</span>
+
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def from_dict(cls, env):</span>
+    <span class="c1">#     valid_data = cls(**{</span>
+    <span class="c1">#         k: v for k, v in env.items()</span>
+    <span class="c1">#         if k in inspect.signature(cls).parameters</span>
+    <span class="c1">#     })</span>
+    <span class="c1">#     for k,v in env.items():</span>
+    <span class="c1">#         if k not in inspect.signature(cls).parameters:</span>
+    <span class="c1">#             click.echo(click.style(k, fg=&#39;bright_red&#39;)+f&#39; not a valid key for CoincidenceTier&#39;)</span>
+    <span class="c1">#     return valid_data</span>
+
+<div class="viewcode-block" id="CoincidenceTier.message"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.CoincidenceTier.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Formats message structure</span>
+
+<span class="sd">        returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        message as dict object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">TimeStuff</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">coincidence_tier_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">machine_time</span><span class="p">,</span>
+                                                    <span class="n">p_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p_value</span><span class="p">,</span>
+                                                    <span class="n">nu_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">neutrino_time</span><span class="p">,</span>
+                                                    <span class="p">)</span>
+        <span class="c1"># if self.extra != None and type(self.extra) == dict:</span>
+        <span class="c1">#     data = snews_pt_utils.coincidence_tier_data(**self.extra, machine_time=self.machine_time,</span>
+        <span class="c1">#                                                 p_value=self.p_value,</span>
+        <span class="c1">#                                                 nu_time=self.neutrino_time,</span>
+        <span class="c1">#                                                 )</span>
+
+        <span class="k">return</span> <span class="n">Message_Schema</span><span class="p">(</span><span class="n">detector_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detector_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_schema</span><span class="p">(</span><span class="n">message_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                                                          <span class="n">sent_time</span><span class="o">=</span><span class="n">times</span><span class="o">.</span><span class="n">get_snews_time</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="SignificanceTier"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.SignificanceTier">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SignificanceTier</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;SignificanceTier</span>
+<span class="sd">       Container class for SignificanceTier, takes in message info and sets up schema.</span>
+
+<span class="sd">       Attributes</span>
+<span class="sd">       ----------</span>
+<span class="sd">       nu_time: str</span>
+<span class="sd">           nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</span>
+<span class="sd">       p_values: list of float</span>
+<span class="sd">           p-values for a SN nu flux.</span>
+<span class="sd">       detector_name:  str</span>
+<span class="sd">           Name of your detector.</span>
+<span class="sd">           Use snews_pt_utils.retrieve_detectors() to see the available detector names.</span>
+<span class="sd">       machine_time: str</span>
+<span class="sd">           time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</span>
+<span class="sd">       message_type: str (default:&#39;SigTier&#39;)</span>
+<span class="sd">           Name of tier, used to format the schema</span>
+<span class="sd">       extra: dict (default: None)</span>
+<span class="sd">           Use this in case you want to send extra information.</span>
+<span class="sd">           Make sure it&#39;s formatted as a dict.</span>
+
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="n">neutrino_time</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">p_values</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">detector_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">)</span>
+    <span class="n">machine_time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">message_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;SigTier&#39;</span>
+
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def from_dict(cls, env):</span>
+    <span class="c1">#     valid_data = cls(**{</span>
+    <span class="c1">#         k: v for k, v in env.items()</span>
+    <span class="c1">#         if k in inspect.signature(cls).parameters</span>
+    <span class="c1">#     })</span>
+    <span class="c1">#     for k,v in env.items():</span>
+    <span class="c1">#         if k not in inspect.signature(cls).parameters:</span>
+    <span class="c1">#             click.echo(click.style(k, fg=&#39;bright_red&#39;)+f&#39; not a valid key for SigTier&#39;)</span>
+    <span class="c1">#     return valid_data</span>
+
+<div class="viewcode-block" id="SignificanceTier.message"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.SignificanceTier.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           Formats message structure</span>
+
+<span class="sd">           returns</span>
+<span class="sd">           -------</span>
+<span class="sd">           message as dict object</span>
+
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">sig_tier_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">nu_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">neutrino_time</span><span class="p">,</span>
+                                            <span class="n">p_values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p_values</span><span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">TimeStuff</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">sig_tier_data</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">,</span> <span class="n">machine_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">machine_time</span><span class="p">,</span>
+                                                <span class="n">nu_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">neutrino_time</span><span class="p">,</span>
+                                                <span class="n">p_values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p_values</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Message_Schema</span><span class="p">(</span><span class="n">detector_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detector_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_schema</span><span class="p">(</span><span class="n">message_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                                                          <span class="n">sent_time</span><span class="o">=</span><span class="n">times</span><span class="o">.</span><span class="n">get_snews_time</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="TimingTier"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.TimingTier">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TimingTier</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Timing Tier</span>
+<span class="sd">          Container class for Timing Tier, takes in message info and sets up schema.</span>
+
+<span class="sd">          Attributes</span>
+<span class="sd">          ----------</span>
+<span class="sd">          nu_time: str</span>
+<span class="sd">            nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</span>
+<span class="sd">          timing_series: list of str</span>
+<span class="sd">              nu arrival times. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</span>
+<span class="sd">          detector_name:  str</span>
+<span class="sd">              Name of your detector.</span>
+<span class="sd">              Use snews_pt_utils.retrieve_detectors() to see the available detector names.</span>
+<span class="sd">          machine_time: str</span>
+<span class="sd">              time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</span>
+<span class="sd">          message_type: str (default:&#39;SigTier&#39;)</span>
+<span class="sd">              Name of tier, used to format the schema</span>
+<span class="sd">          extra: dict (default: None)</span>
+<span class="sd">              Use this in case you want to send extra information.</span>
+<span class="sd">              Make sure it&#39;s formatted as a dict.</span>
+
+<span class="sd">          &quot;&quot;&quot;</span>
+    <span class="n">neutrino_time</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">timing_series</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">detector_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">)</span>
+    <span class="n">machine_time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">message_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;TimeTier&#39;</span>
+
+    <span class="c1"># @classmethod</span>
+    <span class="c1"># def from_dict(cls, env):</span>
+    <span class="c1">#     valid_data = cls(**{</span>
+    <span class="c1">#         k: v for k, v in env.items()</span>
+    <span class="c1">#         if k in inspect.signature(cls).parameters</span>
+    <span class="c1">#     })</span>
+    <span class="c1">#     for k,v in env.items():</span>
+    <span class="c1">#         if k not in inspect.signature(cls).parameters:</span>
+    <span class="c1">#             click.echo(click.style(k, fg=&#39;bright_red&#39;)+f&#39; not a valid key for TimeTier&#39;)</span>
+    <span class="c1">#     return valid_data</span>
+
+<div class="viewcode-block" id="TimingTier.message"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.TimingTier.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           Formats message structure</span>
+
+<span class="sd">           returns</span>
+<span class="sd">           -------</span>
+<span class="sd">           message as dict object</span>
+
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">TimeStuff</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">time_tier_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">nu_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">neutrino_time</span><span class="p">,</span>
+                                             <span class="n">timing_series</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timing_series</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">time_tier_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">nu_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">neutrino_time</span><span class="p">,</span>
+                                                 <span class="n">timing_series</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timing_series</span><span class="p">,</span>
+                                                 <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Message_Schema</span><span class="p">(</span><span class="n">detector_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detector_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_schema</span><span class="p">(</span><span class="n">message_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                                                          <span class="n">sent_time</span><span class="o">=</span><span class="n">times</span><span class="o">.</span><span class="n">get_snews_time</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="Retraction"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.Retraction">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Retraction</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Retraction</span>
+<span class="sd">    Container class for retraction messages.</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    which_tier: str</span>
+<span class="sd">        Name of tier you want to retract from,</span>
+<span class="sd">            &#39;CoincidenceTier&#39;</span>
+<span class="sd">            &#39;SigTier&#39;</span>
+<span class="sd">            &#39;TimeTier&#39;</span>
+<span class="sd">    n_retract_latest: int</span>
+<span class="sd">        Number of most recent message you want to retract</span>
+<span class="sd">    detector_name:  str</span>
+<span class="sd">        Name of your detector.</span>
+<span class="sd">        Use snews_pt_utils.retrieve_detectors() to see the available detector names.</span>
+<span class="sd">    message_type: str (default: &#39;FalseOBS&#39;</span>
+<span class="sd">        Set message type for schema</span>
+<span class="sd">    machine_time: str (default: None)</span>
+<span class="sd">        time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f</span>
+<span class="sd">    false_mgs_id: str (default: None)</span>
+<span class="sd">        specific id of message you want to retract.</span>
+<span class="sd">    retraction_reason: str (default: None)</span>
+<span class="sd">        Reason why you are retracting.</span>
+<span class="sd">    extra: dict (default: None)</span>
+<span class="sd">        Use this in case you want to send extra information.</span>
+<span class="sd">        Make sure it&#39;s formatted as a dict!!!</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">which_tier</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">n_retract_latest</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">detector_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">)</span>
+    <span class="n">message_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;FalseOBS&#39;</span>
+    <span class="n">machine_time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">false_mgs_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">retraction_reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Retraction.message"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.Retraction.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           Formats message structure</span>
+
+<span class="sd">           returns</span>
+<span class="sd">           -------</span>
+<span class="sd">           message as dict object</span>
+
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">retraction_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">false_mgs_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">false_mgs_id</span><span class="p">,</span>
+                                              <span class="n">which_tier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">which_tier</span><span class="p">,</span> <span class="n">n_retract_latest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_retract_latest</span><span class="p">,</span>
+                                              <span class="n">retraction_reason</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retraction_reason</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">retraction_data</span><span class="p">(</span><span class="n">machine_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">machine_time</span><span class="p">,</span> <span class="n">false_mgs_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">false_mgs_id</span><span class="p">,</span>
+                                                  <span class="n">which_tier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">which_tier</span><span class="p">,</span> <span class="n">n_retract_latest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_retract_latest</span><span class="p">,</span>
+                                                  <span class="n">retraction_reason</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retraction_reason</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">extra</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Message_Schema</span><span class="p">(</span><span class="n">detector_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detector_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_schema</span><span class="p">(</span><span class="n">message_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                                                          <span class="n">sent_time</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Heartbeat"><a class="viewcode-back" href="../../api/snews_pub.html#SNEWS_PT.snews_pub.Heartbeat">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Heartbeat</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Publish Heartbeat message.</span>
+<span class="sd">        We recommend submitting messages every 3 minutes</span>
+<span class="sd">        Ideally, this function should be called after fetching</span>
+<span class="sd">        the status of the detector</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        status : `str` (&quot;ON&quot;/&quot;OFF&quot;)</span>
+<span class="sd">            status of the detector at the time of invocation</span>
+<span class="sd">        detector_name: `str`</span>
+<span class="sd">            name of the detector</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">detector_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">)</span>
+    <span class="n">machine_time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">message_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Heartbeat&#39;</span>
+
+    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ON&quot;</span><span class="p">,</span> <span class="s2">&quot;OFF&quot;</span><span class="p">]:</span>
+            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2"> has to be &#39;ON&#39; or &#39;OFF&#39;</span><span class="se">\n\t</span><span class="s2">Setting it to &quot;</span> <span class="o">+</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s1">&#39;OFF&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">))</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;OFF&quot;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">heartbeat_data</span><span class="p">(</span><span class="n">detector_status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">machine_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">machine_time</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">Message_Schema</span><span class="p">(</span><span class="n">detector_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">detector_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_schema</span><span class="p">(</span><span class="n">message_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message_type</span><span class="p">,</span>
+                                                                             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">sent_time</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">message</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

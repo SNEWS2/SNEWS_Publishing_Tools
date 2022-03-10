@@ -1,0 +1,456 @@
+:py:mod:`SNEWS_PT.snews_pub`
+============================
+
+.. py:module:: SNEWS_PT.snews_pub
+
+.. autoapi-nested-parse::
+
+   An interface for SNEWS member experiment
+   to publish their observation and heartbeat messages.
+
+   Created:
+   August 2021
+   Authors:
+   Melih Kara
+   Sebastian Torres-Lara
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.snews_pub.Publisher
+   SNEWS_PT.snews_pub.CoincidenceTier
+   SNEWS_PT.snews_pub.SignificanceTier
+   SNEWS_PT.snews_pub.TimingTier
+   SNEWS_PT.snews_pub.Retraction
+   SNEWS_PT.snews_pub.Heartbeat
+
+
+
+
+.. py:class:: Publisher(env_path=None, verbose=True, auth=True)
+
+   Class in charge of publishing messages to SNEWS-hop sever.
+   This class acts as a context manager.
+
+   :param env_path: path to SNEWS env file, defaults to tes_config.env if None is passed.
+   :type env_path: 'str'
+   :param verbose: Option to display message when publishing.
+   :type verbose: bool
+   :param auth: Option to run hop-Stream without authentication. Pass False to do so
+   :type auth: bool
+
+   .. py:method:: __enter__(self)
+
+
+   .. py:method:: __exit__(self, *args)
+
+
+   .. py:method:: send(self, message)
+
+      This method will set the sent_time and send the message to the hop broker.
+
+      :param message: observation message.
+      :type message: dict
+
+
+   .. py:method:: display_message(self, message)
+
+
+
+.. py:class:: CoincidenceTier
+
+   CoincidenceTier
+   Container class for CoincidenceTier, takes in message info and sets up schema.
+
+   .. attribute:: detector_name
+
+      Name of your detector.
+      Use snews_pt_utils.retrieve_detectors() to see the available detector names.
+
+      :type: str
+
+   .. attribute:: p_val
+
+      p-value of nu signal.
+
+      :type: float
+
+   .. attribute:: nu_time
+
+      nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+
+      :type: str
+
+   .. attribute:: machine_time
+
+      time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+
+      :type: str
+
+   .. attribute:: message_type
+
+      Name of tier, used to format the schema
+
+      :type: str (default:'CoincidenceTier')
+
+   .. attribute:: extra
+
+      Use this in case you want to send extra information.
+      Make sure it's formatted as a dict.
+
+      :type: dict (default: None)
+
+   .. py:attribute:: p_value
+      :annotation: :float
+
+      
+
+   .. py:attribute:: neutrino_time
+      :annotation: :str
+
+      
+
+   .. py:attribute:: detector_name
+      :annotation: :str
+
+      
+
+   .. py:attribute:: machine_time
+      :annotation: :str
+
+      
+
+   .. py:attribute:: message_type
+      :annotation: :str = CoincidenceTier
+
+      
+
+   .. py:method:: message(self)
+
+      Formats message structure
+
+      :returns:
+      :rtype: message as dict object
+
+
+
+.. py:class:: SignificanceTier
+
+   SignificanceTier
+   Container class for SignificanceTier, takes in message info and sets up schema.
+
+   .. attribute:: nu_time
+
+      nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+
+      :type: str
+
+   .. attribute:: p_values
+
+      p-values for a SN nu flux.
+
+      :type: list of float
+
+   .. attribute:: detector_name
+
+      Name of your detector.
+      Use snews_pt_utils.retrieve_detectors() to see the available detector names.
+
+      :type: str
+
+   .. attribute:: machine_time
+
+      time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+
+      :type: str
+
+   .. attribute:: message_type
+
+      Name of tier, used to format the schema
+
+      :type: str (default:'SigTier')
+
+   .. attribute:: extra
+
+      Use this in case you want to send extra information.
+      Make sure it's formatted as a dict.
+
+      :type: dict (default: None)
+
+   .. py:attribute:: neutrino_time
+      :annotation: :str
+
+      
+
+   .. py:attribute:: p_values
+      :annotation: :list
+
+      
+
+   .. py:attribute:: detector_name
+      :annotation: :str
+
+      
+
+   .. py:attribute:: machine_time
+      :annotation: :str
+
+      
+
+   .. py:attribute:: extra
+      :annotation: :dict
+
+      
+
+   .. py:attribute:: message_type
+      :annotation: :str = SigTier
+
+      
+
+   .. py:method:: message(self)
+
+      Formats message structure
+
+      :returns:
+      :rtype: message as dict object
+
+
+
+.. py:class:: TimingTier
+
+   Timing Tier
+   Container class for Timing Tier, takes in message info and sets up schema.
+
+   .. attribute:: nu_time
+
+      nu arrival time. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+
+      :type: str
+
+   .. attribute:: timing_series
+
+      nu arrival times. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+
+      :type: list of str
+
+   .. attribute:: detector_name
+
+      Name of your detector.
+      Use snews_pt_utils.retrieve_detectors() to see the available detector names.
+
+      :type: str
+
+   .. attribute:: machine_time
+
+      time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+
+      :type: str
+
+   .. attribute:: message_type
+
+      Name of tier, used to format the schema
+
+      :type: str (default:'SigTier')
+
+   .. attribute:: extra
+
+      Use this in case you want to send extra information.
+      Make sure it's formatted as a dict.
+
+      :type: dict (default: None)
+
+   .. py:attribute:: neutrino_time
+      :annotation: :str
+
+      
+
+   .. py:attribute:: timing_series
+      :annotation: :list
+
+      
+
+   .. py:attribute:: detector_name
+      :annotation: :str
+
+      
+
+   .. py:attribute:: machine_time
+      :annotation: :str
+
+      
+
+   .. py:attribute:: extra
+      :annotation: :dict
+
+      
+
+   .. py:attribute:: message_type
+      :annotation: :str = TimeTier
+
+      
+
+   .. py:method:: message(self)
+
+      Formats message structure
+
+      :returns:
+      :rtype: message as dict object
+
+
+
+.. py:class:: Retraction
+
+   Retraction
+   Container class for retraction messages.
+   .. attribute:: which_tier
+
+
+
+      Name of tier you want to retract from,
+          'CoincidenceTier'
+          'SigTier'
+          'TimeTier'
+
+      :type: str
+
+   .. attribute:: n_retract_latest
+
+      Number of most recent message you want to retract
+
+      :type: int
+
+   .. attribute:: detector_name
+
+      Name of your detector.
+      Use snews_pt_utils.retrieve_detectors() to see the available detector names.
+
+      :type: str
+
+   .. attribute:: message_type
+
+      Set message type for schema
+
+      :type: str (default: 'FalseOBS'
+
+   .. attribute:: machine_time
+
+      time recorded by detector. formats %y/%m/%d_%H:%M:%S:%f or %H:%M:%S:%f
+
+      :type: str (default: None)
+
+   .. attribute:: false_mgs_id
+
+      specific id of message you want to retract.
+
+      :type: str (default: None)
+
+   .. attribute:: retraction_reason
+
+      Reason why you are retracting.
+
+      :type: str (default: None)
+
+   .. attribute:: extra
+
+      Use this in case you want to send extra information.
+      Make sure it's formatted as a dict!!!
+
+      :type: dict (default: None)
+
+   .. py:attribute:: which_tier
+      :annotation: :str
+
+      
+
+   .. py:attribute:: n_retract_latest
+      :annotation: :int = 1
+
+      
+
+   .. py:attribute:: detector_name
+      :annotation: :str
+
+      
+
+   .. py:attribute:: message_type
+      :annotation: :str = FalseOBS
+
+      
+
+   .. py:attribute:: machine_time
+      :annotation: :str
+
+      
+
+   .. py:attribute:: false_mgs_id
+      :annotation: :str
+
+      
+
+   .. py:attribute:: retraction_reason
+      :annotation: :str
+
+      
+
+   .. py:attribute:: extra
+      :annotation: :dict
+
+      
+
+   .. py:method:: message(self)
+
+      Formats message structure
+
+      :returns:
+      :rtype: message as dict object
+
+
+
+.. py:class:: Heartbeat
+
+   Publish Heartbeat message.
+   We recommend submitting messages every 3 minutes
+   Ideally, this function should be called after fetching
+   the status of the detector
+
+   :param status: status of the detector at the time of invocation
+   :type status: `str` ("ON"/"OFF")
+   :param detector_name: name of the detector
+   :type detector_name: `str`
+
+   .. py:attribute:: status
+      :annotation: :str
+
+      
+
+   .. py:attribute:: detector_name
+      :annotation: :str
+
+      
+
+   .. py:attribute:: machine_time
+      :annotation: :str
+
+      
+
+   .. py:attribute:: extra
+      :annotation: :dict
+
+      
+
+   .. py:attribute:: message_type
+      :annotation: :str = Heartbeat
+
+      
+
+   .. py:method:: message(self)
+
+
+

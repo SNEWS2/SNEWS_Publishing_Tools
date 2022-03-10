@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNEWS_PT.__main__ &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html">
+            <img src="../../_static/snews_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/quickstart.html#command-line-interface-cli">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/message_schema.html">Message Schemas</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">snews API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>SNEWS_PT.__main__</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for SNEWS_PT.__main__</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; CLI for snews_pt</span>
+<span class="sd">    Right now publish method does not allow extra arguments.</span>
+<span class="sd">    While this might be the desired use. I think it should not fail to publish, rather</span>
+<span class="sd">    - either mark the extra columns and publish, or</span>
+<span class="sd">    - split these columns, publish the fixed template, and report back to user.</span>
+<span class="sd">    Manipulations in the publish class can be made see</span>
+<span class="sd">    https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">snews_pt_utils</span>
+<span class="kn">from</span> <span class="nn">.snews_pub</span> <span class="kn">import</span> <span class="n">Publisher</span><span class="p">,</span> <span class="n">Heartbeat</span><span class="p">,</span> <span class="n">Retraction</span>
+<span class="kn">from</span> <span class="nn">.snews_sub</span> <span class="kn">import</span> <span class="n">Subscriber</span>
+<span class="kn">from</span> <span class="nn">.message_schema</span> <span class="kn">import</span> <span class="n">Message_Schema</span> <span class="k">as</span> <span class="n">msg_schema</span>
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">invoke_without_command</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">version_option</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--env&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;/auxiliary/test-config.env&#39;</span><span class="p">,</span>
+    <span class="n">show_default</span><span class="o">=</span><span class="s1">&#39;auxiliary/test-config.env&#39;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;environment file containing the configurations&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/__main__/index.html#SNEWS_PT.__main__.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; User interface for snews_pt tools</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">env_path</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="n">env</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">ensure_object</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">set_env</span><span class="p">(</span><span class="n">env_path</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;env&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DETECTOR_NAME&quot;</span><span class="p">)</span></div>
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;tiers&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--verbose&#39;</span><span class="p">,</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--file&#39;</span><span class="p">,</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="s1">&#39;data file&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<div class="viewcode-block" id="publish"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/__main__/index.html#SNEWS_PT.__main__.publish">[docs]</a><span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">tiers</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Publish a message using snews_pub</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The topics are read from the defaults i.e. from auxiliary/test-config.env</span>
+<span class="sd">    If no file is given it can still submit dummy messages with default values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">tier_data_pairs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;CoincidenceTier&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">coincidence_tier_data</span><span class="p">(),</span>
+                       <span class="s1">&#39;SigTier&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">sig_tier_data</span><span class="p">(),</span>
+                       <span class="s1">&#39;TimeTier&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">time_tier_data</span><span class="p">(),</span>
+                       <span class="s1">&#39;FalseOBS&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">retraction_data</span><span class="p">(),</span>
+                       <span class="s1">&#39;Heartbeat&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">heartbeat_data</span><span class="p">()}</span>
+
+    <span class="n">tiers_list</span><span class="p">,</span> <span class="n">names_list</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">_check_cli_request</span><span class="p">(</span><span class="n">tiers</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">Tier</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tiers_list</span><span class="p">,</span> <span class="n">names_list</span><span class="p">):</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Publishing to </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">; &#39;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;bright_cyan&#39;</span><span class="p">)</span>
+        <span class="c1"># look for the data</span>
+        <span class="k">if</span> <span class="n">file</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">_parse_file</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># get default data for tier</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">tier_data_pairs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;detector_name&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">detector</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;detector_name&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">detector</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;detector_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detector</span>
+        <span class="c1"># message = Tier(**data).message()</span>
+        <span class="c1"># check if the input matches the required fields</span>
+        <span class="n">valid_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">Tier</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sig</span><span class="p">:</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;bright_magenta&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; not a valid key for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">valid_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">Tier</span><span class="p">(</span><span class="o">**</span><span class="n">valid_data</span><span class="p">)</span><span class="o">.</span><span class="n">message</span><span class="p">()</span>
+        <span class="n">pub</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">with_resource</span><span class="p">(</span><span class="n">Publisher</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;env&#39;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">))</span>
+        <span class="n">pub</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<div class="viewcode-block" id="subscribe"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/__main__/index.html#SNEWS_PT.__main__.subscribe">[docs]</a><span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Subscribe to Alert topic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sub</span> <span class="o">=</span> <span class="n">Subscriber</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;env&#39;</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">subscribe</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--machine_time&#39;</span><span class="p">,</span><span class="s1">&#39;-mt&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;`str`, optional  Time when the status was fetched&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--verbose&#39;</span><span class="p">,</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Whether to display the output, default is True&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<div class="viewcode-block" id="heartbeat"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/__main__/index.html#SNEWS_PT.__main__.heartbeat">[docs]</a><span class="k">def</span> <span class="nf">heartbeat</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">machine_time</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Publish heartbeat messages. Recommended frequency is</span>
+<span class="sd">    every 3 minutes.</span>
+<span class="sd">    machine_time is optional, and each message is appended with a `sent_time`</span>
+<span class="sd">    passing machine_time allows for latency studies.</span>
+
+<span class="sd">    USAGE: snews_pt heartbeat ON -mt &#39;22/01/01 19:16:14&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Publishing to Heartbeat; &#39;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;bright_cyan&#39;</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">Heartbeat</span><span class="p">(</span><span class="n">detector_name</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span> <span class="n">machine_time</span><span class="o">=</span><span class="n">machine_time</span><span class="p">)</span><span class="o">.</span><span class="n">message</span><span class="p">()</span>
+    <span class="n">pub</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">with_resource</span><span class="p">(</span><span class="n">Publisher</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;env&#39;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">))</span>
+    <span class="n">pub</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--tier&#39;</span><span class="p">,</span><span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of tier you want to retract from&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--number&#39;</span><span class="p">,</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of most recent message you want to retract&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--reason&#39;</span><span class="p">,</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Retraction reason&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--false_id&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Specific message ID to retract&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--verbose&#39;</span><span class="p">,</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<div class="viewcode-block" id="retract"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/__main__/index.html#SNEWS_PT.__main__.retract">[docs]</a><span class="k">def</span> <span class="nf">retract</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">tier</span><span class="p">,</span> <span class="n">number</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">false_id</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Retract N latest message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">_check_cli_request</span><span class="p">(</span><span class="n">tier</span><span class="p">)</span>
+    <span class="n">tier</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Retracting from </span><span class="si">{</span><span class="n">tier</span><span class="si">}</span><span class="s1">; &#39;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;bright_magenta&#39;</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">Retraction</span><span class="p">(</span><span class="n">detector_name</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;DETECTOR_NAME&#39;</span><span class="p">],</span>
+                         <span class="n">which_tier</span><span class="o">=</span><span class="n">tier</span><span class="p">,</span>
+                         <span class="n">n_retract_latest</span><span class="o">=</span><span class="n">number</span><span class="p">,</span>
+                         <span class="n">false_mgs_id</span><span class="o">=</span><span class="n">false_id</span><span class="p">,</span>
+                         <span class="n">retraction_reason</span><span class="o">=</span><span class="n">reason</span><span class="p">)</span><span class="o">.</span><span class="n">message</span><span class="p">()</span>
+    <span class="n">pub</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">with_resource</span><span class="p">(</span><span class="n">Publisher</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;env&#39;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">))</span>
+    <span class="n">pub</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;tier&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="message_schema"><a class="viewcode-back" href="../../autoapi/SNEWS_PT/__main__/index.html#SNEWS_PT.__main__.message_schema">[docs]</a><span class="k">def</span> <span class="nf">message_schema</span><span class="p">(</span><span class="n">tier</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Display the message format for `tier`, default &#39;all&#39;</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    TODO: For some reason, the displayed keys are missing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tier_data_pairs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;CoincidenceTier&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">coincidence_tier_data</span><span class="p">(),</span>
+                       <span class="s1">&#39;SigTier&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">sig_tier_data</span><span class="p">(),</span>
+                       <span class="s1">&#39;TimeTier&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">time_tier_data</span><span class="p">(),</span>
+                       <span class="s1">&#39;FalseOBS&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">retraction_data</span><span class="p">(),</span>
+                       <span class="s1">&#39;Heartbeat&#39;</span><span class="p">:</span><span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">heartbeat_data</span><span class="p">()}</span>
+
+    <span class="k">if</span> <span class="n">tier</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="c1"># display all formats</span>
+        <span class="n">tier</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tier_data_pairs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># check for aliases e.g. coinc = coincidence = CoinCideNceTier</span>
+        <span class="n">tier</span> <span class="o">=</span> <span class="n">snews_pt_utils</span><span class="o">.</span><span class="n">_check_aliases</span><span class="p">(</span><span class="n">tier</span><span class="p">)</span>
+
+    <span class="c1"># get message format for given tier(s)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">msg_schema</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tier</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">tier_data_pairs</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+        <span class="n">all_data</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_schema</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1"> &gt;The Message Schema for </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">all_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s1">&lt;20s</span><span class="si">}</span><span class="s1">:(SNEWS SETS)&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;bright_red&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">secho</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s1">&lt;20s</span><span class="si">}</span><span class="s1">:(User Input)&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;bright_cyan&#39;</span><span class="p">)</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

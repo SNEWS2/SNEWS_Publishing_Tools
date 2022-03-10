@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command Line Interface (CLI) &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html">
+            <img src="_static/snews_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/quickstart.html#command-line-interface-cli">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/message_schema.html">Message Schemas</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/api.html">snews API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Command Line Interface (CLI)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cli_docs.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="command-line-interface-cli">
+<h1>Command Line Interface (CLI)<a class="headerlink" href="#command-line-interface-cli" title="Permalink to this headline">¶</a></h1>
+<p>It is also possible to interact with <code class="docutils literal notranslate"><span class="pre">snews_pt</span></code> through the command line. <br>
+All the commands have their short descriptions accessible via <code class="docutils literal notranslate"><span class="pre">--help</span></code> flag.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> User$: snews_pt --help 
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Usage: snews_pt <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+  User interface <span class="k">for</span> snews_pt tools
+
+Options:
+  --version   Show the version and exit.
+  --env TEXT  environment file containing the configurations  <span class="o">[</span>default: <span class="o">(</span>auxiliary/test-config.env<span class="o">)]</span>
+  --help      Show this message and exit.
+
+Commands:
+  heartbeat       Publish heartbeat messages.
+  message-schema  Display the message format <span class="k">for</span> <span class="sb">`</span>tier<span class="sb">`</span>, default <span class="s1">&#39;all&#39;</span>
+  publish         Publish a message using snews_pub
+  retract         Retract N latest message
+  subscribe       Subscribe to Alert topic 
+</pre></div>
+</div>
+<p>The main command <code class="docutils literal notranslate"><span class="pre">snews_pt</span></code> serves an entry point. It is also possible to set an <em>environment</em> by passing it to this with any other command.
+E.g. <code class="docutils literal notranslate"><span class="pre">snews_pt</span> <span class="pre">--env</span> <span class="pre">myenvfile.env</span> <span class="pre">subscribe</span></code> will set the variables in <em>myenvfile.env</em>  and subscribe to the <em>ALERT_TOPIC</em> specified in this file. <br>
+By default, it uses the environment file that comes with the package.</p>
+<hr class="docutils" />
+<section id="subscribing-to-alert-topics">
+<h2>Subscribing to Alert Topics<a class="headerlink" href="#subscribing-to-alert-topics" title="Permalink to this headline">¶</a></h2>
+<p>The subscription command can be called without any arguments.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> User$: snews_pt subscribe 
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; You are subscribing to ALERT 
+&gt; Broker:kafka://kafka.scimma.org/snews.alert-test
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="message-schemas">
+<h2>Message Schemas<a class="headerlink" href="#message-schemas" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">snews_pt</span> <span class="pre">message-schema</span></code> can tell you the required contents for each tiers. You can display the contents of a single tier by calling e.g.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> User$: snews_pt message-schema <span class="nb">time</span>
+</pre></div>
+</div>
+<p>In which case it displays the following</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>         &gt;The Message Schema <span class="k">for</span> TimeTier 
+_id                 :<span class="o">(</span>SNEWS SETS<span class="o">)</span>
+detector_name       :<span class="o">(</span>SNEWS SETS<span class="o">)</span>
+sent_time           :<span class="o">(</span>SNEWS SETS<span class="o">)</span>
+machine_time        :<span class="o">(</span>User Input<span class="o">)</span>
+neutrino_time       :<span class="o">(</span>User Input<span class="o">)</span>
+timing_series       :<span class="o">(</span>User Input<span class="o">)</span>  
+</pre></div>
+</div>
+<p>or you can simply call <code class="docutils literal notranslate"><span class="pre">snews_pt</span> <span class="pre">message-schema</span></code> without any positional arguments in which case it displays all the message schemes. <br></p>
+</section>
+<hr class="docutils" />
+<section id="publishing-observation-messages">
+<h2>Publishing Observation Messages<a class="headerlink" href="#publishing-observation-messages" title="Permalink to this headline">¶</a></h2>
+<p>User can publish observation messages to one of the ‘CoincidenceTier’, ‘TimeTier’, or ‘SigTier’. It is also possible to publish <em>Heartbeat</em> and <em>Retraction</em> messages, see respective section below.</p>
+<p>To publish one or more tier user can request arbitrary number of tiers in one line</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> User$: snews_pt publish coincidence <span class="nb">time</span> <span class="nb">time</span> significance s
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">publish</span></code> tool takes all the request and queries known aliases e.g. <code class="docutils literal notranslate"><span class="pre">s</span></code> is accepted as <code class="docutils literal notranslate"><span class="pre">SignificanceTier</span></code>, and returns a list of unique requested tiers.<br>
+Without any additional <em>options</em> this by default publishes a dummy observation to each of the requested tiers with their required data fields.</p>
+<p>For a more realistic case, we would want to submit a message that is saved by our experiment as a <em>json</em> file. This can be passed with a <code class="docutils literal notranslate"><span class="pre">--file</span></code> (or <code class="docutils literal notranslate"><span class="pre">-f</span></code>) flag.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> User$: snews_pt publish coincidence -f my_coincidence_message.json
+</pre></div>
+</div>
+<p>There are several dummy examples <span class="xref myst">here</span> that can be used as a reference. In principle, SNEWS only accept specific fields (see <code class="docutils literal notranslate"><span class="pre">snews_pt</span> <span class="pre">message-schema</span></code>), however the tools does not fail if you provide additional arguments. It kindly warns you about them and publishes the remaining parts.</p>
+<p>Try publishing the following file which contains an <code class="docutils literal notranslate"><span class="pre">extra_key</span></code> field.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> User$: snews_pt publish coincidence -f SNEWS_PT/test/test_coincidence_tier_message.json
+</pre></div>
+</div>
+<p>It should give the following</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Requested tiers are<span class="p">;</span>
+                &gt; CoincidenceTier
+Publishing to CoincidenceTier<span class="p">;</span>
+extra_key not a valid key <span class="k">for</span> CoincidenceTier
+---------------------------------------------------------
+_id                 :0_CoincidenceTier_22/01/01_20:19:06:356690
+detector_name       :TEST
+sent_time           :22/01/01 <span class="m">20</span>:19:06
+machine_time        :test machine <span class="nb">time</span>
+neutrino_time       :test nu <span class="nb">time</span>
+p_value             :test p-values 
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="publishing-heartbeat-messages">
+<h2>Publishing Heartbeat messages<a class="headerlink" href="#publishing-heartbeat-messages" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">snews_pt</span> <span class="pre">heartbeat</span></code>  can be used to publish heartbeat messages. It is up to the user to invoke this function with a desired frequency, however it is recommended to publish heartbeats consistently and with couple of minutes intervals.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">heartbeat</span></code> command takes a <code class="docutils literal notranslate"><span class="pre">status</span></code> argument which can either be ‘ON’ or ‘OFF’.
+Additionaly, <code class="docutils literal notranslate"><span class="pre">machine_time</span></code> can be passed using <code class="docutils literal notranslate"><span class="pre">--machine_time</span></code> (<code class="docutils literal notranslate"><span class="pre">-mt</span></code>) flag as a string. Each heartbeat message is appended with a <code class="docutils literal notranslate"><span class="pre">sent_time</span></code>, if machine time is also provided, the latency can be tracked.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> User$: snews_pt heartbeat ON -mt <span class="s1">&#39;22/01/01 20:19:06&#39;</span> --verbose False
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="retraction-messages">
+<h2>Retraction Messages<a class="headerlink" href="#retraction-messages" title="Permalink to this headline">¶</a></h2>
+<p>It can happen that user publishes a message by accident or with wrong input. In these cases <code class="docutils literal notranslate"><span class="pre">snews_pt</span></code> allows for retraction messages. <br>
+While the specific message id can be passed, it is also possible to publish a retraction message for the last <code class="docutils literal notranslate"><span class="pre">n</span></code> number of messages. This</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span> User$: snews_pt retract --tier Coinc -n <span class="m">3</span> --reason <span class="s1">&#39;daq failure&#39;</span> 
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

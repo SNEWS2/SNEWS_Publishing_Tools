@@ -1,0 +1,40 @@
+:py:mod:`SNEWS_PT.test.test_snews_pub`
+======================================
+
+.. py:module:: SNEWS_PT.test.test_snews_pub
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.test.test_snews_pub.test_send_CoincidenceTier_working
+   SNEWS_PT.test.test_snews_pub.test_send_TimingTier_working
+   SNEWS_PT.test.test_snews_pub.test_CoincidenceTier_message_keys
+
+
+
+.. py:function:: test_send_CoincidenceTier_working()
+
+   Test sending a coincidence tier message.
+
+   .. note:: Checks if SNEWS_PT can import and run.  Does not check for accuracy.
+
+
+.. py:function:: test_send_TimingTier_working()
+
+   Test sending a timing tier message.
+
+   .. note:: Checks if SNEWS_PT can import and run.  Does not check for accuracy.
+
+
+.. py:function:: test_CoincidenceTier_message_keys()
+
+   Test creating a message with an invalid detector.
+
+

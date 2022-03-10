@@ -1,0 +1,230 @@
+:py:mod:`SNEWS_PT.snews_pt_utils`
+=================================
+
+.. py:module:: SNEWS_PT.snews_pt_utils
+
+.. autoapi-nested-parse::
+
+   Utility tools for SNEWS_PT
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.snews_pt_utils.TimeStuff
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   SNEWS_PT.snews_pt_utils.set_env
+   SNEWS_PT.snews_pt_utils.set_topic_state
+   SNEWS_PT.snews_pt_utils.retrieve_detectors
+   SNEWS_PT.snews_pt_utils.get_detector
+   SNEWS_PT.snews_pt_utils.coincidence_tier_data
+   SNEWS_PT.snews_pt_utils.sig_tier_data
+   SNEWS_PT.snews_pt_utils.time_tier_data
+   SNEWS_PT.snews_pt_utils.retraction_data
+   SNEWS_PT.snews_pt_utils.heartbeat_data
+   SNEWS_PT.snews_pt_utils._check_aliases
+   SNEWS_PT.snews_pt_utils._check_cli_request
+   SNEWS_PT.snews_pt_utils._parse_file
+   SNEWS_PT.snews_pt_utils.isnotebook
+   SNEWS_PT.snews_pt_utils.display_gif
+
+
+
+.. py:function:: set_env(env_path=None)
+
+   Set environment parameters
+
+   :param env_path: path for the environment file.
+                    Use default settings if not given
+   :type env_path: `str`, (optional)
+
+
+.. py:class:: TimeStuff(env_path=None)
+
+   SNEWS format datetime objects
+
+
+
+   .. py:method:: str_to_datetime(self, nu_time, fmt='%y/%m/%d %H:%M:%S')
+
+      string to datetime object
+
+
+   .. py:method:: str_to_hr(self, nu_time, fmt='%H:%M:%S:%f')
+
+      string to datetime hour object
+
+
+
+.. py:function:: set_topic_state(which_topic, env_path=None)
+
+   Set the topic path based on which_topic
+
+   :param which_topic: single-letter string indicating the topic [O/H/A]
+                       If an environment was defined, it uses the topics
+                       specified in that environment. If not, it looks
+                       for the env_path parameter
+   :type which_topic: `str`
+   :param env_path: The path to the environment configuration file
+   :type env_path: `str`
+
+
+.. py:function:: retrieve_detectors(detectors_path=os.path.dirname(__file__) + '/auxiliary/detector_properties.json')
+
+   Retrieve the name-ID-location of the participating detectors.
+
+   :param detectors_path: path to detector proporties. File needs to be
+                          in JSON format
+   :type detectors_path: `str`, optional
+
+   :returns:
+   :rtype: None
+
+
+.. py:function:: get_detector(detector, detectors_path=os.path.dirname(__file__) + '/auxiliary/detector_properties.json')
+
+   Return the selected detector properties
+
+   :param detector: The name of the detector. Should be one of the predetermined detectors.
+                    If the name is not in that list, returns TEST detector.
+   :type detector: `str`
+   :param detectors_path: path for the json file with all detectors. By default this is
+                          /auxiliary/detector_properties.json
+   :type detectors_path: `str`
+
+
+.. py:function:: coincidence_tier_data(machine_time=None, nu_time=None, p_value=None, **kwargs)
+
+   Formats data for CoincidenceTier as dict object
+
+   :param machine_time: The machine time at the time of execution of command
+   :type machine_time: `str`
+   :param nu_time: The neutrino arrival time
+   :type nu_time: `str`
+   :param p_value: If determined, the p value of the observation
+   :type p_value: `float`
+   :param \*\*kwargs: Any other key-value pair desired to be published. Notice,
+                      these additional arguments will be prepended with ^.
+
+   :returns: **coincidence_tier_dict** -- dictionary of the complete CoincidenceTier data
+   :rtype: `dict`
+
+
+.. py:function:: sig_tier_data(machine_time=None, nu_time=None, p_values=None, **kwargs)
+
+   Formats data for SigTier as dict object
+
+   :param machine_time: The machine time at the time of execution of command
+   :type machine_time: `str`
+   :param nu_time: The neutrino arrival time
+   :type nu_time: `str`
+   :param p_values: If determined, the p values of the observation
+   :type p_values: `list`
+   :param \*\*kwargs: Any other key-value pair desired to be published. Notice,
+                      these additional arguments will be prepended with ^.
+
+   :returns: **sig_tier_dict** -- dictionary of the complete observation data
+   :rtype: `dict`
+
+
+.. py:function:: time_tier_data(machine_time=None, nu_time=None, timing_series=None, **kwargs)
+
+   Formats data for TimingTier as dict object
+
+   :param machine_time: The machine time at the time of execution of command
+   :type machine_time: `str`
+   :param nu_time: The neutrino arrival time
+   :type nu_time: `str`
+   :param timing_series: Time series of the detected signal
+   :type timing_series: `array-like`
+   :param \*\*kwargs: Any other key-value pair desired to be published. Notice,
+                      these additional arguments will be prepended with ^.
+
+   :returns: **data_dict** -- dictionary of the TimingTier data
+   :rtype: `dict`
+
+
+.. py:function:: retraction_data(machine_time=None, false_mgs_id=None, which_tier=None, n_retract_latest=0, retraction_reason=None, **kwargs)
+
+   Formats data for Retraction as dict object
+
+   :param machine_time: The machine time at the time of execution of command
+   :type machine_time: `str`
+   :param false_mgs_id: The id of the message that is falsely published
+   :type false_mgs_id: `str`
+   :param which_tier: OBS type of false message ['CoincidenceTier', 'SigTier', 'TimeTier, 'ALL']
+   :type which_tier: 'str'
+   :param n_retract_latest: Tells retraction methods to look for N  latest message sent by a detector. can also pass 'ALL'
+                            to retract all messages in a OBS tier.
+   :type n_retract_latest: 'int' or 'str'
+   :param retraction_reason: Reason for message(s) retraction
+   :type retraction_reason: 'str"
+   :param \*\*kwargs: Any other key-value pair desired to be published. Notice,
+                      these additional arguments will be prepended with ^.
+
+   :returns: **retraction_dict** -- dictionary of the retraction data
+   :rtype: `dict`
+
+
+.. py:function:: heartbeat_data(machine_time=None, detector_status=None, **kwargs)
+
+   Formats data for Heartbeat as dict object
+
+   :param machine_time: The machine time at the time of execution of command
+   :type machine_time: `str`
+   :param detector_status: ON or OFF
+   :type detector_status: 'str'
+   :param \*\*kwargs: Any other key-value pair desired to be published. Notice,
+                      these additional arguments will be prepended with ^.
+
+   :returns: **heartbeat_dict** -- dictionary of the Heartbeat data
+   :rtype: `dict`
+
+
+.. py:function:: _check_aliases(tier)
+
+
+.. py:function:: _check_cli_request(requested)
+
+   check the requested tier in the CLI
+
+   :param requested: The list of requested tiers
+   :type requested: `list`
+
+
+.. py:function:: _parse_file(filename)
+
+   Parse the file to fetch the json data
+
+   .. rubric:: Notes
+
+   Infer Tier based on keys ?
+
+
+.. py:function:: isnotebook()
+
+   Tell if the script is running on a notebook
+
+
+
+
+.. py:function:: display_gif()
+
+   Some fun method to display an alert gif
+   If running on notebook.
+
+
+

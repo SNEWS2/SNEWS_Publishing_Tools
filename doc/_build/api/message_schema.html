@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNEWS_PT.message_schema &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SNEWS_PT.generate" href="snews_pt_utils.html" />
+    <link rel="prev" title="snews API" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/snews_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/quickstart.html#command-line-interface-cli">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/message_schema.html">Message Schemas</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">snews API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SNEWS_PT.message_schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#SNEWS_PT.message_schema.Message_Schema">Message_Schema</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SNEWS_PT.message_schema.Message_Schema.get_schema">get_schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SNEWS_PT.message_schema.Message_Schema.id_format">id_format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="snews_pt_utils.html">SNEWS_PT.generate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snews_pub.html">SNEWS_PT.snews_pub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="snews_sub.html">SNEWS_PT.snews_sub</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">snews API</a> &raquo;</li>
+      <li>SNEWS_PT.message_schema</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/message_schema.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="snews-pt-message-schema">
+<span id="message-schema"></span><h1>SNEWS_PT.message_schema<a class="headerlink" href="#snews-pt-message-schema" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-SNEWS_PT.message_schema"></span><dl class="py class">
+<dt class="sig sig-object py" id="SNEWS_PT.message_schema.Message_Schema">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">SNEWS_PT.message_schema.</span></span><span class="sig-name descname"><span class="pre">Message_Schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'TEST'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/message_schema.html#Message_Schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.message_schema.Message_Schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Message scheme for the alert and observations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_path</strong> (<cite>str</cite>, optional) – The path containing the environment configuration file
+If None, uses the default file in ‘/auxiliary/test-config.env’</p></li>
+<li><p><strong>detector_key</strong> (<cite>str</cite>, optional) – The name of the detector. If None, uses “TEST”</p></li>
+<li><p><strong>alert</strong> (<cite>bool</cite>, optional) – True if the message is ALERT message. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.message_schema.Message_Schema.get_schema">
+<span class="sig-name descname"><span class="pre">get_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sent_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/message_schema.html#Message_Schema.get_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.message_schema.Message_Schema.get_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a message schema for given topic type.
+Internally called in hop_pub</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message_type</strong> (<cite>str</cite>) – type of the message to be published. Can be;
+‘TimeTier’, ‘SigTier’, ‘CoincidenceTier’ for
+observation messages and, ‘HeartBeat’ for
+heartbeat messages</p></li>
+<li><p><strong>data</strong> (<em>dict</em>) – dict object that contains message information.</p></li>
+<li><p><strong>sent_time</strong> (<cite>str</cite>) – time as a string</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>message with the correct scheme</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.message_schema.Message_Schema.id_format">
+<span class="sig-name descname"><span class="pre">id_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SNEWS_PT/message_schema.html#Message_Schema.id_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.message_schema.Message_Schema.id_format" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Returns formatted message ID</dt><dd><p>time format should always be same for all detectors.
+The heartbeats and observation messages have the
+same id format.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic_state</strong> (<cite>str</cite>) – Can either be ‘OBS’, or  ‘ALERT’</p></li>
+<li><p><strong>topic_type</strong> (<cite>str</cite>) – type of the message to be published. Can be;
+‘TimeTier’, ‘SigTier’, ‘CoincidenceTier’ for
+observation messages and, ‘HeartBeat’ for
+heartbeat messages, and ‘FalseOBS’ for false
+observations.</p></li>
+<li><p><strong>Returns</strong> – <dl class="simple">
+<dt>:<cite>str</cite></dt><dd><p>The formatted id as a string</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api.html" class="btn btn-neutral float-left" title="snews API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="snews_pt_utils.html" class="btn btn-neutral float-right" title="SNEWS_PT.generate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

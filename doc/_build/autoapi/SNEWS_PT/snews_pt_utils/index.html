@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNEWS_PT.snews_pt_utils &mdash; snews publishing tools  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/my_theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html">
+            <img src="../../../_static/snews_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/quickstart.html#command-line-interface-cli">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/message_schema.html">Message Schemas</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/api.html">snews API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">snews publishing tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">SNEWS_PT.snews_pt_utils</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/SNEWS_PT/snews_pt_utils/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-SNEWS_PT.snews_pt_utils">
+<span id="snews-pt-snews-pt-utils"></span><h1><a class="reference internal" href="#module-SNEWS_PT.snews_pt_utils" title="SNEWS_PT.snews_pt_utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SNEWS_PT.snews_pt_utils</span></code></a><a class="headerlink" href="#module-SNEWS_PT.snews_pt_utils" title="Permalink to this headline">¶</a></h1>
+<p>Utility tools for SNEWS_PT</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.TimeStuff" title="SNEWS_PT.snews_pt_utils.TimeStuff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeStuff</span></code></a></p></td>
+<td><p>SNEWS format datetime objects</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.set_env" title="SNEWS_PT.snews_pt_utils.set_env"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_env</span></code></a>(env_path=None)</p></td>
+<td><p>Set environment parameters</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.set_topic_state" title="SNEWS_PT.snews_pt_utils.set_topic_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_topic_state</span></code></a>(which_topic, env_path=None)</p></td>
+<td><p>Set the topic path based on which_topic</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.retrieve_detectors" title="SNEWS_PT.snews_pt_utils.retrieve_detectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retrieve_detectors</span></code></a>(detectors_path=os.path.dirname(__file__) + '/auxiliary/detector_properties.json')</p></td>
+<td><p>Retrieve the name-ID-location of the participating detectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.get_detector" title="SNEWS_PT.snews_pt_utils.get_detector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_detector</span></code></a>(detector, detectors_path=os.path.dirname(__file__) + '/auxiliary/detector_properties.json')</p></td>
+<td><p>Return the selected detector properties</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.coincidence_tier_data" title="SNEWS_PT.snews_pt_utils.coincidence_tier_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coincidence_tier_data</span></code></a>(machine_time=None, nu_time=None, p_value=None, **kwargs)</p></td>
+<td><p>Formats data for CoincidenceTier as dict object</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.sig_tier_data" title="SNEWS_PT.snews_pt_utils.sig_tier_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sig_tier_data</span></code></a>(machine_time=None, nu_time=None, p_values=None, **kwargs)</p></td>
+<td><p>Formats data for SigTier as dict object</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.time_tier_data" title="SNEWS_PT.snews_pt_utils.time_tier_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_tier_data</span></code></a>(machine_time=None, nu_time=None, timing_series=None, **kwargs)</p></td>
+<td><p>Formats data for TimingTier as dict object</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.retraction_data" title="SNEWS_PT.snews_pt_utils.retraction_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">retraction_data</span></code></a>(machine_time=None, false_mgs_id=None, which_tier=None, n_retract_latest=0, retraction_reason=None, **kwargs)</p></td>
+<td><p>Formats data for Retraction as dict object</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.heartbeat_data" title="SNEWS_PT.snews_pt_utils.heartbeat_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">heartbeat_data</span></code></a>(machine_time=None, detector_status=None, **kwargs)</p></td>
+<td><p>Formats data for Heartbeat as dict object</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils._check_aliases" title="SNEWS_PT.snews_pt_utils._check_aliases"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_aliases</span></code></a>(tier)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils._check_cli_request" title="SNEWS_PT.snews_pt_utils._check_cli_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_cli_request</span></code></a>(requested)</p></td>
+<td><p>check the requested tier in the CLI</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils._parse_file" title="SNEWS_PT.snews_pt_utils._parse_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_file</span></code></a>(filename)</p></td>
+<td><p>Parse the file to fetch the json data</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.isnotebook" title="SNEWS_PT.snews_pt_utils.isnotebook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isnotebook</span></code></a>()</p></td>
+<td><p>Tell if the script is running on a notebook</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#SNEWS_PT.snews_pt_utils.display_gif" title="SNEWS_PT.snews_pt_utils.display_gif"><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_gif</span></code></a>()</p></td>
+<td><p>Some fun method to display an alert gif</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.set_env">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">set_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#set_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.set_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set environment parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env_path</strong> (<cite>str</cite>, (optional)) – path for the environment file.
+Use default settings if not given</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.TimeStuff">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">TimeStuff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#TimeStuff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.TimeStuff" title="Permalink to this definition">¶</a></dt>
+<dd><p>SNEWS format datetime objects</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.TimeStuff.str_to_datetime">
+<span class="sig-name descname"><span class="pre">str_to_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%y/%m/%d</span> <span class="pre">%H:%M:%S'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#TimeStuff.str_to_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.TimeStuff.str_to_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>string to datetime object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.TimeStuff.str_to_hr">
+<span class="sig-name descname"><span class="pre">str_to_hr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%H:%M:%S:%f'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#TimeStuff.str_to_hr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.TimeStuff.str_to_hr" title="Permalink to this definition">¶</a></dt>
+<dd><p>string to datetime hour object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.set_topic_state">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">set_topic_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">which_topic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#set_topic_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.set_topic_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the topic path based on which_topic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>which_topic</strong> (<cite>str</cite>) – single-letter string indicating the topic [O/H/A]
+If an environment was defined, it uses the topics
+specified in that environment. If not, it looks
+for the env_path parameter</p></li>
+<li><p><strong>env_path</strong> (<cite>str</cite>) – The path to the environment configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.retrieve_detectors">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">retrieve_detectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detectors_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">os.path.dirname(__file__)</span> <span class="pre">+</span> <span class="pre">'/auxiliary/detector_properties.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#retrieve_detectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.retrieve_detectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the name-ID-location of the participating detectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>detectors_path</strong> (<cite>str</cite>, optional) – path to detector proporties. File needs to be
+in JSON format</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.get_detector">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">get_detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detectors_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">os.path.dirname(__file__)</span> <span class="pre">+</span> <span class="pre">'/auxiliary/detector_properties.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#get_detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.get_detector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the selected detector properties</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>detector</strong> (<cite>str</cite>) – The name of the detector. Should be one of the predetermined detectors.
+If the name is not in that list, returns TEST detector.</p></li>
+<li><p><strong>detectors_path</strong> (<cite>str</cite>) – path for the json file with all detectors. By default this is
+/auxiliary/detector_properties.json</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.coincidence_tier_data">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">coincidence_tier_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#coincidence_tier_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.coincidence_tier_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats data for CoincidenceTier as dict object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>machine_time</strong> (<cite>str</cite>) – The machine time at the time of execution of command</p></li>
+<li><p><strong>nu_time</strong> (<cite>str</cite>) – The neutrino arrival time</p></li>
+<li><p><strong>p_value</strong> (<cite>float</cite>) – If determined, the p value of the observation</p></li>
+<li><p><strong>**kwargs</strong> – Any other key-value pair desired to be published. Notice,
+these additional arguments will be prepended with ^.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>coincidence_tier_dict</strong> – dictionary of the complete CoincidenceTier data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.sig_tier_data">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">sig_tier_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#sig_tier_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.sig_tier_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats data for SigTier as dict object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>machine_time</strong> (<cite>str</cite>) – The machine time at the time of execution of command</p></li>
+<li><p><strong>nu_time</strong> (<cite>str</cite>) – The neutrino arrival time</p></li>
+<li><p><strong>p_values</strong> (<cite>list</cite>) – If determined, the p values of the observation</p></li>
+<li><p><strong>**kwargs</strong> – Any other key-value pair desired to be published. Notice,
+these additional arguments will be prepended with ^.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sig_tier_dict</strong> – dictionary of the complete observation data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.time_tier_data">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">time_tier_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timing_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#time_tier_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.time_tier_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats data for TimingTier as dict object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>machine_time</strong> (<cite>str</cite>) – The machine time at the time of execution of command</p></li>
+<li><p><strong>nu_time</strong> (<cite>str</cite>) – The neutrino arrival time</p></li>
+<li><p><strong>timing_series</strong> (<cite>array-like</cite>) – Time series of the detected signal</p></li>
+<li><p><strong>**kwargs</strong> – Any other key-value pair desired to be published. Notice,
+these additional arguments will be prepended with ^.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data_dict</strong> – dictionary of the TimingTier data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.retraction_data">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">retraction_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">false_mgs_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">which_tier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_retract_latest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retraction_reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#retraction_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.retraction_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats data for Retraction as dict object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>machine_time</strong> (<cite>str</cite>) – The machine time at the time of execution of command</p></li>
+<li><p><strong>false_mgs_id</strong> (<cite>str</cite>) – The id of the message that is falsely published</p></li>
+<li><p><strong>which_tier</strong> (<em>'str'</em>) – OBS type of false message [‘CoincidenceTier’, ‘SigTier’, ‘TimeTier, ‘ALL’]</p></li>
+<li><p><strong>n_retract_latest</strong> (<em>'int'</em><em> or </em><em>'str'</em>) – Tells retraction methods to look for N  latest message sent by a detector. can also pass ‘ALL’
+to retract all messages in a OBS tier.</p></li>
+<li><p><strong>retraction_reason</strong> (<em>'str&quot;</em>) – Reason for message(s) retraction</p></li>
+<li><p><strong>**kwargs</strong> – Any other key-value pair desired to be published. Notice,
+these additional arguments will be prepended with ^.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>retraction_dict</strong> – dictionary of the retraction data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.heartbeat_data">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">heartbeat_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">machine_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#heartbeat_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.heartbeat_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats data for Heartbeat as dict object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>machine_time</strong> (<cite>str</cite>) – The machine time at the time of execution of command</p></li>
+<li><p><strong>detector_status</strong> (<em>'str'</em>) – ON or OFF</p></li>
+<li><p><strong>**kwargs</strong> – Any other key-value pair desired to be published. Notice,
+these additional arguments will be prepended with ^.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>heartbeat_dict</strong> – dictionary of the Heartbeat data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils._check_aliases">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">_check_aliases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#_check_aliases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils._check_aliases" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils._check_cli_request">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">_check_cli_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">requested</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#_check_cli_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils._check_cli_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>check the requested tier in the CLI</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>requested</strong> (<cite>list</cite>) – The list of requested tiers</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils._parse_file">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">_parse_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#_parse_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils._parse_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the file to fetch the json data</p>
+<p class="rubric">Notes</p>
+<p>Infer Tier based on keys ?</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.isnotebook">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">isnotebook</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#isnotebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.isnotebook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell if the script is running on a notebook</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SNEWS_PT.snews_pt_utils.display_gif">
+<span class="sig-prename descclassname"><span class="pre">SNEWS_PT.snews_pt_utils.</span></span><span class="sig-name descname"><span class="pre">display_gif</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/SNEWS_PT/snews_pt_utils.html#display_gif"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SNEWS_PT.snews_pt_utils.display_gif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some fun method to display an alert gif
+If running on notebook.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Melih Kara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
