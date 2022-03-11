@@ -33,6 +33,26 @@ The subscription command can be called without any arguments.
 > You are subscribing to ALERT 
 > Broker:kafka://kafka.scimma.org/snews.alert-test
 ```
+
+### Extension for follow-up plugins 
+`snews_pt subscribe` also allows for other scripts to be plugged in and act on alerts. The *CLI* command `snews_pt subscribe` takes the custom made script via `--plugin` (`-p`) option.
+
+```bash 
+user/home$: snews_pt subscribe -p custom_made_script.py
+```
+
+`snews_pt subscribe` saves the alert messages to a local JSON file with the date stamp of the received time. When a custom plugin is provided, as soon as an alert is received and JSON is created, the name of this unique-JSON file is passed to the script and executed.
+
+Therefore, all custom made scripts should contain the following two lines;
+
+```python
+# in "custom_made_script.py"
+import sys, json
+data = json.load(open(sys.argv[1]))
+```
+and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/plug-in-scripts/SNEWS_PT/test/random_plugin.py).
+
+
 ---
 ## Message Schemas
 `snews_pt message-schema` can tell you the required contents for each tiers. You can display the contents of a single tier by calling e.g.
