@@ -52,14 +52,16 @@ class Subscriber:
     env_path : `str`
         path for the environment file.
         Use default settings if not given
+    firedrill_mode : bool
+        tell Subscriber to get messages from the firedrill hop broker, defaults to False
 
     """
-    def __init__(self, env_path=None):
+    def __init__(self, env_path=None, firedrill_mode=False):
         snews_pt_utils.set_env(env_path)
-        self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         self.alert_topic = os.getenv("ALERT_TOPIC")
+        if firedrill_mode:
+            self.alert_topic = os.getenv("FIREDRILL_ALERT_TOPIC")
         self.times = snews_pt_utils.TimeStuff()
-
         # time object/strings
         self.times = snews_pt_utils.TimeStuff(env_path)
         self.hr = self.times.get_hour()

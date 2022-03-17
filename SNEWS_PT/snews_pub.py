@@ -23,7 +23,7 @@ from . import snews_pt_utils
 
 class Publisher:
 
-    def __init__(self, env_path=None, verbose=True, auth=True):
+    def __init__(self, env_path=None, verbose=True, auth=True, firedrill_mode=False):
         """Class in charge of publishing messages to SNEWS-hop sever.
         This class acts as a context manager.
 
@@ -35,10 +35,14 @@ class Publisher:
             Option to display message when publishing.
         auth: `bool`
             Option to run hop-Stream without authentication. Pass False to do so
+        firedrill_mode :'bool'
+            use firedrill broker
         """
         snews_pt_utils.set_env(env_path)
         self.auth = auth
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
+        if firedrill_mode:
+            self.obs_broker = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
         self.times = snews_pt_utils.TimeStuff()
         self.verbose = verbose
 
@@ -90,24 +94,25 @@ class SNEWSTiersPublisher:
                  retraction_reason=None,
                  detector_status=None,
                  is_pre_sn=False,
+                 firedrill_mode=False,
                  **kwargs):
         """
         Parameters
         ----------
-         env_file: str
+        env_file: str
             path to env file, defaults to None
-         detector_name:  str
+        detector_name:  str
             Name of your detector,defaults to None.
             See auxiliary/detector_properties.json for available detector names.
-         machine_time:  str
+        machine_time:  str
             time recorded by your detector, defaults to None
             format: '%y/%m/%d %H:%M:%S:%f'
-         neutrino_time: str
+        neutrino_time: str
             time stamp of initial neutrino signal, defaults to None
             format: '%y/%m/%d %H:%M:%S:%f'
-         p_val: float
+        p_val: float
             p value of possible neutrino observation(s), defaults to None
-         p_values: list
+        p_values: list
             p values of possible neutrino observation(s),defaults to None.
             list of floats
         t_bin_width: float
@@ -124,17 +129,19 @@ class SNEWSTiersPublisher:
                 'ALL'
         n_retract_latest: int
             how many of your last messages do you want to retract, defaults to None
-         retraction_reason: str
+        retraction_reason: str
             (optional) share with SNEWS what caused your false observation, defaults to None.
             We won't judge you :)
-         detector_status: str
+        detector_status: str
             tell SNEWS if your detector is ON or OFF, defaults to None.
             Options:
                 'ON'
                 'OFF'
-         is_pre_sn: bool
+        is_pre_sn: bool
             Set to True if your detector saw a pre-SN event, defaults to False.
-         kwargs:
+        firedrill_mode : bool
+            tell Publisher to send messages to the firedrill hop broker, defaults to False
+        kwargs:
             extra stuff you want to send to SNEWS
         """
         self.message_data = {'detector_name': detector_name,
@@ -153,7 +160,7 @@ class SNEWSTiersPublisher:
         self.message_data['meta'] = self.meta
         self.env_file = env_file
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, env_file)
-
+        self.firedrill_mode = firedrill_mode
     @classmethod
     def from_json(cls, jsonfile, env_file=None, **kwargs):
         """ Read the data from a json file
@@ -165,5 +172,5 @@ class SNEWSTiersPublisher:
         return cls(env_file=env_file, **output_data)
 
     def send_to_snews(self):
-        with Publisher() as pub:
+        with Publisher(firedrill_mode=self.firedrill_mode) as pub:
             pub.send(self.messages)
