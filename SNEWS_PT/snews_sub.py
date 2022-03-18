@@ -56,7 +56,7 @@ class Subscriber:
         tell Subscriber to get messages from the firedrill hop broker, defaults to False
 
     """
-    def __init__(self, env_path=None, firedrill_mode=False):
+    def __init__(self, env_path=None, firedrill_mode=True):
         snews_pt_utils.set_env(env_path)
         self.alert_topic = os.getenv("ALERT_TOPIC")
         if firedrill_mode:

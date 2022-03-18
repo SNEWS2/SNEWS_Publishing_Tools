@@ -23,7 +23,7 @@ from . import snews_pt_utils
 
 class Publisher:
 
-    def __init__(self, env_path=None, verbose=True, auth=True, firedrill_mode=False):
+    def __init__(self, env_path=None, verbose=True, auth=True, firedrill_mode=True):
         """Class in charge of publishing messages to SNEWS-hop sever.
         This class acts as a context manager.
 
@@ -94,7 +94,7 @@ class SNEWSTiersPublisher:
                  retraction_reason=None,
                  detector_status=None,
                  is_pre_sn=False,
-                 firedrill_mode=False,
+                 firedrill_mode=True,
                  **kwargs):
         """
         Parameters
