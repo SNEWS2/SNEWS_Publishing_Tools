@@ -159,5 +159,16 @@
       "neutrino_time": "30/01/01 12:30:18:678999",
       "p_value": 0.98
     }
-  ]
+  ],
+   "20ms apart": [
+    {
+      "detector_name": "XENONnT",
+      "neutrino_time": "30/01/01 12:34:45:678999",
+      "p_val": 0.98
+    },
+    {
+      "detector_name": "XENONnT",
+      "neutrino_time": "30/01/01 12:34:45:878999",
+      "p_val": 0.98
+    },]
 }
