@@ -7,13 +7,11 @@ def make_file(outputfolder):
     """ Get a proper json file name at a given folder
     """
     os.makedirs(outputfolder, exist_ok=True)
-    S = Subscriber()
-    file = os.path.join(outputfolder, f"0_{S.times.get_date()}_ALERTS.json")
-    # if file exists make a new
-    # TODO: do it properly
-    if os.path.isfile(file):
-        # i = file.split('/')[-1][0]
-        file = os.path.join(outputfolder, f"1_{S.times.get_date()}_ALERTS.json")
+    date = snews_pt_utils.TimeStuff().get_date()
+    file = os.path.join(outputfolder, f"0-SNEWS_ALERT_{date}.json")
+    while os.path.isfile(file):
+        i = int(file.split('/')[-1].split('_')[0])
+        file = os.path.join(outputfolder, f"{i+1}-SNEWS_ALERT_{date}.json")
     return file
 
 def save_message(message, outputfolder):
@@ -23,7 +21,6 @@ def save_message(message, outputfolder):
     file = make_file(outputfolder)
     with open(file, 'w') as outfile:
         json.dump(message, outfile, indent=4, sort_keys=True)
-
 
 def display(message):
     """ Function to format output messages
@@ -43,6 +40,7 @@ def display(message):
             else:
                 click.echo(f'{k:<20s}:{items:<45}')
     click.secho('_'.center(65, '_'), bg='bright_red')
+
 
 class Subscriber:
     """ Class to subscribe ALERT message stream
