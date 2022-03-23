@@ -193,6 +193,6 @@ and do the follow-up work using the `data` dictionary as the alert message. See 
 
 ---
 
-# [Command Line Interface (CLI)](./doc/cli_docs.md)
+# [Command Line Interface (CLI)](docs/cli_docs.md)
 
-There also exists tools for command line interactions. These are explained in detail [here](./doc/cli_docs.md)
+There also exists tools for command line interactions. These are explained in detail [here](docs/cli_docs.md)
