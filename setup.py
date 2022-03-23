@@ -13,15 +13,6 @@ with open("SNEWS_PT/_version.py", "r") as f:
 version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", version_file, re.M)
 version = version_match.group(1)
 
-# requirements
-#install_requires = [
-#    "hop-client >= 0.5.0",
-#    "jsonschema",
-#    "python-dotenv",
-#    "click",
-#    "sphinxcontrib-programoutput"
-#]
-
 install_requires = []
 
 def read_requirements():
@@ -29,8 +20,6 @@ def read_requirements():
         content = req.read()
         requirements = content.split('\n')
     return install_requires.append(requirements)
-    #return install_requires
-
 
 extras_require = {
     'dev': [

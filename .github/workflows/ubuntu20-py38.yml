@@ -52,7 +52,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install wheel
-        pip install jsonschema python-dotenv click tabulate
+        pip install python-dotenv click tabulate
 
     - shell: bash
       env:
