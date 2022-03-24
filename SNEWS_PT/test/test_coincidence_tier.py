@@ -15,7 +15,7 @@ def test_coincidence_expected():
     assert coin.env_file == None
     # Try to send message to SNEWS 2.0 server.
     try:
-        coin.send_to_snews()
+        coin.send_to_snews(firedrill_mode=False)
     except Exception as exc:
         print('SNEWSTiersPublisher.send_to_snews() test failed!\n')
         assert False, f"Exception raised:\n {exc}"

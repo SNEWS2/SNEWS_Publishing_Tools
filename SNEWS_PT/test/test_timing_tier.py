@@ -17,7 +17,7 @@ def test_timing_expected():
     assert tims.env_file == None
     # Try to send message to SNEWS 2.0 server.
     try:
-        tims.send_to_snews()
+        tims.send_to_snews(firedrill_mode=False)
     except Exception as exc:
         print('SNEWSTiersPublisher.send_to_snews() test failed!\n')
         assert False, f"Exception raised:\n {exc}"
