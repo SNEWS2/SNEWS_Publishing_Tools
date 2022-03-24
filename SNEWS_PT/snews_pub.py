@@ -10,12 +10,6 @@ Sebastian Torres-Lara
 Joe Smolsky
 """
 
-# TODO: based on this post and its answers https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
-# We can add a class method and allow for entries using ".from_kwargs/ from_dict" which then passes only the
-# relevant fields to Tiers and displays/stores or appends extra fields
-# Not sure if we should do this. As it still requires, user to know what is not needed and pass via this .from_kwargs
-# I already implemented the functionality down; see commented-out parts
-
 import os, click
 from hop import Stream
 from . import snews_pt_utils
@@ -82,7 +76,7 @@ class Publisher:
 class SNEWSTiersPublisher:
 
     def __init__(self, env_file=None,
-                 detector_name=None,
+                 detector_name='TEST',
                  machine_time=None,
                  neutrino_time=None,
                  p_val=None,
@@ -99,48 +93,46 @@ class SNEWSTiersPublisher:
         """
         Parameters
         ----------
-        env_file: str
+        env_file: `str`
             path to env file, defaults to None
-        detector_name:  str
+        detector_name: `str`
             Name of your detector,defaults to None.
             See auxiliary/detector_properties.json for available detector names.
-        machine_time:  str
+        machine_time: `str`
             time recorded by your detector, defaults to None
             format: '%y/%m/%d %H:%M:%S:%f'
-        neutrino_time: str
+        neutrino_time: `str`
             time stamp of initial neutrino signal, defaults to None
             format: '%y/%m/%d %H:%M:%S:%f'
-        p_val: float
+        p_val: `float`
             p value of possible neutrino observation(s), defaults to None
-        p_values: list
+        p_values: `list`
             p values of possible neutrino observation(s),defaults to None.
             list of floats
-        t_bin_width: float
+        t_bin_width: `float`
             width of time window [sec] ,defaults to None.
-        timing_series: list
+        timing_series: `list`
             defaults to None
             list of strings, format: '%y/%m/%d %H:%M:%S:%f'
-        which_tier: str
+        which_tier: `str`
             which tier are you trying to retract from, defaults to None.
             Options:
                 'CoincidenceTier'
                 'SigTier'
                 'TimingTier'
                 'ALL'
-        n_retract_latest: int
+        n_retract_latest: `int`
             how many of your last messages do you want to retract, defaults to None
-        retraction_reason: str
+        retraction_reason: `str`
             (optional) share with SNEWS what caused your false observation, defaults to None.
             We won't judge you :)
-        detector_status: str
+        detector_status: `str`
             tell SNEWS if your detector is ON or OFF, defaults to None.
             Options:
                 'ON'
                 'OFF'
-        is_pre_sn: bool
+        is_pre_sn: `bool`
             Set to True if your detector saw a pre-SN event, defaults to False.
-        firedrill_mode : bool
-            tell Publisher to send messages to the firedrill hop broker, defaults to False
         kwargs:
             extra stuff you want to send to SNEWS
         """
@@ -171,6 +163,13 @@ class SNEWSTiersPublisher:
         output_data = {**input_json, **kwargs}
         return cls(env_file=env_file, **output_data)
 
-    def send_to_snews(self):
-        with Publisher(firedrill_mode=self.firedrill_mode) as pub:
+    def send_to_snews(self, firedrill_mode=True):
+        """ Send the message to SNEWS
+            Parameters
+            ----------
+            firedrill_mode : `bool`
+            tell Publisher to send messages to the firedrill hop broker, defaults to True
+
+        """
+        with Publisher(firedrill_mode=firedrill_mode) as pub:
             pub.send(self.messages)

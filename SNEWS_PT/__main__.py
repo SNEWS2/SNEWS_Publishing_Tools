@@ -6,7 +6,7 @@
 
 from . import __version__
 from . import snews_pt_utils
-from .snews_pub import Publisher
+from .snews_pub import Publisher, SNEWSTiersPublisher
 from .snews_sub import Subscriber
 from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
 from .snews_pt_utils import retraction_data, heartbeat_data
@@ -33,10 +33,10 @@ def main(ctx, env):
 
 
 @main.command()
-@click.option('--verbose','-v', type=bool, default=True)
+@click.option('--firedrill/--no-firedrill', default=True)
 @click.argument('file', nargs=-1)
 @click.pass_context
-def publish(ctx, file, verbose):
+def publish(ctx, file, firedrill):
     """ Publish a message using snews_pub, multiple files are allowed
     Examples
     --------
@@ -50,13 +50,16 @@ def publish(ctx, file, verbose):
     click.clear()
     for f in file:
         if f.endswith('.json'):
-            data = snews_pt_utils._parse_file(f)
+            SNEWSTiersPublisher.from_json(jsonfile=f, env_file=ctx.obj['env']).send_to_snews(firedrill)
+
         else:
+            # maybe just print instead of raising
             raise TypeError(f"Expected json file with .json format! Got {f}")
 
-        messages, names_list = snews_pt_utils._tier_decider(data)
-        pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-        pub.send(messages)
+            # data = snews_pt_utils._parse_file(f)
+        # messages, names_list = snews_pt_utils._tier_decider(data)
+        # pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
+        # pub.send(messages)
 
 
 @main.command()
