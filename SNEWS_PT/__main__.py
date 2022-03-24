@@ -64,8 +64,9 @@ def publish(ctx, file, firedrill):
 
 @main.command()
 @click.option('--plugin', '-p', type=str, default="None")
+@click.option('--firedrill/--no-firedrill', default=True)
 @click.pass_context
-def subscribe(ctx, plugin):
+def subscribe(ctx, plugin, firedrill):
     """ Subscribe to Alert topic
         Optionally, `plugin` script can be passed
         The message content as a single dictionary will be passed to 
@@ -73,7 +74,7 @@ def subscribe(ctx, plugin):
         dictionary follows the snews_alert message schema
 
     """
-    sub = Subscriber(ctx.obj['env'])
+    sub = Subscriber(ctx.obj['env'], firedrill_mode=firedrill)
     try:
         if plugin != "None":
             print(f"Redirecting output to {plugin}")

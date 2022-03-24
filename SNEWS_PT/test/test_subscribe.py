@@ -4,7 +4,7 @@ import subprocess
 
 def test_subscribe():
     # Subscribe to SNEWS alters in a subprocess via CLI.
-    p = subprocess.Popen(['snews_pt', 'subscribe'], stdout=subprocess.PIPE, shell=False, preexec_fn=os.setsid) 
+    p = subprocess.Popen(['snews_pt', 'subscribe', '--no-firedrill'], stdout=subprocess.PIPE, shell=False, preexec_fn=os.setsid)
 
     # List for SNEWS_PT echos
     echos = []
