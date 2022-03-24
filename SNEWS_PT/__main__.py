@@ -134,7 +134,7 @@ def run_scenarios():
     """
     """
     base = os.path.dirname(os.path.realpath(__file__))
-    path = os.path.join(base, 'auxiliary/test_scenarios.py')
+    path = os.path.join(base, 'auxiliary/try_scenarios.py')
     os.system(f'python3 {path}')
 
 if __name__ == "__main__":
