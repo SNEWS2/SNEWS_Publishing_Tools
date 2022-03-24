@@ -34,6 +34,13 @@ The subscription command can be called without any arguments.
 > Broker:kafka://kafka.scimma.org/snews.alert-test
 ```
 
+**Fire-Drills**<br>
+In case you want to subscribe to the firedrill channels, you can simply pass `--firedrill` in the command
+and it will automatically use the existing firedrill channel.
+```bash 
+(venv) User$: snews_pt subscribe --firedrills
+```
+
 ### Extension for follow-up plugins 
 `snews_pt subscribe` also allows for other scripts to be plugged in and act on alerts. The *CLI* command `snews_pt subscribe` takes the custom made script via `--plugin` (`-p`) option.
 
@@ -101,6 +108,14 @@ neutrino_time       :test nu time
 p_value             :test p-values 
 meta                :{'extra_key':'extra_value'}
 ```
+
+**Fire-Drills**<br>
+In case you want to publish to the firedrill channels, you can simply pass `--firedrill` in the command
+and it will automatically use the existing firedrill channel.
+```bash 
+(venv) User$: snews_pt publish path/to/your_message.json --firedrills
+```
+
 ----
 
 ## Publishing Heartbeat and Retraction messages
