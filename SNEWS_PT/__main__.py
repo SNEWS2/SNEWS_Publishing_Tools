@@ -138,5 +138,18 @@ def run_scenarios():
     path = os.path.join(base, 'auxiliary/try_scenarios.py')
     os.system(f'python3 {path}')
 
+
+@main.command()
+@click.pass_context
+def test_connection(ctx):
+    """ test the server connection
+        It should prompt your whether the
+        coincidence script is running in the server
+    """
+    name = ctx.obj['DETECTOR_NAME']
+    with Publisher() as pub:
+        pub.send([{'_id':'test-connection',
+                   'name':name}])
+
 if __name__ == "__main__":
     main()
