@@ -10,10 +10,17 @@
 
 This packages provides users with a Python API and CLI to publish observation messages to SNEWS
 
-## How to Install
-
 > Note: Make sure your hop credentials are set up !!<br>
-> Follow the instructions [**here**](https://github.com/scimma/hop-client) if needed
+> Follow the instructions [**here**](https://github.com/scimma/hop-client) if needed<br>
+> Request permissions to given topics [here](https://my.hop.scimma.org/hopauth/)
+
+|              |        |
+| ------------ | ------ |
+|**Fire-Drills**| <br>
+|`snews_pt` allows for fire-drill mode, currently this is the default option. Later, it can be adjusted through `firedrill_mode=True/False` arguments in subcription and publication functions, and through `--firedrill/--no-firedrill` flags within the CLI tools. Make sure you have the correct [permissions](https://my.hop.scimma.org/hopauth/) to publish and subscribe to these firedrill channels. |
+| |
+
+## How to Install
 
 First you need to clone this repo. In your terminal run the following:
 
