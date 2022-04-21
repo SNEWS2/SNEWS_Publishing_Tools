@@ -29,8 +29,8 @@ class Publisher:
             Option to display message when publishing.
         auth: `bool`
             Option to run hop-Stream without authentication. Pass False to do so
-        firedrill_mode :'bool'
-            use firedrill broker
+        firedrill_mode :`bool`
+            whether to use firedrill broker
         """
         snews_pt_utils.set_env(env_path)
         self.auth = auth
@@ -151,7 +151,8 @@ class SNEWSTiersPublisher:
         self.meta = dict(**kwargs)
         self.message_data['meta'] = self.meta
         self.env_file = env_file
-        self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, env_file)
+        stamp_time = snews_pt_utils.TimeStuff().get_utcnow()
+        self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, sent_time=stamp_time, env_file=env_file)
         self.firedrill_mode = firedrill_mode
     @classmethod
     def from_json(cls, jsonfile, env_file=None, **kwargs):
