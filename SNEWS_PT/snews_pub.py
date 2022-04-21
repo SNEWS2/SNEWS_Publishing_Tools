@@ -66,7 +66,7 @@ class Publisher:
         if self.verbose:
             tier = message['_id'].split('_')[1]
             click.secho(f'{"-" * 64}', fg='bright_blue')
-            click.secho(f'Sending message to {tier}', fg='bright_red')
+            click.secho(f'Sending message to {tier} on {self.obs_broker}', fg='bright_red')
             if tier == 'Retraction':
                 click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
             for k, v in message.items():
