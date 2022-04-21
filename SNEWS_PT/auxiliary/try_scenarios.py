@@ -28,7 +28,7 @@ try:
                     time.sleep(1)
                     # clear cache after each scenario
                 with Publisher() as pub:
-                    pub.send([{'_id': 'hard-reset_'}])
+                    pub.send([{'_id': 'hard-reset_', 'pass':'very1secret2password', 'detector_name':'TEST'}])
                     print('> Cache cleaned\n')
 
         except KeyboardInterrupt:
