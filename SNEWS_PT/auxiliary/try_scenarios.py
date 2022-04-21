@@ -2,6 +2,7 @@
 import json, click, time, sys
 from os import path as osp
 from SNEWS_PT.snews_pub import SNEWSTiersPublisher, Publisher
+fd_mode = bool(sys.argv[1])
 
 with open(osp.join(osp.dirname(__file__), "scenarios.json")) as json_file:
     data = json.load(json_file)
@@ -23,7 +24,7 @@ try:
                 click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                 messages = data[scenario]
                 for msg in messages: # send one by one and sleep in between
-                    SNEWSTiersPublisher(**msg).send_to_snews()
+                    SNEWSTiersPublisher(**msg, firedrill_mode=fd_mode).send_to_snews()
                     time.sleep(1)
                     # clear cache after each scenario
                 with Publisher() as pub:
