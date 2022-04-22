@@ -52,7 +52,7 @@ class Message_Schema:
         else:
             return f'{self.detector.id}_{tier}_{machine_time}'
 
-    def get_schema(self, tier, data, version=__version__):
+    def get_schema(self, tier, data, sent_time, version=__version__):
         """ Create a message schema for given topic type.
             Internally called in hop_pub
 
@@ -73,7 +73,7 @@ class Message_Schema:
                 message with the correct scheme 
 
         """
-        message = {"_id": self.id_format(tier=tier, machine_time=data['machine_time']),
+        message = {"_id": self.id_format(tier=tier, machine_time=sent_time), # data['machine_time']
                    "detector_name": self.detector_name,
                    "machine_time": data['machine_time'],
                    }
@@ -107,5 +107,5 @@ class Message_Schema:
                     message['_extra_' + key] = data[key]
 
         message["schema_version"] = version
-
+        message["sent_time"] = sent_time
         return message
