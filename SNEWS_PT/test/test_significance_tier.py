@@ -28,17 +28,18 @@ def test_significance_expected():
                                  'meta': {'neutrino_times':
                                           ['12/06/09 15:31:08:1098',
                                            '12/06/09 15:33:07:8910']}}
-    assert sign.messages == [
-                            {'_id': '18_SigTier_None',
-                             'detector_name': 'DS-20K',
-                             'machine_time': None,
-                             'neutrino_time': None,
-                             't_bin_width': 0.8,
-                             'p_values': [0.4, 0.5],
-                             'meta': {'meta': {'neutrino_times':
-                                               ['12/06/09 15:31:08:1098',
-                                                '12/06/09 15:33:07:8910']}},
-                             'schema_version': '1.1.0'}]
+    input_message = {'detector_name': 'DS-20K',
+                     'machine_time': None,
+                     'neutrino_time': None,
+                     't_bin_width': 0.8,
+                     'p_values': [0.4, 0.5],
+                     'meta': {'meta': {'neutrino_times':
+                                       ['12/06/09 15:31:08:1098',
+                                        '12/06/09 15:33:07:8910']}},
+                     'schema_version': '1.1.0'}
+    for k,v in input_message.items():
+        assert sign.messages[0][k] == v
+
     assert sign.env_file is None
 
     # Try to send message to SNEWS 2.0 server.

@@ -33,17 +33,16 @@ def main(ctx, env):
 
 
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True)
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
 @click.argument('file', nargs=-1)
 @click.pass_context
 def publish(ctx, file, firedrill):
     """ Publish a message using snews_pub, multiple files are allowed
-    Examples
-    --------
+
     $: snews_pt publish my_json_message.json
 
     Notes
-    -----
+
     The topics are read from the defaults i.e. from auxiliary/test-config.env
     If no file is given it can still submit dummy messages with default values
     """
@@ -64,7 +63,7 @@ def publish(ctx, file, firedrill):
 
 @main.command()
 @click.option('--plugin', '-p', type=str, default="None")
-@click.option('--firedrill/--no-firedrill', default=True)
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
 @click.pass_context
 def subscribe(ctx, plugin, firedrill):
     """ Subscribe to Alert topic
@@ -131,12 +130,13 @@ def message_schema(ctx, requested_tier):
         
 
 @main.command()
-def run_scenarios():
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+def run_scenarios(firedrill):
     """
     """
     base = os.path.dirname(os.path.realpath(__file__))
     path = os.path.join(base, 'auxiliary/try_scenarios.py')
-    os.system(f'python3 {path}')
+    os.system(f'python3 {path} {firedrill}')
 
 
 @main.command()

@@ -73,7 +73,7 @@ There are several dummy examples [here](../test/) that can be used as a referenc
 
 Try publishing the following file which contains an `extra_key` field.
 ```bash
-(venv) User$: snews_pt publish coincidence -f SNEWS_PT/test/test_coincidence_tier_message.json
+(venv) User$: snews_pt publish coincidence -f SNEWS_PT/test/example_coincidence_tier_message.json
 ```
 
 It should give the following

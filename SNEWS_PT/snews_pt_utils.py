@@ -35,8 +35,7 @@ class TimeStuff:
         self.snews_t_format = os.getenv("TIME_STRING_FORMAT")
         self.hour_fmt = "%H:%M:%S"
         self.date_fmt = "%y_%m_%d"
-        self.get_datetime = datetime.utcnow()
-        self.get_snews_time = lambda fmt=self.snews_t_format: datetime.utcnow().strftime(fmt)
+        self.get_utcnow = lambda fmt=self.snews_t_format: datetime.utcnow().strftime(fmt)
         self.get_hour = lambda fmt=self.hour_fmt: datetime.utcnow().strftime(fmt)
         self.get_date = lambda fmt=self.date_fmt: datetime.utcnow().strftime(fmt)
 
@@ -133,7 +132,7 @@ def coincidence_tier_data(machine_time=None, neutrino_time=None, p_val=None, met
         ----------
         machine_time : `str`
             The machine time at the time of execution of command
-        nu_time : `str`
+        neutrino_time : `str`
             The neutrino arrival time
         p_val : `float`
             If determined, the p value of the observation
@@ -158,9 +157,10 @@ def sig_tier_data(machine_time=None, neutrino_time=None, p_values=None, t_bin_wi
 
         Parameters
         ----------
+        t_bin_width : `float`
         machine_time : `str`
             The machine time at the time of execution of command
-        nu_time : `str`
+        neutrino_time : `str`
             The neutrino arrival time
         p_values : `list`
             If determined, the p values of the observation
@@ -292,7 +292,7 @@ def _check_aliases(tier):
     return [tier]
 
 
-def _tier_decider(data, env_file=None):
+def _tier_decider(data, sent_time, env_file=None):
     """ Decide on the tier(s) or commands (Heartbeat/Retraction)
         Based on the content of the message
 
@@ -306,7 +306,7 @@ def _tier_decider(data, env_file=None):
     data['detector_name'] = data.get("detector_name", os.getenv('DETECTOR_NAME'))
     schema = Message_Schema(detector_key=data['detector_name'], is_pre_sn=data['is_pre_sn'])
     valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series", "which_tier",
-                  "n_retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width', ]
+                  "n_retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
 
     # if there are keys that wouldn't belong to any tier/command pass them as meta
     meta_keys = [key for key, value in data.items() if sys.getsizeof(value) < 2048]
@@ -319,7 +319,7 @@ def _tier_decider(data, env_file=None):
         data_for_tier = tier_function(**data_for_tier)
         if name not in ['Retraction', 'Heartbeat']:
             data_for_tier['meta'] = meta_data
-        msg = schema.get_schema(tier=name, data=data_for_tier, )
+        msg = schema.get_schema(tier=name, data=data_for_tier, sent_time=sent_time)
         tiernames.append(name)
         messages.append(msg)
 
@@ -334,7 +334,7 @@ def _tier_decider(data, env_file=None):
     # SignificanceTier if it has p_values
     if type(data['p_values']) == list and type(data['t_bin_width']) == float:
         _append_messages(sig_tier_data, 'SigTier')
-    # TimingTier if timing_series exists (@Seb why do we need p_value to be float?)
+    # TimingTier if timing_series exists
     if type(data['timing_series']) == list:
         _append_messages(time_tier_data, 'TimeTier')
 
@@ -344,15 +344,13 @@ def _tier_decider(data, env_file=None):
 
     if type(data['detector_status']) == str:
         _append_messages(heartbeat_data, 'Heartbeat')
+
     return messages, tiernames
 
 
 def _parse_file(filename):
     """ Parse the file to fetch the json data
 
-    Notes
-    -----
-    Infer Tier based on keys ?
     """
     with open(filename) as json_file:
         data = json.load(json_file)

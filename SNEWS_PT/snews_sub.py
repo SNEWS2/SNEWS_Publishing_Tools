@@ -10,7 +10,7 @@ def make_file(outputfolder):
     date = snews_pt_utils.TimeStuff().get_date()
     file = os.path.join(outputfolder, f"0-SNEWS_ALERT_{date}.json")
     while os.path.isfile(file):
-        i = int(file.split('/')[-1].split('_')[0])
+        i = int(file.split('/')[-1].split('-')[0])
         file = os.path.join(outputfolder, f"{i+1}-SNEWS_ALERT_{date}.json")
     return file
 
