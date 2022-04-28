@@ -1,5 +1,7 @@
-## This script is to demonstrate how a custom made script
-## can be plugged into the alert subscription
+"""
+ This script is to demonstrate how a custom made script
+ can be plugged into the alert subscription
+"""
 
 # must have arguments
 import sys, json
