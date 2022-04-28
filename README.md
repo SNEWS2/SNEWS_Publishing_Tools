@@ -183,19 +183,20 @@ found [here](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/doc/subs
 `snews_pt subscribe` also allows for other scripts to be plugged in and act on alerts. The *CLI* command `snews_pt subscribe` takes the custom made script via `--plugin` (`-p`) option.
 
 ```bash 
-user/home$: snews_pt subscribe -p custom_made_script.py
+user/home$: snews_pt subscribe -p ./auxiliary/custom_script.py
 ```
 
 `snews_pt subscribe` saves the alert messages to a local JSON file with the date stamp of the received time. When a custom plugin is provided, as soon as an alert is received and JSON is created, the name of this unique-JSON file is passed to the script and executed.
 
-Therefore, all custom made scripts should contain the following two lines;
+Therefore, all custom-made scripts should contain the following two lines;
 
 ```python
 # in "custom_made_script.py"
 import sys, json
 data = json.load(open(sys.argv[1]))
 ```
-and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/SNEWS_PT/test/random_plugin.py).
+and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/SNEWS_PT/auxiliary/custom_script.py) which 
+only brags about itself and displays you the content of the alert message.
 
 
 ---
