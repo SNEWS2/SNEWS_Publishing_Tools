@@ -334,6 +334,7 @@ def _tier_decider(data, sent_time, env_file=None):
     # SignificanceTier if it has p_values
     if type(data['p_values']) == list and type(data['t_bin_width']) == float:
         _append_messages(sig_tier_data, 'SigTier')
+
     # TimingTier if timing_series exists
     if type(data['timing_series']) == list:
         _append_messages(time_tier_data, 'TimeTier')
