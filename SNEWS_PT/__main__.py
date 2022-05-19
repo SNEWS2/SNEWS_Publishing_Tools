@@ -3,6 +3,7 @@
     Notes to dev team
     https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
 """
+import time
 
 from . import __version__
 from . import snews_pt_utils
@@ -54,11 +55,6 @@ def publish(ctx, file, firedrill):
         else:
             # maybe just print instead of raising
             raise TypeError(f"Expected json file with .json format! Got {f}")
-
-            # data = snews_pt_utils._parse_file(f)
-        # messages, names_list = snews_pt_utils._tier_decider(data)
-        # pub = ctx.with_resource(Publisher(ctx.obj['env'], verbose=verbose))
-        # pub.send(messages)
 
 
 @main.command()
@@ -137,6 +133,35 @@ def run_scenarios(firedrill):
     base = os.path.dirname(os.path.realpath(__file__))
     path = os.path.join(base, 'auxiliary/try_scenarios.py')
     os.system(f'python3 {path} {firedrill}')
+
+
+@main.command()
+@click.pass_context
+def test_connection(ctx):
+    """ test the server connection
+        It should prompt your whether the
+        coincidence script is running in the server
+    """
+    from hop import Stream
+    name = ctx.obj['DETECTOR_NAME']
+    stamp_time = snews_pt_utils.TimeStuff().get_utcnow()
+    message = {'_id': 'test-connection',
+               'name': name,
+               'time': stamp_time}
+
+    topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
+    substream = Stream(until_eos=True, auth=True, start_at=-5)
+    pubstream = Stream(until_eos=True, auth=True)
+
+    try:
+        with substream.open(topic, "r") as ss, pubstream.open(topic, "w") as ps:
+            ps.write(message)
+            for read in ss:
+                if read == message:
+                    click.secho(f"You ({read['name']}) have a connection to the server at {read['time']}", fg='green', bold=True)
+    except:
+        click.secho("Couldn't find connection, try again", fg='red')
+
 
 if __name__ == "__main__":
     main()

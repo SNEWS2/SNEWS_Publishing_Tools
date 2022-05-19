@@ -14,13 +14,15 @@ def make_file(outputfolder):
         file = os.path.join(outputfolder, f"{i+1}-SNEWS_ALERT_{date}.json")
     return file
 
-def save_message(message, outputfolder):
+def save_message(message, outputfolder, return_file=False):
     """ Save messages to a json file.
 
     """
     file = make_file(outputfolder)
     with open(file, 'w') as outfile:
         json.dump(message, outfile, indent=4, sort_keys=True)
+    if return_file:
+        return file
 
 def display(message):
     """ Function to format output messages
@@ -64,7 +66,7 @@ class Subscriber:
         self.times = snews_pt_utils.TimeStuff(env_path)
         self.hr = self.times.get_hour()
         self.date = self.times.get_date()
-        self.snews_time = lambda: self.times.get_snews_time()
+        self.snews_time = lambda: self.times.get_utcnow()
         self.default_output = os.path.join(os.getcwd(), os.getenv("ALERT_OUTPUT"))
 
 
@@ -112,10 +114,10 @@ class Subscriber:
         try:
             with stream.open(self.alert_topic, "r") as s:
                 for message in s:
-                    save_message(message, outputfolder)
+                    file = save_message(message, outputfolder, return_file=True)
                     snews_pt_utils.display_gif()
                     display(message)
                     # jsonformat = json.dumps(message)
-                    yield make_file(outputfolder)
+                    yield file #make_file(outputfolder)
         except KeyboardInterrupt:
             click.secho('Done', fg='green')
