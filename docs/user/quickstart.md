@@ -3,7 +3,7 @@
 
 The module allows you to `publish` observation messages and `retract` them if needed. 
 You can also `subscribe` to _alert topics_. The default configuration file using the snews-test kafka servers and a 
-_TEST_ detector is stored in [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/SNEWS_PT/auxiliary/test-config.env)
+_TEST_ detector is stored in [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/test-config.env)
 please **change the configuration** to your needs before using the tools. Once set, `snews_pt` can fetch from this file at each execution. 
 Alternatively, custom made configuration file can also be passed to functions.   
 

@@ -81,4 +81,4 @@ jobs:
     - name: Run pytest
       run: |
         pip install pytest
-        pytest SNEWS_PT
+        pytest snews_pt
