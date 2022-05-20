@@ -1,5 +1,5 @@
 """Test publishing timing tier messages."""
-from SNEWS_PT.snews_pub import SNEWSTiersPublisher
+from snews_pt.snews_pub import SNEWSTiersPublisher
 
 def test_timing_expected():
     """Test with example of expected message type."""

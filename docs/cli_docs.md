@@ -93,7 +93,7 @@ There are several dummy json examples [here](../test/) that can be used as a ref
 
 Try publishing the following file which contains an `extra_key` field.
 ```bash
-(venv) User$: snews_pt publish SNEWS_PT/test/example_coincidence_tier_message.json
+(venv) User$: snews_pt publish snews_pt/test/example_coincidence_tier_message.json
 ```
 
 It should give the following

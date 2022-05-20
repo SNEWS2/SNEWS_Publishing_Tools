@@ -5,7 +5,7 @@
 # import unittest
 # from hop import Stream
 ### THESE ======> CoincidenceTier, SignificanceTier, TimingTier NO LONGER EXISTS
-# from SNEWS_PT.snews_pub import Publisher, CoincidenceTier, SignificanceTier, TimingTier
+# from snews_pt.snews_pub import Publisher, CoincidenceTier, SignificanceTier, TimingTier
 #
 #
 # class TestPubSub(unittest.TestCase):

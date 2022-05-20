@@ -1,7 +1,7 @@
 
 import json, click, time, sys
 from os import path as osp
-from SNEWS_PT.snews_pub import SNEWSTiersPublisher, Publisher
+from snews_pt.snews_pub import SNEWSTiersPublisher, Publisher
 fd_mode = bool(sys.argv[1])
 
 with open(osp.join(osp.dirname(__file__), "scenarios.json")) as json_file:

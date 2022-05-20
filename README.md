@@ -91,7 +91,7 @@ First you need to import your Publisher:
 
 ````Python
 # Import the constructor for SNEWS Tiers and Publisher class
-from SNEWS_PT.snews_pub import SNEWSTiersPublisher
+from snews_pt.snews_pub import SNEWSTiersPublisher
 ````
 ### Passing Message Parameters as Arguments. 
 To send a message you need initialize the ``Publisher``, construct your message by initializing ``SNEWSTiers`` and
@@ -171,7 +171,7 @@ In two lines, one can subscribe to the alert topic specified in the default conf
 This starts a stream, and waits for alert messages to be received.
 
 ```python
-from SNEWS_PT.snews_sub import Subscriber
+from snews_pt.snews_sub import Subscriber
 
 Subscriber().subscribe()
 ```
