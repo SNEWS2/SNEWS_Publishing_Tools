@@ -57,7 +57,7 @@ Therefore, all custom made scripts should contain the following two lines;
 import sys, json
 data = json.load(open(sys.argv[1]))
 ```
-and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/plug-in-scripts/SNEWS_PT/test/random_plugin.py).
+and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/plug-in-scripts/snews_pt/test/random_plugin.py).
 
 
 ---
@@ -93,7 +93,7 @@ There are several dummy json examples [here](../test/) that can be used as a ref
 
 Try publishing the following file which contains an `extra_key` field.
 ```bash
-(venv) User$: snews_pt publish SNEWS_PT/test/example_coincidence_tier_message.json
+(venv) User$: snews_pt publish snews_pt/test/example_coincidence_tier_message.json
 ```
 
 It should give the following

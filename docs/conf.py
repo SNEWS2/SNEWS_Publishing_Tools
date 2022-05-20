@@ -56,7 +56,7 @@ extensions = [
     'autoapi.extension',
 ]
 
-autoapi_dirs = ['../SNEWS_PT']
+autoapi_dirs = ['../snews_pt']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

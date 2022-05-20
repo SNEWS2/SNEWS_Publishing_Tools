@@ -3,7 +3,7 @@
 
 The module allows you to `publish` observation messages and `retract` them if needed. 
 You can also `subscribe` to _alert topics_. The default configuration file using the snews-test kafka servers and a 
-_TEST_ detector is stored in [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/SNEWS_PT/auxiliary/test-config.env)
+_TEST_ detector is stored in [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/test-config.env)
 please **change the configuration** to your needs before using the tools. Once set, `snews_pt` can fetch from this file at each execution. 
 Alternatively, custom made configuration file can also be passed to functions.   
 
@@ -35,13 +35,13 @@ First you need to import Publisher and  your desired Observation class:
 
 ````Python
 # Import the Publisher class
-from SNEWS_PT.snews_pub import Publisher
+from snews_pt.snews_pub import Publisher
 # Import the constructor for Coincidence Tier
-from SNEWS_PT.snews_pub import CoincidenceTier
+from snews_pt.snews_pub import CoincidenceTier
 # Import the constructor for Significance Tier
-from SNEWS_PT.snews_pub import SignificanceTier
+from snews_pt.snews_pub import SignificanceTier
 # Import the constructor for Timing Tier
-from SNEWS_PT.snews_pub import TimingTier
+from snews_pt.snews_pub import TimingTier
 ````
 
 First let's make a dummy nu time method (optional)
@@ -75,8 +75,9 @@ See also this [examples notebook](https://github.com/SNEWS2/SNEWS_Publishing_Too
 
 In two lines, one can subscribe to the alert topic specified in the default configuration. <br>
 This starts a stream, and waits for alert messages to be received.
+
 ```python
-from SNEWS_PT.snews_sub import Subscriber
+from snews_pt.snews_sub import Subscriber
 
 Subscriber().subscribe()
 ```
@@ -159,7 +160,7 @@ There are several dummy examples [here](../test/) that can be used as a referenc
 
 Try publishing the following file which contains an `extra_key` field.
 ```bash
-(venv) User$: snews_pt publish coincidence -f SNEWS_PT/test/example_coincidence_tier_message.json
+(venv) User$: snews_pt publish coincidence -f snews_pt/test/example_coincidence_tier_message.json
 ```
 
 It should give the following

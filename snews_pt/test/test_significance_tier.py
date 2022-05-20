@@ -1,5 +1,5 @@
 """Test publishing significane tier messages."""
-from SNEWS_PT.snews_pub import SNEWSTiersPublisher
+from snews_pt.snews_pub import SNEWSTiersPublisher
 
 
 def test_significance_expected():

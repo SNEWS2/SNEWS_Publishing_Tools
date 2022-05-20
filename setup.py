@@ -8,18 +8,16 @@ with open(os.path.join(this_dir, 'README.md'), 'rb') as f:
     long_description = f.read().decode().strip()
 
 # load version
-with open("SNEWS_PT/_version.py", "r") as f:
+with open("snews_pt/_version.py", "r") as f:
     version_file = f.read()
 version_match = re.search(r"^version = ['\"]([^'\"]*)['\"]", version_file, re.M)
 version = version_match.group(1)
 
 install_requires = []
-
-def read_requirements():
-    with open('docs/requirements.txt') as req:
-        content = req.read()
-        requirements = content.split('\n')
-    return install_requires.append(requirements)
+with open('requirements.txt', 'r') as f:
+    for line in f:
+        if line.strip():
+            install_requires.append(line.strip())
 
 extras_require = {
     'dev': [
@@ -42,7 +40,7 @@ extras_require = {
 }
 
 setup(
-    name='SNEWS_PT',
+    name='snews_pt',
     version=version,
     description='An alert application for observing supernovas.',
     long_description=long_description,
@@ -58,12 +56,12 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'snews_pt = SNEWS_PT.__main__:main',
+            'snews_pt = snews_pt.__main__:main',
         ],
     },
 
     python_requires='>=3.6.*',
-    install_requires=read_requirements(),
+    install_requires=install_requires,
     extras_require=extras_require,
 
     classifiers=[

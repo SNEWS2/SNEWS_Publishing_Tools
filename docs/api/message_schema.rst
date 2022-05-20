@@ -1,7 +1,7 @@
 .. _message_schema:
 
-SNEWS_PT.message_schema
+snews_pt.message_schema
 #####################
 
-.. automodule:: SNEWS_PT.message_schema
+.. automodule:: snews_pt.message_schema
     :members:

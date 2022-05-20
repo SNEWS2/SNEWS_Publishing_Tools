@@ -1,7 +1,7 @@
 .. _snews_pub:
 
-SNEWS_PT.snews_pub
+snews_pt.snews_pub
 ##################
 
-.. automodule:: SNEWS_PT.snews_pub
+.. automodule:: snews_pt.snews_pub
     :members:

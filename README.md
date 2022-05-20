@@ -91,7 +91,7 @@ First you need to import your Publisher:
 
 ````Python
 # Import the constructor for SNEWS Tiers and Publisher class
-from SNEWS_PT.snews_pub import SNEWSTiersPublisher
+from snews_pt.snews_pub import SNEWSTiersPublisher
 ````
 ### Passing Message Parameters as Arguments. 
 To send a message you need initialize the ``Publisher``, construct your message by initializing ``SNEWSTiers`` and
@@ -171,7 +171,7 @@ In two lines, one can subscribe to the alert topic specified in the default conf
 This starts a stream, and waits for alert messages to be received.
 
 ```python
-from SNEWS_PT.snews_sub import Subscriber
+from snews_pt.snews_sub import Subscriber
 
 Subscriber().subscribe()
 ```
@@ -195,7 +195,7 @@ Therefore, all custom-made scripts should contain the following two lines;
 import sys, json
 data = json.load(open(sys.argv[1]))
 ```
-and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/SNEWS_PT/auxiliary/custom_script.py) which 
+and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/custom_script.py) which 
 only brags about itself and displays you the content of the alert message.
 
 

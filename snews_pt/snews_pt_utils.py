@@ -1,5 +1,5 @@
 """
-Utility tools for SNEWS_PT
+Utility tools for snews_pt
 """
 from dotenv import load_dotenv
 from datetime import datetime
