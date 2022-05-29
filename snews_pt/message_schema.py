@@ -73,9 +73,13 @@ class Message_Schema:
                 message with the correct scheme 
 
         """
-        message = {"_id": self.id_format(tier=tier, machine_time=sent_time), # data['machine_time']
+        if data['machine_time'] is None:
+            machine_time = sent_time
+        else:
+            machine_time = data['machine_time']
+        message = {"_id": self.id_format(tier=tier, machine_time=machine_time),
                    "detector_name": self.detector_name,
-                   "machine_time": data['machine_time'],
+                   "machine_time": machine_time,
                    }
         if tier == 'Heartbeat':
             message['detector_status'] = data['detector_status']

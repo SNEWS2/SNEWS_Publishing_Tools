@@ -39,7 +39,7 @@ class TimeStuff:
         self.get_hour = lambda fmt=self.hour_fmt: datetime.utcnow().strftime(fmt)
         self.get_date = lambda fmt=self.date_fmt: datetime.utcnow().strftime(fmt)
 
-    def str_to_datetime(self, nu_time, fmt='%y/%m/%d %H:%M:%S'):
+    def str_to_datetime(self, nu_time, fmt='%y/%m/%d %H:%M:%S:%f'):
         """ string to datetime object """
         return datetime.strptime(nu_time, fmt)
 
