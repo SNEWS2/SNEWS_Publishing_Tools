@@ -164,7 +164,7 @@ class SNEWSTiersPublisher:
         output_data = {**input_json, **kwargs}
         return cls(env_file=env_file, **output_data)
 
-    def send_to_snews(self, firedrill_mode=True):
+    def send_to_snews(self):
         """ Send the message to SNEWS
             Parameters
             ----------
@@ -172,5 +172,5 @@ class SNEWSTiersPublisher:
             tell Publisher to send messages to the firedrill hop broker, defaults to True
 
         """
-        with Publisher(firedrill_mode=firedrill_mode) as pub:
+        with Publisher(firedrill_mode=self.firedrill_mode) as pub:
             pub.send(self.messages)
