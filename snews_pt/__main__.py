@@ -169,10 +169,13 @@ def test_connection(ctx, firedrill):
             if read == message_expected:
                 click.secho(f"You ({read['name']}) have a connection to the server at {read['time']}", fg='green', bold=True)
                 break
-            elif time.time()-time_start > 3:
-                click.secho("I waited 3 second, couldn't find connection\n"
-                            "Something is not right, try again!", fg='red')
-                break
+            else:
+                if time.time()-time_start > 3:
+                    click.secho("I waited 3 second, couldn't find connection\n"
+                                "Something is not right, try again!", fg='red')
+                    break
+                else:
+                    continue
 
 
 if __name__ == "__main__":
