@@ -133,6 +133,8 @@ class SNEWSTiersPublisher:
                 'OFF'
         is_pre_sn: `bool`
             Set to True if your detector saw a pre-SN event, defaults to False.
+        firedrill_mode : `bool`
+                tell Publisher to send messages to the firedrill hop broker, defaults to True
         kwargs:
             extra stuff you want to send to SNEWS
         """
@@ -164,13 +166,15 @@ class SNEWSTiersPublisher:
         output_data = {**input_json, **kwargs}
         return cls(env_file=env_file, **output_data)
 
-    def send_to_snews(self):
+    def send_to_snews(self, auth=True, verbose=True):
         """ Send the message to SNEWS
             Parameters
             ----------
-            firedrill_mode : `bool`
-            tell Publisher to send messages to the firedrill hop broker, defaults to True
+            verbose : `bool`
+                Whether to display the sent message
+            auth : `bool`
+                whether to authenticate with hop
 
         """
-        with Publisher(firedrill_mode=self.firedrill_mode) as pub:
+        with Publisher(env_path=self.env_file, verbose=verbose,  auth=auth, firedrill_mode=self.firedrill_mode) as pub:
             pub.send(self.messages)
