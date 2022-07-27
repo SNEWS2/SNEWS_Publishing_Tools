@@ -81,8 +81,6 @@ class Subscriber:
 
         """
         outputfolder = outputfolder or self.default_output
-        # base = os.path.dirname(os.path.realpath(__file__))
-        # outputfolder = os.path.join(base, outputfolder)
         click.echo('You are subscribing to ' +
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
                    click.style(f'{ self.alert_topic}', bg='green'))
@@ -103,8 +101,6 @@ class Subscriber:
         """ subscribe generator
         """
         outputfolder = outputfolder or self.default_output
-        # base = os.path.dirname(os.path.realpath(__file__))
-        # outputfolder = os.path.join(base, outputfolder)
         click.echo('You are subscribing to ' +
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
                    click.style(f'{ self.alert_topic}', bg='green'))
