@@ -24,6 +24,7 @@ try:
                 click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                 messages = data[scenario]
                 for msg in messages: # send one by one and sleep in between
+                    msg["testing"] = "scenarios"
                     SNEWSTiersPublisher(**msg, firedrill_mode=fd_mode).send_to_snews()
                     time.sleep(1)
                     # clear cache after each scenario
