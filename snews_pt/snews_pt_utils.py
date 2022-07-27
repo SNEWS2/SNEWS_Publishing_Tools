@@ -26,10 +26,9 @@ def set_env(env_path=None):
 
 
 class TimeStuff:
-    ''' SNEWS format datetime objects
+    """ SNEWS format datetime objects
 
-    '''
-
+    """
     def __init__(self, env_path=None):
         set_env(env_path)
         self.snews_t_format = os.getenv("TIME_STRING_FORMAT")
@@ -62,7 +61,8 @@ def set_topic_state(which_topic, env_path=None):
         The path to the environment configuration file
 
     """
-    if os.getenv("ALERT_TOPIC") == None: set_env(env_path)
+    if os.getenv("ALERT_TOPIC") is None:
+        set_env(env_path)
     Topics = namedtuple('Topics', ['topic_name', 'topic_broker'])
     topics = {
         'A': Topics('ALERT', os.getenv("ALERT_TOPIC")),
@@ -73,7 +73,7 @@ def set_topic_state(which_topic, env_path=None):
 
 
 def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/detector_properties.json"):
-    ''' Retrieve the name-ID-location of the participating detectors.
+    """ Retrieve the name-ID-location of the participating detectors.
 
         Parameters
         ----------
@@ -85,7 +85,7 @@ def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/de
         -------
         None
 
-    '''
+    """
     if not os.path.isfile(detectors_path):
         os.system(f'python {os.path.dirname(__file__)}/auxiliary/make_detector_file.py')
 
