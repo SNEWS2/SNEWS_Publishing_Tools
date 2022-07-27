@@ -151,7 +151,8 @@ class SNEWSTiersPublisher:
                              'detector_status': detector_status,
                              'is_pre_sn': is_pre_sn, }
         self.meta = dict(**kwargs)
-        self.message_data['meta'] = self.meta
+        # self.message_data['meta'] = self.meta   # this is already done in tier decider
+        self.message_data = {**self.message_data, ** self.meta}
         self.env_file = env_file
         stamp_time = snews_pt_utils.TimeStuff().get_utcnow()
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, sent_time=stamp_time, env_file=env_file)
