@@ -383,3 +383,29 @@ def display_gif():
         from IPython.display import HTML, display
         giphy_snews = "https://raw.githubusercontent.com/SNEWS2/hop-SNalert-app/snews2_dev/hop_comms/auxiliary/snalert.gif"
         display(HTML(f'<img src={giphy_snews}>'))
+
+
+def set_name():
+    """ set your detector's name
+        messages sent with detector_name="TEST" will be
+        ignored in the server
+        messages can still be subscribed to as "TEST"
+    """
+    import dotenv
+    from dotenv import load_dotenv
+    envpath = os.path.join(os.path.dirname(__file__), 'auxiliary/test-config.env')
+    load_dotenv(envpath)
+
+    from .snews_pt_utils import retrieve_detectors
+    import click
+    detectors = list(retrieve_detectors().keys())
+    if int(os.getenv("HAS_NAME_CHANGED")) == 0:
+        for i,d in enumerate(detectors):
+            click.secho(f"[{i:2d}] {d}")
+        inp = input(click.secho("Please put select your detector's index\n", bold=True))
+        selected_name = detectors[int(inp)]
+        os.environ["DETECTOR_NAME"] = selected_name
+        os.environ["HAS_NAME_CHANGED"] = "1"
+
+        dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
+        dotenv.set_key(envpath, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
