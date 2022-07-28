@@ -13,7 +13,7 @@ try:
     questions = [
     inquirer.Checkbox('scenarios',
                     message=click.style(" Which scenario(s) would you like to run next?", bg='yellow', bold=True),
-                    choices=list(data.keys()),
+                    choices=list(data.keys())+list(["finish & exit"]),
                 )
     ]
 
@@ -21,10 +21,13 @@ try:
         try:
             answers = inquirer.prompt(questions) # , theme=GreenPassion()
             for scenario in answers['scenarios']:
+                if scenario=="finish & exit":
+                    click.secho("Terminating.")
+                    sys.exit()
                 click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                 messages = data[scenario]
                 for msg in messages: # send one by one and sleep in between
-                    msg["testing"] = "scenarios"
+                    msg["testing"] = "this is a test"
                     SNEWSTiersPublisher(**msg, firedrill_mode=fd_mode).send_to_snews()
                     time.sleep(1)
                     # clear cache after each scenario
@@ -33,7 +36,7 @@ try:
                     print('> Cache cleaned\n')
 
         except KeyboardInterrupt:
-            sys.exit()
+            break
 except Exception as e:
     print("Something went wrong\n", e, "\nTry manually submitting messages :/")
 #
