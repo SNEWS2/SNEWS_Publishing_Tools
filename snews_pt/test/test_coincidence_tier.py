@@ -15,6 +15,8 @@ def test_coincidence_expected():
     input_messages = {'detector_name': 'KamLAND', 'machine_time': None, 'neutrino_time': '12/06/09 15:31:08:1098',
                       'p_val': None, 'meta': {'meta': {'p_value': 0.4}}, 'schema_version': '1.1.0'}
     for k,v in input_messages.items():
+        if k == 'sent_time':
+            continue
         assert coin.messages[0][k] == v
 
     assert coin.env_file == None

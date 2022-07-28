@@ -39,6 +39,8 @@ def test_significance_expected():
                                         '12/06/09 15:33:07:8910']}},
                      'schema_version': '1.1.0'}
     for k,v in input_message.items():
+        if k == 'sent_time':
+            continue
         assert sign.messages[0][k] == v
 
     assert sign.env_file is None
@@ -49,3 +51,5 @@ def test_significance_expected():
     except Exception as exc:
         print('SNEWSTiersPublisher.send_to_snews() test failed!\n')
         assert False, f"Exception raised:\n {exc}"
+
+test_significance_expected()

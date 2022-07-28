@@ -18,6 +18,8 @@ def test_timing_expected():
                      'neutrino_time': '12/06/09 15:31:08:1098', 'timing_series': ['12/06/09 15:31:08:1098', '12/06/09 15:33:07:8910'], 'meta': {'meta': {}}, 'schema_version': '1.1.0'}]
     for i, message in enumerate(input_messages):
         for k,v in message.items():
+            if k == 'sent_time':
+                continue
             assert tims.messages[i][k] == v
 
     assert tims.env_file == None
