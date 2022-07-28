@@ -59,9 +59,6 @@ jobs:
     - name: Install snews-pt
       run:  pip install .
 
-    - name: Check version
-      run: snews_pt --version
-
     - name: Run pytest
       run: |
         pip install pytest
