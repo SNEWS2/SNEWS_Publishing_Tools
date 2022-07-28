@@ -9,7 +9,8 @@ def test_significance_expected():
                                neutrino_times=['12/06/09 15:31:08:1098', 
                                                '12/06/09 15:33:07:8910'],
                                p_values=[0.4, 0.5],
-                               t_bin_width=0.8)
+                               t_bin_width=0.8,
+                               firedrill_mode=False)
 
     # Check that message has expected structure.
     assert sign.tiernames == ['SigTier']
@@ -44,7 +45,7 @@ def test_significance_expected():
 
     # Try to send message to SNEWS 2.0 server.
     try:
-        sign.send_to_snews(firedrill_mode=False)
+        sign.send_to_snews()
     except Exception as exc:
         print('SNEWSTiersPublisher.send_to_snews() test failed!\n')
         assert False, f"Exception raised:\n {exc}"

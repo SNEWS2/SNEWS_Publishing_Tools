@@ -4,7 +4,8 @@ from snews_pt.snews_pub import SNEWSTiersPublisher
 def test_timing_expected():
     """Test with example of expected message type."""
     # Create timing tier message.
-    tims = SNEWSTiersPublisher(detector_name='XENONnT', neutrino_time='12/06/09 15:31:08:1098', timing_series=['12/06/09 15:31:08:1098', '12/06/09 15:33:07:8910'])
+    tims = SNEWSTiersPublisher(detector_name='XENONnT', neutrino_time='12/06/09 15:31:08:1098', timing_series=['12/06/09 15:31:08:1098', '12/06/09 15:33:07:8910'],
+                               firedrill_mode=False)
 
     # Check that message has expected structure.
     assert tims.tiernames == ['CoincidenceTier', 'TimeTier']
@@ -22,7 +23,7 @@ def test_timing_expected():
     assert tims.env_file == None
     # Try to send message to SNEWS 2.0 server.
     try:
-        tims.send_to_snews(firedrill_mode=False)
+        tims.send_to_snews()
     except Exception as exc:
         print('SNEWSTiersPublisher.send_to_snews() test failed!\n')
         assert False, f"Exception raised:\n {exc}"
