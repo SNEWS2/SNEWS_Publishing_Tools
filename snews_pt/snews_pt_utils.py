@@ -1,6 +1,7 @@
 """
 Utility tools for snews_pt
 """
+import dotenv
 from dotenv import load_dotenv
 from datetime import datetime
 from collections import namedtuple
@@ -26,10 +27,9 @@ def set_env(env_path=None):
 
 
 class TimeStuff:
-    ''' SNEWS format datetime objects
+    """ SNEWS format datetime objects
 
-    '''
-
+    """
     def __init__(self, env_path=None):
         set_env(env_path)
         self.snews_t_format = os.getenv("TIME_STRING_FORMAT")
@@ -62,7 +62,8 @@ def set_topic_state(which_topic, env_path=None):
         The path to the environment configuration file
 
     """
-    if os.getenv("ALERT_TOPIC") == None: set_env(env_path)
+    if os.getenv("ALERT_TOPIC") is None:
+        set_env(env_path)
     Topics = namedtuple('Topics', ['topic_name', 'topic_broker'])
     topics = {
         'A': Topics('ALERT', os.getenv("ALERT_TOPIC")),
@@ -73,7 +74,7 @@ def set_topic_state(which_topic, env_path=None):
 
 
 def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/detector_properties.json"):
-    ''' Retrieve the name-ID-location of the participating detectors.
+    """ Retrieve the name-ID-location of the participating detectors.
 
         Parameters
         ----------
@@ -85,7 +86,7 @@ def retrieve_detectors(detectors_path=os.path.dirname(__file__) + "/auxiliary/de
         -------
         None
 
-    '''
+    """
     if not os.path.isfile(detectors_path):
         os.system(f'python {os.path.dirname(__file__)}/auxiliary/make_detector_file.py')
 
@@ -383,3 +384,32 @@ def display_gif():
         from IPython.display import HTML, display
         giphy_snews = "https://raw.githubusercontent.com/SNEWS2/hop-SNalert-app/snews2_dev/hop_comms/auxiliary/snalert.gif"
         display(HTML(f'<img src={giphy_snews}>'))
+
+
+def set_name(detector_name='TEST'):
+    """ set your detector's name
+        messages sent with detector_name="TEST" will be
+        ignored in the server
+        messages can still be subscribed to as "TEST"
+    """
+
+    envpath = os.path.join(os.path.dirname(__file__), 'auxiliary/test-config.env')
+    load_dotenv(envpath)
+    detectors = list(retrieve_detectors().keys())
+    if detector_name=="TEST":
+        if int(os.getenv("HAS_NAME_CHANGED")) == 0:
+            for i,d in enumerate(detectors):
+                click.secho(f"[{i:2d}] {d}")
+            inp = input(click.secho("Please put select your detector's index\n", bold=True))
+            selected_name = detectors[int(inp)]
+            os.environ["DETECTOR_NAME"] = selected_name
+            os.environ["HAS_NAME_CHANGED"] = "1"
+            dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
+            dotenv.set_key(envpath, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
+        else:
+            click.secho(f'You are {os.environ["DETECTOR_NAME"]}')
+    else:
+        os.environ["DETECTOR_NAME"] = detector_name
+        os.environ["HAS_NAME_CHANGED"] = "1"
+        dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
+        dotenv.set_key(envpath, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])

@@ -136,31 +136,46 @@ def run_scenarios(firedrill):
 
 
 @main.command()
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
 @click.pass_context
-def test_connection(ctx):
+def test_connection(ctx, firedrill):
     """ test the server connection
         It should prompt your whether the
         coincidence script is running in the server
     """
     from hop import Stream
+    import time
     name = ctx.obj['DETECTOR_NAME']
     stamp_time = snews_pt_utils.TimeStuff().get_utcnow()
     message = {'_id': 'test-connection',
                'name': name,
-               'time': stamp_time}
+               'time': stamp_time,
+               'status': 'sending'}
 
-    topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
-    substream = Stream(until_eos=True, auth=True, start_at=-5)
+    if firedrill:
+        topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
+    else:
+        topic = os.getenv("OBSERVATION_TOPIC")
+    substream = Stream(until_eos=False, auth=True, start_at=-5)
     pubstream = Stream(until_eos=True, auth=True)
+    click.secho(f"> Testing your connection to {topic}. \nShould take 4-5 seconds...\n", fg='green')
 
-    try:
-        with substream.open(topic, "r") as ss, pubstream.open(topic, "w") as ps:
-            ps.write(message)
-            for read in ss:
-                if read == message:
-                    click.secho(f"You ({read['name']}) have a connection to the server at {read['time']}", fg='green', bold=True)
-    except:
-        click.secho("Couldn't find connection, try again", fg='red')
+    with substream.open(topic, "r") as ss, pubstream.open(topic, "w") as ps:
+        ps.write(message)
+        time_start = time.time()
+        for read in ss:
+            message_expected = message.copy()
+            message_expected["status"] = "received"
+            if read == message_expected:
+                click.secho(f"You ({read['name']}) have a connection to the server at {read['time']}", fg='green', bold=True)
+                break
+            else:
+                if time.time()-time_start > 3:
+                    click.secho("I waited 3 second, couldn't find connection\n"
+                                "Something is not right, try again!", fg='red')
+                    break
+                else:
+                    continue
 
 
 if __name__ == "__main__":

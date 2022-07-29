@@ -70,7 +70,7 @@ class Subscriber:
         self.default_output = os.path.join(os.getcwd(), os.getenv("ALERT_OUTPUT"))
 
 
-    def subscribe(self, outputfolder=None):
+    def subscribe(self, outputfolder=None, auth=True):
         """ Subscribe and listen to a given topic
 
         Parameters
@@ -78,17 +78,18 @@ class Subscriber:
         outputfolder: `str`
             where to save the alert messages, if None
             creates a file based on env file
+        auth: A `bool` or :class:`Auth <hop.auth.Auth>` instance. Defaults to
+            loading from :meth:`auth.load_auth <hop.auth.load_auth>` if set to
+            True. To disable authentication, set to False.
 
         """
         outputfolder = outputfolder or self.default_output
-        # base = os.path.dirname(os.path.realpath(__file__))
-        # outputfolder = os.path.join(base, outputfolder)
         click.echo('You are subscribing to ' +
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
                    click.style(f'{ self.alert_topic}', bg='green'))
 
         # Initiate hop_stream
-        stream = Stream(until_eos=False)
+        stream = Stream(until_eos=False, auth=auth)
         try:
             with stream.open(self.alert_topic, "r") as s:
                 for message in s:
@@ -99,18 +100,16 @@ class Subscriber:
             click.secho('Done', fg='green')
 
 
-    def subscribe_and_redirect_alert(self, outputfolder=None):
+    def subscribe_and_redirect_alert(self, outputfolder=None,  auth=True):
         """ subscribe generator
         """
         outputfolder = outputfolder or self.default_output
-        # base = os.path.dirname(os.path.realpath(__file__))
-        # outputfolder = os.path.join(base, outputfolder)
         click.echo('You are subscribing to ' +
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
                    click.style(f'{ self.alert_topic}', bg='green'))
 
         # Initiate hop_stream
-        stream = Stream(until_eos=False)
+        stream = Stream(until_eos=False, auth=auth)
         try:
             with stream.open(self.alert_topic, "r") as s:
                 for message in s:
