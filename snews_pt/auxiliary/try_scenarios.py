@@ -9,7 +9,6 @@ with open(osp.join(osp.dirname(__file__), "scenarios.json")) as json_file:
 
 try:
     import inquirer
-    # from inquirer.themes import GreenPassion
     questions = [
     inquirer.Checkbox('scenarios',
                     message=click.style(" Which scenario(s) would you like to run next?", bg='yellow', bold=True),
@@ -19,7 +18,7 @@ try:
 
     while True:
         try:
-            answers = inquirer.prompt(questions) # , theme=GreenPassion()
+            answers = inquirer.prompt(questions)
             for scenario in answers['scenarios']:
                 if scenario=="finish & exit":
                     click.secho("Terminating.")
