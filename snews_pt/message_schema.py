@@ -1,4 +1,4 @@
-from .snews_pt_utils import get_detector
+from .snews_pt_utils import get_detector, get_name
 from ._version import version as __version__
 
 
@@ -7,17 +7,14 @@ class Message_Schema:
 
     Parameters
     ----------
-    env_path : `str`, optional
-        The path containing the environment configuration file
-        If None, uses the default file in '/auxiliary/test-config.env'
     detector_key : `str`, optional
-        The name of the detector. If None, uses "TEST"
-    alert : `bool`, optional
-        True if the message is ALERT message. Default is False.
+        The name of the detector. If "TEST", looks in the env file
 
     """
 
-    def __init__(self, env_path=None, detector_key='TEST', is_pre_sn=False):
+    def __init__(self, detector_key='TEST', is_pre_sn=False):
+        if detector_key == "TEST":
+            detector_key = get_name()
         self.detector = get_detector(detector_key)
         self.detector_name = self.detector.name
         self.is_pre_sn = is_pre_sn
