@@ -148,7 +148,7 @@ def test_connection(ctx, firedrill, start_at):
     name = ctx.obj['DETECTOR_NAME']
     snewstimes = snews_pt_utils.TimeStuff()
     stamp_time = snewstimes.get_utcnow()
-    message = {'_id': 'test-connection',
+    message = {'_id': '0_test-connection',
                'detector_name': name,
                'time': stamp_time,
                'status': 'sending'}
