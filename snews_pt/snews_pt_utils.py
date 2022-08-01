@@ -415,3 +415,11 @@ def set_name(detector_name='TEST'):
         os.environ["HAS_NAME_CHANGED"] = "1"
         dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
         dotenv.set_key(envpath, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
+
+
+def get_name():
+    """ Get the name of the detector from the
+        env file
+
+    """
+    return os.getenv("DETECTOR_NAME")

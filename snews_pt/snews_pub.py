@@ -138,6 +138,8 @@ class SNEWSTiersPublisher:
         kwargs:
             extra stuff you want to send to SNEWS
         """
+        if detector_name == "TEST":
+            detector_name = snews_pt_utils.get_name()
         self.message_data = {'detector_name': detector_name,
                              'machine_time': machine_time,
                              'neutrino_time': neutrino_time,
