@@ -320,6 +320,8 @@ def _tier_decider(data, sent_time, env_file=None):
         data_for_tier = tier_function(**data_for_tier)
         if name not in ['Retraction', 'Heartbeat']:
             data_for_tier['meta'] = meta_data
+        else:
+            data_for_tier['meta'] = {}
         msg = schema.get_schema(tier=name, data=data_for_tier, sent_time=sent_time)
         tiernames.append(name)
         messages.append(msg)

@@ -83,6 +83,7 @@ class Message_Schema:
                    }
         if tier == 'Heartbeat':
             message['detector_status'] = data['detector_status']
+            message['meta'] = data['meta']
 
         if tier == 'TimeTier':
             message['neutrino_time'] = data['neutrino_time']
@@ -104,11 +105,12 @@ class Message_Schema:
             message['which_tier'] = data['which_tier']
             message['N_retract_latest'] = data['N_retract_latest']
             message['retraction_reason'] = data['retraction_reason']
+            message['meta'] = data['meta']
 
-        if len(data.keys()) > len(message.keys()):
-            for key in data.keys():
-                if key not in message.keys():
-                    message['_extra_' + key] = data[key]
+        # if len(data.keys()) > len(message.keys()):
+        #     for key in data.keys():
+        #         if key not in message.keys():
+        #             message['_extra_' + key] = data[key]
 
         message["schema_version"] = version
         message["sent_time"] = sent_time
