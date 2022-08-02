@@ -2,7 +2,7 @@
 import json, click, time, sys
 from os import path as osp
 from snews_pt.snews_pub import SNEWSTiersPublisher, Publisher
-fd_mode = bool(sys.argv[1])
+fd_mode = True if sys.argv[1].lower() == "true" else False
 
 with open(osp.join(osp.dirname(__file__), "scenarios.json")) as json_file:
     data = json.load(json_file)
