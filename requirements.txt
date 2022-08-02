@@ -20,3 +20,4 @@ myst-parser==0.16.1
 sphinx_rtd_theme==1.0.0
 sphinx-autoapi==1.8.4
 sphinxcontrib-programoutput==0.17
+pytest~=6.2.5
