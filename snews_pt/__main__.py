@@ -34,7 +34,8 @@ def main(ctx, env):
 
 
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True',
+              help='Whether to use firedrill brokers or default ones')
 @click.argument('file', nargs=-1)
 @click.pass_context
 def publish(ctx, file, firedrill):
@@ -50,7 +51,7 @@ def publish(ctx, file, firedrill):
     click.clear()
     for f in file:
         if f.endswith('.json'):
-            SNEWSTiersPublisher.from_json(jsonfile=f, env_file=ctx.obj['env']).send_to_snews(firedrill)
+            SNEWSTiersPublisher.from_json(jsonfile=f, env_file=ctx.obj['env'], firedrill_mode=firedrill).send_to_snews()
 
         else:
             # maybe just print instead of raising
