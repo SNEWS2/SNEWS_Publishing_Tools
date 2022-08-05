@@ -1,5 +1,6 @@
 """Test publishing significane tier messages."""
 from snews_pt.snews_pub import SNEWSTiersPublisher
+from snews_pt._version import version as __version__
 
 def test_significance_expected():
     """Test with example of expected message type."""
@@ -36,7 +37,7 @@ def test_significance_expected():
                      'meta': {'neutrino_times':
                                    ['2012-06-09T15:31:08.1098',
                                     '2012-06-09T15:33:07.8910']},
-                     'schema_version': '1.1.0'}
+                     'schema_version': __version__}
     for k,v in input_message.items():
         if k in ['sent_time', 'machine_time']:
             continue

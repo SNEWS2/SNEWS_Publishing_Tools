@@ -1,5 +1,7 @@
 """Test publishing coincidence tier messages."""
 from snews_pt.snews_pub import SNEWSTiersPublisher
+from snews_pt._version import version as __version__
+
 
 def test_coincidence_expected():
     """Test with example of expected message type."""
@@ -14,7 +16,7 @@ def test_coincidence_expected():
                                  'p_value': 0.4}
 
     input_messages = {'detector_name': 'KamLAND', 'machine_time': None, 'neutrino_time': '2012-06-09T15:31:08.1098',
-                      'p_val': None, 'meta': {'p_value': 0.4}, 'schema_version': '1.1.0'}
+                      'p_val': None, 'meta': {'p_value': 0.4}, 'schema_version': __version__}
     for k,v in input_messages.items():
         if k in ['sent_time', 'machine_time']:
             continue

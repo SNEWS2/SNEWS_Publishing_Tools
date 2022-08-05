@@ -1,5 +1,6 @@
 """Test publishing timing tier messages."""
 from snews_pt.snews_pub import SNEWSTiersPublisher
+from snews_pt._version import version as __version__
 
 def test_timing_expected():
     """Test with example of expected message type."""
@@ -14,11 +15,11 @@ def test_timing_expected():
                                  'retraction_reason': None, 'detector_status': None, 'is_pre_sn': False, 't_bin_width': None, }
 
     input_messages = [{'detector_name': 'XENONnT', 'machine_time': None, 'neutrino_time': '2012-06-09T15:31:08.1098',
-                     'p_val': None, 'meta': {}, 'schema_version': '1.1.0'},
+                     'p_val': None, 'meta': {}, 'schema_version': __version__},
                       {'detector_name': 'XENONnT', 'machine_time': None,
                      'neutrino_time': '2012-06-09T15:31:08.1098',
                        'timing_series': ['2012-06-09T15:31:08.1098', '2012-06-09T15:33:07.8910'],
-                       'meta': {}, 'schema_version': '1.1.0'}]
+                       'meta': {}, 'schema_version': __version__}]
     for i, message in enumerate(input_messages):
         for k,v in message.items():
             if k in ['sent_time', 'machine_time']:
