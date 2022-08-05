@@ -26,26 +26,26 @@ def set_env(env_path=None):
     load_dotenv(env)
 
 
-class TimeStuff:
-    """ SNEWS format datetime objects
+# class TimeStuff:
+#     """ SNEWS format datetime objects
 
-    """
-    def __init__(self, env_path=None):
-        set_env(env_path)
-        self.snews_t_format = os.getenv("TIME_STRING_FORMAT")
-        self.hour_fmt = "%H:%M:%S"
-        self.date_fmt = "%y_%m_%d"
-        self.get_utcnow = lambda fmt=self.snews_t_format: datetime.utcnow().strftime(fmt)
-        self.get_hour = lambda fmt=self.hour_fmt: datetime.utcnow().strftime(fmt)
-        self.get_date = lambda fmt=self.date_fmt: datetime.utcnow().strftime(fmt)
+#     """
+#     def __init__(self, env_path=None):
+#         set_env(env_path)
+#         self.snews_t_format = os.getenv("TIME_STRING_FORMAT")
+#         self.hour_fmt = "%H:%M:%S"
+#         self.date_fmt = "%y_%m_%d"
+#         self.get_utcnow = lambda fmt=self.snews_t_format: datetime.utcnow().strftime(fmt)
+#         self.get_hour = lambda fmt=self.hour_fmt: datetime.utcnow().strftime(fmt)
+#         self.get_date = lambda fmt=self.date_fmt: datetime.utcnow().strftime(fmt)
 
-    def str_to_datetime(self, nu_time, fmt='%y/%m/%d %H:%M:%S:%f'):
-        """ string to datetime object """
-        return datetime.strptime(nu_time, fmt)
+#     def str_to_datetime(self, nu_time, fmt='%y/%m/%d %H:%M:%S:%f'):
+#         """ string to datetime object """
+#         return datetime.strptime(nu_time, fmt)
 
-    def str_to_hr(self, nu_time, fmt='%H:%M:%S:%f'):
-        """ string to datetime hour object """
-        return datetime.strptime(nu_time, fmt)
+#     def str_to_hr(self, nu_time, fmt='%H:%M:%S:%f'):
+#         """ string to datetime hour object """
+#         return datetime.strptime(nu_time, fmt)
 
 
 def set_topic_state(which_topic, env_path=None):
