@@ -1,14 +1,12 @@
 """Test publishing significane tier messages."""
 from snews_pt.snews_pub import SNEWSTiersPublisher
-from snews_pt.snews_pt_utils import set_name
 
 def test_significance_expected():
     """Test with example of expected message type."""
     # Create significance tier message.
-    set_name(detector_name='DS-20K')
     sign = SNEWSTiersPublisher(detector_name='DS-20K',
-                               neutrino_times=['12/06/09 15:31:08:1098', 
-                                               '12/06/09 15:33:07:8910'],
+                               neutrino_times=['2012-06-09T15:31:08.1098', 
+                                               '2012-06-09T15:33:07.8910'],
                                p_values=[0.4, 0.5],
                                t_bin_width=0.8,
                                firedrill_mode=False)
@@ -28,16 +26,16 @@ def test_significance_expected():
                                  'detector_status': None,
                                  'is_pre_sn': False,
                                  'neutrino_times':
-                                          ['12/06/09 15:31:08:1098',
-                                           '12/06/09 15:33:07:8910']}
+                                          ['2012-06-09T15:31:08.1098',
+                                           '2012-06-09T15:33:07.8910']}
     input_message = {'detector_name': 'DS-20K',
                      'machine_time': None,
                      'neutrino_time': None,
                      't_bin_width': 0.8,
                      'p_values': [0.4, 0.5],
                      'meta': {'neutrino_times':
-                                   ['12/06/09 15:31:08:1098',
-                                    '12/06/09 15:33:07:8910']},
+                                   ['2012-06-09T15:31:08.1098',
+                                    '2012-06-09T15:33:07.8910']},
                      'schema_version': '1.1.0'}
     for k,v in input_message.items():
         if k in ['sent_time', 'machine_time']:
