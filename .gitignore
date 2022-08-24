@@ -1,5 +1,6 @@
-# Alerts
+# Alerts and logs
 SNEWS_ALERTS/
+logs/
 
 # Visual Studio Code
 .vscode/
