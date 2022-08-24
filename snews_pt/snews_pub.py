@@ -60,9 +60,15 @@ class Publisher:
         if type(messages) == dict:
             messages = list(messages)
         for message in messages:
-            self.stream.write(message)
-            self.display_message(message)
-
+            if snews_pt_utils.is_snews_format(message):
+                self.stream.write(message)
+                self.display_message(message)
+            else:
+                click.secho(f'{"-" * 64}', fg='bright_red')
+                click.secho(f'Skipping message! Improper format! See log for details.')
+                for k, v in message.items():
+                    print(f'{k:<20s}:{v}')
+            
     def display_message(self, message):
         if self.verbose:
             tier = message['_id'].split('_')[1]
