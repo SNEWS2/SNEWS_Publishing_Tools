@@ -9,6 +9,9 @@ import os, json, click
 import sys
 from inspect import signature
 
+from .core.logging import getLogger
+
+log = getLogger(__name__)
 
 def set_env(env_path=None):
     """ Set environment parameters
@@ -423,3 +426,91 @@ def get_name():
 
     """
     return os.getenv("DETECTOR_NAME")
+
+
+def is_snews_format(snews_message, is_test=False):
+    """ This method checks to see if message meets SNEWS standards.
+
+    Parameters
+    ----------
+    snews_message : dict
+        incoming SNEWS message
+
+    Returns
+    -------
+        bool
+            True if message meets SNEWS standards, else False
+
+    """
+    message_keys = snews_message.keys()
+    missing_key = False
+    contents_bad = False
+    time_bad = False
+    
+    warning = f'The following Message does not meet SNEWS 2.0 standards!\n{snews_message}\n'
+
+    # Check if detector name is in registered list.
+    detector_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'auxiliary/detector_properties.json'))
+    with open(detector_file) as file:
+        snews_detectors = json.load(file)
+    snews_detectors = list(snews_detectors.keys())
+
+    if 'detector_name' not in message_keys:
+        warning += f'* Does not have required key: "detector_name"\n'
+        snews_format = False
+        missing_key = True
+
+    elif snews_message['detector_name'] not in snews_detectors:
+        warning += f'* Detector not found: {snews_message["detector_name"]}\n'
+        warning += f"Detector options: {snews_detectors}\n"
+
+    # Check for missing keys
+    if 'neutrino_time' not in message_keys:
+        warning += f'* Does not have required key: "neutrino_time"\n'
+        missing_key = True
+
+    if missing_key:
+        log.warning(warning)
+        return snews_format
+
+    # Check contents
+    if type(snews_message['p_val']) is not float:
+        contents_bad = True
+        warning += f'* p value needs to be a float type, type given: {type(snews_message["p_val"])}\n'
+
+    if type(snews_message['p_val']) is float and (snews_message['p_val'] >= 1.0 or snews_message['p_val'] <= 0):
+        warning += f'* {snews_message["p_val"]} is not a valid p value !\n'
+        contents_bad = True
+
+    if type(snews_message['neutrino_time']) is not str:
+        contents_bad = True
+        warning += f'* neutrino time must be a str, type given: {type(snews_message["neutrino_time"])}\n'
+
+    if contents_bad:
+        log.warning(warning)
+        return False
+
+    # Time format check
+    try:
+        datetime.fromisoformat(snews_message['neutrino_time'])
+    except ValueError:
+        warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
+        log.warning(warning)
+        return False
+
+    if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() <= -172800.0:
+        warning += f'* neutrino time is more than 48 hrs olds !\n'
+        time_bad = True
+
+    if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() > 0:
+        if is_test:
+            pass
+        else:
+            warning += f'* neutrino time comes from the future, please stop breaking causality\n'
+            time_bad = True
+
+    if time_bad:
+        log.warning(warning)
+        return False
+
+    return True
