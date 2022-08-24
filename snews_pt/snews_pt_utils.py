@@ -474,13 +474,14 @@ def is_snews_format(snews_message, is_test=False):
         return snews_format
 
     # Check contents
-    if type(snews_message['p_val']) is not float:
-        contents_bad = True
-        warning += f'* p value needs to be a float type, type given: {type(snews_message["p_val"])}\n'
+    if 'p_val' in message_keys:
+        if type(snews_message['p_val']) is not float:
+            contents_bad = True
+            warning += f'* p value needs to be a float type, type given: {type(snews_message["p_val"])}\n'
 
-    if type(snews_message['p_val']) is float and (snews_message['p_val'] >= 1.0 or snews_message['p_val'] <= 0):
-        warning += f'* {snews_message["p_val"]} is not a valid p value !\n'
-        contents_bad = True
+        if type(snews_message['p_val']) is float and (snews_message['p_val'] >= 1.0 or snews_message['p_val'] <= 0):
+            warning += f'* {snews_message["p_val"]} is not a valid p value !\n'
+            contents_bad = True
 
     if type(snews_message['neutrino_time']) is not str:
         contents_bad = True
