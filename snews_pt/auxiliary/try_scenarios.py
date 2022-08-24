@@ -30,7 +30,7 @@ try:
                     SNEWSTiersPublisher(**msg, firedrill_mode=fd_mode).send_to_snews()
                     time.sleep(1)
                     # clear cache after each scenario
-                with Publisher() as pub:
+                with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
                     pub.send([{'_id': '0_hard-reset_', 'pass':'very1secret2password', 'detector_name':'TEST'}])
                     print('> Cache cleaned\n')
 
