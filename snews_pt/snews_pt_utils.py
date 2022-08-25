@@ -488,7 +488,7 @@ def is_snews_format(snews_message, is_test=False):
             warning += f'* p value needs to be a float type, type given: {key_type}\n'
 
         if key_type is float and (key_val >= 1.0 or key_val <= 0):
-            warning += f'* {kev_val} is not a valid p value !\n'
+            warning += f'* {key_val} is not a valid p value !\n'
             contents_bad = True
 
     if type(snews_message['neutrino_time']) is not str:
