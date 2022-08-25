@@ -65,7 +65,7 @@ class Publisher:
                 self.display_message(message)
             else:
                 click.secho(f'{"-" * 64}', fg='bright_red')
-                click.secho(f'Skipping message! Improper format! See log for details.')
+                click.secho(f'Skipping message! Improper format!')
                 for k, v in message.items():
                     print(f'{k:<20s}:{v}')
             

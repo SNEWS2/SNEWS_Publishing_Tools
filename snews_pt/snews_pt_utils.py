@@ -8,6 +8,7 @@ from collections import namedtuple
 import os, json, click
 import sys
 from inspect import signature
+import warnings
 
 from .core.logging import getLogger
 
@@ -472,6 +473,7 @@ def is_snews_format(snews_message, is_test=False):
         missing_key = True
 
     if missing_key:
+        warnings.warn(warning, UserWarning)
         log.warning(warning)
         return snews_format
 
@@ -490,6 +492,7 @@ def is_snews_format(snews_message, is_test=False):
         warning += f'* neutrino time must be a str, type given: {type(snews_message["neutrino_time"])}\n'
 
     if contents_bad:
+        warnings.warn(warning, UserWarning)
         log.warning(warning)
         return False
 
@@ -498,12 +501,14 @@ def is_snews_format(snews_message, is_test=False):
         datetime.fromisoformat(snews_message['neutrino_time'])
     except ValueError:
         warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
+        warnings.warn(warning, UserWarning)
         log.warning(warning)
         return False
 
     if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() <= -172800.0:
         warning += f'* neutrino time is more than 48 hrs olds !\n'
         time_bad = True
+        warnings.warn(warning, UserWarning)
         log.warning(warning)
 
     if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() > 0:
@@ -512,9 +517,11 @@ def is_snews_format(snews_message, is_test=False):
         else:
             warning += f'* neutrino time comes from the future, please stop breaking causality\n'
             time_bad = True
+            warnings.warn(warning, UserWarning)
             log.warning(warning)
 
     if time_bad:
+        warnings.warn(warning, UserWarning)
         log.warning(warning)
         return False
 
