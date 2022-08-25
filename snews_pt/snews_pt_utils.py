@@ -494,7 +494,7 @@ def is_snews_format(snews_message, is_test=False):
     if type(snews_message['neutrino_time']) is not str:
         if snews_message['neutrino_time'] is not None:
             contents_bad = True
-            warning += f'* neutrino time must be a str, type given: {type(snews_message['p_val'])}\n'
+            warning += f'* neutrino time must be a str, type given: {type(snews_message["p_val"])}\n'
 
     if contents_bad:
         warnings.warn(warning, UserWarning)
