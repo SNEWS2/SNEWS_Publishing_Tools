@@ -447,6 +447,7 @@ def is_snews_format(snews_message, is_test=False):
     missing_key = False
     contents_bad = False
     time_bad = False
+    snews_format = True
 
     log.debug(f"\nChecking message: {snews_message}\n")
     
@@ -466,15 +467,18 @@ def is_snews_format(snews_message, is_test=False):
     elif snews_message['detector_name'] not in snews_detectors:
         warning += f'* Detector not found: {snews_message["detector_name"]}\n'
         warning += f"Detector options: {snews_detectors}\n"
+        snews_format = False
 
     # Check for missing keys
     if 'neutrino_time' not in message_keys:
         warning += f'* Does not have required key: "neutrino_time"\n'
         missing_key = True
+        snews_format = False
 
     if missing_key:
         warnings.warn(warning, UserWarning)
         log.warning(warning)
+
         return snews_format
  
     # Check contents
@@ -499,6 +503,7 @@ def is_snews_format(snews_message, is_test=False):
     if contents_bad:
         warnings.warn(warning, UserWarning)
         log.warning(warning)
+
         return False
 
     # Time format check
@@ -509,6 +514,7 @@ def is_snews_format(snews_message, is_test=False):
             warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
             warnings.warn(warning, UserWarning)
             log.warning(warning)
+
             return False
 
     if snews_message['neutrino_time'] is not None:
@@ -531,6 +537,7 @@ def is_snews_format(snews_message, is_test=False):
     if time_bad:
         warnings.warn(warning, UserWarning)
         log.warning(warning)
+        
         return False
 
     return True
