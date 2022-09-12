@@ -449,6 +449,10 @@ def is_snews_format(snews_message):
     time_bad = False
     snews_format = True
 
+    # Don't check reset messages for format
+    if snews_message['_id'] == '0_hard-reset_':
+        return True
+
     log.debug(f"\nChecking message: {snews_message}\n")
     
     warning = f'The following Message does not meet SNEWS 2.0 standards!\n{snews_message}\n'
