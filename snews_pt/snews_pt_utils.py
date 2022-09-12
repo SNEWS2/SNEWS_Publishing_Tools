@@ -519,11 +519,13 @@ def is_snews_format(snews_message, is_test=False):
 
     if snews_message['neutrino_time'] is not None:
         log.debug(f"\nChecking neutrino_time: {snews_message['neutrino_time']}\n")
+
         if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() <= -172800.0:
-            warning += f'* neutrino time is more than 48 hrs olds !\n'
-            time_bad = True
-            warnings.warn(warning, UserWarning)
-            log.warning(warning)
+            if not is_test:
+                warning += f'* neutrino time is more than 48 hrs olds !\n'
+                time_bad = True
+                warnings.warn(warning, UserWarning)
+                log.warning(warning)
 
         if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() > 0:
             if is_test:
@@ -537,7 +539,7 @@ def is_snews_format(snews_message, is_test=False):
     if time_bad:
         warnings.warn(warning, UserWarning)
         log.warning(warning)
-        
+
         return False
 
     return True
