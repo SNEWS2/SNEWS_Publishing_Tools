@@ -429,7 +429,7 @@ def get_name():
     return os.getenv("DETECTOR_NAME")
 
 
-def is_snews_format(snews_message, is_test=False):
+def is_snews_format(snews_message):
     """ This method checks to see if message meets SNEWS standards.
 
     Parameters
@@ -521,16 +521,14 @@ def is_snews_format(snews_message, is_test=False):
         log.debug(f"\nChecking neutrino_time: {snews_message['neutrino_time']}\n")
 
         if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() <= -172800.0:
-            if not is_test:
+            if not "this is a test" in snews_message['meta'].values():
                 warning += f'* neutrino time is more than 48 hrs olds !\n'
                 time_bad = True
                 warnings.warn(warning, UserWarning)
                 log.warning(warning)
 
         if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() > 0:
-            if is_test:
-                pass
-            else:
+            if not "this is a test" in snews_message['meta'].values():
                 warning += f'* neutrino time comes from the future, please stop breaking causality\n'
                 time_bad = True
                 warnings.warn(warning, UserWarning)
