@@ -1,3 +1,4 @@
+from datetime import datetime
 
 import os, json, click
 from hop import Stream
@@ -7,7 +8,8 @@ def make_file(outputfolder):
     """ Get a proper json file name at a given folder
     """
     os.makedirs(outputfolder, exist_ok=True)
-    date = snews_pt_utils.TimeStuff().get_date()
+    # date = snews_pt_utils.TimeStuff().get_date()
+    date = datetime.utcnow().isoformat().split('T')[0]
     file = os.path.join(outputfolder, f"0-SNEWS_ALERT_{date}.json")
     while os.path.isfile(file):
         i = int(file.split('/')[-1].split('-')[0])
@@ -61,12 +63,13 @@ class Subscriber:
         self.alert_topic = os.getenv("ALERT_TOPIC")
         if firedrill_mode:
             self.alert_topic = os.getenv("FIREDRILL_ALERT_TOPIC")
-        self.times = snews_pt_utils.TimeStuff()
+        # self.times = snews_pt_utils.TimeStuff()
         # time object/strings
-        self.times = snews_pt_utils.TimeStuff(env_path)
-        self.hr = self.times.get_hour()
-        self.date = self.times.get_date()
-        self.snews_time = lambda: self.times.get_utcnow()
+        # self.times = snews_pt_utils.TimeStuff(env_path)
+        # self.hr = self.times.get_hour()
+        # self.date = self.times.get_date()
+        # self.snews_time = lambda: self.times.get_utcnow()
+        self.snews_time = datetime.utcnow().isoformat()
         self.default_output = os.path.join(os.getcwd(), os.getenv("ALERT_OUTPUT"))
 
 

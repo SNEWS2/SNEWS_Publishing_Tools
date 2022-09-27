@@ -10,6 +10,7 @@ Sebastian Torres-Lara
 Joe Smolsky
 """
 
+from datetime import datetime
 import os, click
 from hop import Stream
 from . import snews_pt_utils
@@ -37,7 +38,7 @@ class Publisher:
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         if firedrill_mode:
             self.obs_broker = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
-        self.times = snews_pt_utils.TimeStuff()
+        # self.times = snews_pt_utils.TimeStuff()
         self.verbose = verbose
 
     def __enter__(self):
@@ -59,9 +60,15 @@ class Publisher:
         if type(messages) == dict:
             messages = list(messages)
         for message in messages:
-            self.stream.write(message)
-            self.display_message(message)
-
+            if snews_pt_utils.is_snews_format(message):
+                self.stream.write(message)
+                self.display_message(message)
+            else:
+                click.secho(f'{"-" * 64}', fg='bright_red')
+                click.secho(f'Skipping message! Improper format!')
+                for k, v in message.items():
+                    print(f'{k:<20s}:{v}')
+            
     def display_message(self, message):
         if self.verbose:
             tier = message['_id'].split('_')[1]
@@ -156,7 +163,7 @@ class SNEWSTiersPublisher:
         # self.message_data['meta'] = self.meta   # this is already done in tier decider
         self.message_data = {**self.message_data, ** self.meta}
         self.env_file = env_file
-        stamp_time = snews_pt_utils.TimeStuff().get_utcnow()
+        stamp_time = datetime.utcnow().isoformat()
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, sent_time=stamp_time, env_file=env_file)
         self.firedrill_mode = firedrill_mode
     @classmethod

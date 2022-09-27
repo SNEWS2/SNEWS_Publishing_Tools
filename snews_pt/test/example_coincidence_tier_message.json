@@ -1,10 +1,12 @@
 {
     "machine_time": 
-        "22/06/14 14:57:238275",
+        "2022-06-14T14:57:12.238275",
     "neutrino_time": 
-        "22/06/14 14:50:345275",
+        "2022-06-14T14:50:12.345275",
     "p_val":
         0.07,
     "extra_key":
-        "test extra"
+        "test extra",
+    "testing": 
+        "this is a test"
 }

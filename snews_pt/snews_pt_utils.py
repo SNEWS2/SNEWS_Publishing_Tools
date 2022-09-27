@@ -8,7 +8,11 @@ from collections import namedtuple
 import os, json, click
 import sys
 from inspect import signature
+import warnings
 
+from .core.logging import getLogger
+
+log = getLogger(__name__)
 
 def set_env(env_path=None):
     """ Set environment parameters
@@ -26,26 +30,26 @@ def set_env(env_path=None):
     load_dotenv(env)
 
 
-class TimeStuff:
-    """ SNEWS format datetime objects
+# class TimeStuff:
+#     """ SNEWS format datetime objects
 
-    """
-    def __init__(self, env_path=None):
-        set_env(env_path)
-        self.snews_t_format = os.getenv("TIME_STRING_FORMAT")
-        self.hour_fmt = "%H:%M:%S"
-        self.date_fmt = "%y_%m_%d"
-        self.get_utcnow = lambda fmt=self.snews_t_format: datetime.utcnow().strftime(fmt)
-        self.get_hour = lambda fmt=self.hour_fmt: datetime.utcnow().strftime(fmt)
-        self.get_date = lambda fmt=self.date_fmt: datetime.utcnow().strftime(fmt)
+#     """
+#     def __init__(self, env_path=None):
+#         set_env(env_path)
+#         self.snews_t_format = os.getenv("TIME_STRING_FORMAT")
+#         self.hour_fmt = "%H:%M:%S"
+#         self.date_fmt = "%y_%m_%d"
+#         self.get_utcnow = lambda fmt=self.snews_t_format: datetime.utcnow().strftime(fmt)
+#         self.get_hour = lambda fmt=self.hour_fmt: datetime.utcnow().strftime(fmt)
+#         self.get_date = lambda fmt=self.date_fmt: datetime.utcnow().strftime(fmt)
 
-    def str_to_datetime(self, nu_time, fmt='%y/%m/%d %H:%M:%S:%f'):
-        """ string to datetime object """
-        return datetime.strptime(nu_time, fmt)
+#     def str_to_datetime(self, nu_time, fmt='%y/%m/%d %H:%M:%S:%f'):
+#         """ string to datetime object """
+#         return datetime.strptime(nu_time, fmt)
 
-    def str_to_hr(self, nu_time, fmt='%H:%M:%S:%f'):
-        """ string to datetime hour object """
-        return datetime.strptime(nu_time, fmt)
+#     def str_to_hr(self, nu_time, fmt='%H:%M:%S:%f'):
+#         """ string to datetime hour object """
+#         return datetime.strptime(nu_time, fmt)
 
 
 def set_topic_state(which_topic, env_path=None):
@@ -423,3 +427,121 @@ def get_name():
 
     """
     return os.getenv("DETECTOR_NAME")
+
+
+def is_snews_format(snews_message):
+    """ This method checks to see if message meets SNEWS standards.
+
+    Parameters
+    ----------
+    snews_message : dict
+        incoming SNEWS message
+
+    Returns
+    -------
+        bool
+            True if message meets SNEWS standards, else False
+
+    """
+    message_keys = snews_message.keys()
+    missing_key = False
+    contents_bad = False
+    time_bad = False
+    snews_format = True
+
+    # Don't check reset messages for format
+    if snews_message['_id'] == '0_hard-reset_':
+        return True
+
+    log.debug(f"\nChecking message: {snews_message}\n")
+    
+    warning = f'The following Message does not meet SNEWS 2.0 standards!\n{snews_message}\n'
+
+    # Check if detector name is in registered list.
+    detector_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'auxiliary/detector_properties.json'))
+    with open(detector_file) as file:
+        snews_detectors = json.load(file)
+    snews_detectors = list(snews_detectors.keys())
+
+    if 'detector_name' not in message_keys:
+        warning += f'* Does not have required key: "detector_name"\n'
+        snews_format = False
+        missing_key = True
+
+    elif snews_message['detector_name'] not in snews_detectors:
+        warning += f'* Detector not found: {snews_message["detector_name"]}\n'
+        warning += f"Detector options: {snews_detectors}\n"
+        snews_format = False
+
+    # Check for missing keys
+    if 'neutrino_time' not in message_keys:
+        warning += f'* Does not have required key: "neutrino_time"\n'
+        missing_key = True
+        snews_format = False
+
+    if missing_key:
+        warnings.warn(warning, UserWarning)
+        log.warning(warning)
+
+        return snews_format
+ 
+    # Check contents
+    if 'p_val' in message_keys and snews_message['p_val'] is not None:
+        log.debug(f"\nChecking p_val: {snews_message['p_val']}\n")
+        key_type = type(snews_message['p_val'])
+        key_val = snews_message['p_val']
+
+        if key_type is not float:
+            contents_bad = True
+            warning += f'* p value needs to be a float type, type given: {key_type}\n'
+
+        if key_type is float and (key_val >= 1.0 or key_val <= 0):
+            warning += f'* {key_val} is not a valid p value !\n'
+            contents_bad = True
+
+    if type(snews_message['neutrino_time']) is not str:
+        if snews_message['neutrino_time'] is not None:
+            contents_bad = True
+            warning += f'* neutrino time must be a str, type given: {type(snews_message["p_val"])}\n'
+
+    if contents_bad:
+        warnings.warn(warning, UserWarning)
+        log.warning(warning)
+
+        return False
+
+    # Time format check
+    try:
+        datetime.fromisoformat(snews_message['neutrino_time'])
+    except:
+        if snews_message['neutrino_time'] is not None:
+            warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
+            warnings.warn(warning, UserWarning)
+            log.warning(warning)
+
+            return False
+
+    if snews_message['neutrino_time'] is not None:
+        log.debug(f"\nChecking neutrino_time: {snews_message['neutrino_time']}\n")
+
+        if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() <= -172800.0:
+            if not "this is a test" in snews_message['meta'].values():
+                warning += f'* neutrino time is more than 48 hrs olds !\n'
+                time_bad = True
+                warnings.warn(warning, UserWarning)
+                log.warning(warning)
+
+        if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() > 0:
+            if not "this is a test" in snews_message['meta'].values():
+                warning += f'* neutrino time comes from the future, please stop breaking causality\n'
+                time_bad = True
+                warnings.warn(warning, UserWarning)
+                log.warning(warning)
+
+    if time_bad:
+        warnings.warn(warning, UserWarning)
+        log.warning(warning)
+
+        return False
+
+    return True

@@ -3,7 +3,7 @@
     Notes to dev team
     https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
 """
-import time
+from datetime import datetime
 
 from . import __version__
 from . import snews_pt_utils
@@ -147,8 +147,7 @@ def test_connection(ctx, firedrill, start_at):
     """
     from hop import Stream
     name = ctx.obj['DETECTOR_NAME']
-    snewstimes = snews_pt_utils.TimeStuff()
-    stamp_time = snewstimes.get_utcnow()
+    stamp_time = datetime.utcnow().isoformat()
     message = {'_id': '0_test-connection',
                'detector_name': name,
                'time': stamp_time,
