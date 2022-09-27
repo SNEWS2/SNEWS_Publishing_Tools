@@ -173,5 +173,14 @@ def test_connection(ctx, firedrill, start_at):
                 click.secho(f"You ({read['detector_name']}) have a connection to the server at {read['time']}", fg='green', bold=True)
                 break
 
+@main.command()
+@click.option('--name', '-n', default="TEST", show_default='TEST', help='Set the detectors name')
+def set_name(name):
+    """ Set your detectors name
+    """
+    from .snews_pt_utils import set_name as _set_name
+    _set_name(name)
+    click.secho(f"Your detector name is set to be: {os.environ['DETECTOR_NAME']}", fg='green', bold=True)
+
 if __name__ == "__main__":
     main()
