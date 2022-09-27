@@ -1,4 +1,5 @@
 # SNEWS Publishing Tool
+<img src="docs/custom_logo.png" alt="snews_logo" width="200"/> 
 
 [![Documentation Status](https://readthedocs.org/projects/snews-publishing-tools/badge/?version=latest)](https://snews-publishing-tools.readthedocs.io/en/latest/?badge=latest)
 ![testing](https://github.com/SNEWS2/SNEWS_Publishing_Tools/actions/workflows/ubuntu20-py39.yml/badge.svg)
