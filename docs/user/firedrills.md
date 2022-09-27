@@ -69,8 +69,8 @@ One can play with this object before finally `send_to_snews()`.
 
 -----
 
-# Notes:
-## Subscribe and Redirect
+## Notes:
+### Subscribe and Redirect
 
 `snews_pt subscribe` also allows for other scripts to be plugged in and act on alerts. The *CLI* command `snews_pt subscribe` takes the custom made script via `--plugin` (`-p`) option.
 
@@ -90,7 +90,7 @@ data = json.load(open(sys.argv[1]))
 and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/test/random_plugin.py).
 
 
-## On the first run
+### On the first run
 
 The publishing tools will want to know the user. To aid the user, instead of asking for a user name, we developed a method to
 set the user-name only one time. By default `snews_pt` assigns you the name `"TEST"` and as long as you do not change this, it raises an error message.
