@@ -17,71 +17,25 @@ This packages provides users with a Python API and CLI to publish observation me
 |              |
 | ------------ | 
 |**Fire-Drills**|
-|`snews_pt` allows for fire-drill mode, currently this is the default option. Later, it can be adjusted through `firedrill_mode=True/False` arguments in subcription and publication functions, and through `--firedrill/--no-firedrill` flags within the CLI tools. Make sure you have the correct [permissions](https://my.hop.scimma.org/hopauth/) to publish and subscribe to these firedrill channels. |
-|              |
+|`snews_pt` allows for fire-drill mode, currently this is the default option. <br/>Later, it can be adjusted through `firedrill_mode=True/False` arguments in subcription and publication functions, and through `--firedrill/--no-firedrill` flags within the CLI tools. Make sure you have the correct [permissions](https://my.hop.scimma.org/hopauth/) to publish and subscribe to these firedrill channels. |
 
 ## How to Install
 
-First you need to clone this repo. In your terminal run the following:
+- #### From source <br>
+  First you need to clone this repo. In your terminal run the following:
 
-````bash 
-git clone https://github.com/SNEWS2/SNEWS_Publishing_Tools.git
-````
+  ```bash 
+  git clone https://github.com/SNEWS2/SNEWS_Publishing_Tools.git
+  ```
+  Once cloned, install the package using pip (make sure you're in the cloned dir)
+  ```bash
+  pip install .
+  ```
 
-Once cloned, install the package using pip (make sure you're in the cloned dir)
-
-````bash
-pip install .
-````
-
-## Message Schemas
-
-    Note: Not the final schemas !!
-
-### Coincidence Tier
-
-````
-_id                 
-detector_name     (user input)    
-sent_time           
-machine_time      (user input)    
-neutrino_time     (user input)     
-p_val             (user input)    
-````
-
-### Significance Tier
-
-````
-_id                 
-detector_name    (user input)      
-sent_time           
-machine_time     (user input)        
-neutrino_time    (user input)       
-p_value(s)       (user input)    
-````
-
-### Time Series Tier
-
-````
-_id                
-detector_name   (user input)      
-sent_time           
-machine_time    (user input)      
-neutrino_time   (user input)     
-timing_series   (user input)
-````
-
-### False Obs
-
-````
-_id
-detector_name           (user input)          
-false_id                (user input, optional)    
-which_tier              (user input)    
-N_retract_latest        (user input)    
-retraction_reason       (user input, optional)  
-sent_time           
-````
+- #### From PyPi <br>
+  ```bash
+  pip install -U snews-pt
+  ```
 
 ## How to Publish
 
@@ -99,18 +53,17 @@ passing your parameters of choice. The backend will parse your arguments, check 
 tiers you can send a message to (see **Publishing Protocols**). If you pass multiple parameters (_see code bellow_) the
 sender will send a message *all* the appropriate tiers.
 
-```Python
-
-SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time='22/02/28 4:31:08:565',
-                    timing_series=['22/02/28 4:31:08:565', '22/02/28 4:31:08:765', '22/02/28 4:31:09:001'],
-                    p_val=0.000007, machine_time='22/02/28 4:31:08:565', 
+```python
+SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time="2022-02-28T04:31:08.678999",
+                    timing_series=["2022-02-28T04:31:08.694999", "2022-02-28T04:31:08.698999", "2022-02-28T04:31:08.7078945"],
+                    p_val=0.000007,
+                    machine_time="2022-02-28T04:31:09.778859", 
                     ).send_to_snews()
 ```
 
 This instance has parameters for **CoincidenceTier** and **TimingTier**, thus it will send a message to both. The output
 should look like this:
-![img.png](img.png)!
-
+![img.png](img.png)
 
 ### Passing Message Parameters from JSON File.
 
@@ -132,38 +85,8 @@ observation.send_to_snews()
 
 ***See this [`examples notebook`](./examples.ipynb) for more tutorial scripts***
 
-### Publishing Protocols
-
-**Coincidence Tier**
-
-* ``p_value`` and ``neutrino_time`` need to be passed.
-    * ``p_val`` must be a ``float``.
-    * ``neutrino_time`` must be a ``string``, format: ``'%y/%m/%d %H:%M:%S'``
-
-**Significance Tier**
-
-* ``p_values`` needs to be passed.
-    * ``p_values`` must be a ``list (float)``.
-
-**Timing Tier**
-
-* ``p_value`` and ``timing_series`` need to be passed.
-    * ``p_val`` must be a ``float``.
-    * ``timing_series`` must be a ``list (string)``, format: ``'%y/%m/%d %H:%M:%S'``
-
-**Retraction**
-
-* ``n_retract_latest`` and ``which`` need to be passed.
-    * ``n_retract_latest`` must be a ``int (and >0 )``. You can also pass it as a ``'ALL'``.
-    * ``which_tier`` must be a ``which_tier``, format: ``'%y/%m/%d %H:%M:%S'``
-
-**Pre-SN Timing Tier**
-
-* ``is_pre_sn`` and ``timing_series`` need to be passed.
-    * ``is_pre_sn`` must be a ``bool``.
-    * ``timing_series`` must be a ``list (string)``, format: ``'%y/%m/%d %H:%M:%S'``
-
-Notice that your message can contain fields that corresponds to several tiers e.g. if you have ``p_value``, ``neutrino_time``, and ``p_values`` we submit two separate messages to _Coincidence_ and _Significance_ tiers by selecting the relevant fields from your input.
+- ### [See Publishing Protocols here](docs/user/message_schema.md)
+- ### [See Message Schemas here](docs/user/message_schema.md)
 
 ## How to Subscribe
 
@@ -178,6 +101,12 @@ Subscriber().subscribe()
 
 Should there be an alert message, this will be both displayed on the screen and saved into your local machine. The location can be passed as an argument `subscribe(outputfolder='folder/path')`, if not given, the default is used based on the `"ALERT_OUTPUT"` folder in the environment file. The message is then saved under this directory with a time stamp as `folder/0_<date>_ALERTS.json` and if there are multiple messages in the same day e.g. for the same supernova you kept receiving alerts with every coincidence message, the counter infront will be incremented. An example alert message (partly missing) can be
 found [here](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/doc/subscribed_messages.json)
+
+---
+
+# [Command Line Interface (CLI)](docs/cli_docs.md)
+
+There also exists tools for command line interactions. These are explained in detail [here](docs/cli_docs.md)
 
 ### Extension for follow-up plugins (only with CLI for now)
 `snews_pt subscribe` also allows for other scripts to be plugged in and act on alerts. The *CLI* command `snews_pt subscribe` takes the custom made script via `--plugin` (`-p`) option.
@@ -198,9 +127,3 @@ data = json.load(open(sys.argv[1]))
 and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/custom_script.py) which 
 only brags about itself and displays you the content of the alert message.
 
-
----
-
-# [Command Line Interface (CLI)](docs/cli_docs.md)
-
-There also exists tools for command line interactions. These are explained in detail [here](docs/cli_docs.md)

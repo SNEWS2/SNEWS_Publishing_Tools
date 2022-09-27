@@ -10,6 +10,7 @@ User's Guide
    user/installation
    user/quickstart
    user/message_schema
+   user/publishing_protocols
 
 
 API Reference
