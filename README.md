@@ -124,6 +124,6 @@ Therefore, all custom-made scripts should contain the following two lines;
 import sys, json
 data = json.load(open(sys.argv[1]))
 ```
-and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/custom_script.py) which 
+and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example]https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/test/random_plugin.py) which 
 only brags about itself and displays you the content of the alert message.
 
