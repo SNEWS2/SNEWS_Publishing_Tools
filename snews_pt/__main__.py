@@ -31,6 +31,7 @@ def main(ctx, env):
     snews_pt_utils.set_env(env_path)
     ctx.obj['env'] = env
     ctx.obj['DETECTOR_NAME'] = os.getenv("DETECTOR_NAME")
+    ctx.obj['USER_PASS'] = os.getenv("ADMIN_PASS", "NO_AUTH")
 
 
 @main.command()
@@ -172,6 +173,31 @@ def test_connection(ctx, firedrill, start_at):
             if read == message_expected:
                 click.secho(f"You ({read['detector_name']}) have a connection to the server at {read['time']}", fg='green', bold=True)
                 break
+
+@main.command()
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.pass_context
+def write_hb_logs(ctx, firedrill):
+    """ REQUIRES AUTHENTICATION
+        ask to print the HB logs on the server standard output
+        later admins can see them remotely
+    """
+    from hop import Stream
+    passw = ctx.obj['USER_PASS']
+    message = {'_id': '0_display-heartbeats',
+               'pass': passw}
+    if firedrill:
+        topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
+    else:
+        topic = os.getenv("OBSERVATION_TOPIC")
+    pubstream = Stream(until_eos=True, auth=True)
+
+    with pubstream.open(topic, "w") as ps:
+        ps.write(message)
+    logslink = "> https://www.physics.purdue.edu/snews/logs/"
+    click.secho(f"> Requested logs. If you have rights, go to remote Purdue server logs\n{logslink}\n",
+                fg='blue', bold=True)
+
 
 @main.command()
 @click.option('--name', '-n', default="TEST", show_default='TEST', help='Set the detectors name')
