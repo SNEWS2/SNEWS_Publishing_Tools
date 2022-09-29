@@ -449,9 +449,16 @@ def is_snews_format(snews_message):
     time_bad = False
     snews_format = True
 
-    # Don't check reset messages for format
-    if snews_message['_id'] == '0_hard-reset_':
+    # Don't check reset messages or test connection messages for format
+    if snews_message['_id'] == '0_hard-reset_' or snews_message['_id'] == '0_test-connection':
         return True
+
+    elif '_Heartbeat_' in snews_message['_id']:
+        if snews_message["detector_status"] in ["ON","OFF"]:
+            return True
+        else:
+            print(f"Expected detector status to be 'ON' or 'OFF' got {snews_message['detector_status']}")
+            return False
 
     log.debug(f"\nChecking message: {snews_message}\n")
     
