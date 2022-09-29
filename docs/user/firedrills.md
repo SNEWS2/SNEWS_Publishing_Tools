@@ -104,7 +104,7 @@ This name can easily be set by API or CLI
 
 - CLI
 ```bash
-    user/home$: snews_pt set_name --name NAMEOFDETECTOR
+    user/home$: snews_pt set-name --name NAMEOFDETECTOR
 ```
 
 
