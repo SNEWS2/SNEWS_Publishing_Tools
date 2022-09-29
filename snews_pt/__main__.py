@@ -140,13 +140,15 @@ def run_scenarios(firedrill):
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
 @click.option('--start_at', '-s', type=int, default=-2)
+@click.option('--wait', '-w', type=int, default=4)
 @click.pass_context
-def test_connection(ctx, firedrill, start_at):
+def test_connection(ctx, firedrill, start_at, wait):
     """ test the server connection
         It should prompt your whether the
         coincidence script is running in the server
     """
     from hop import Stream
+    from datetime import datetime, timedelta
     name = ctx.obj['DETECTOR_NAME']
     stamp_time = datetime.utcnow().isoformat()
     message = {'_id': '0_test-connection',
@@ -158,21 +160,27 @@ def test_connection(ctx, firedrill, start_at):
         topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
     else:
         topic = os.getenv("OBSERVATION_TOPIC")
-    substream = Stream(until_eos=True, auth=True, start_at=start_at)
+    substream = Stream(until_eos=False, auth=True, start_at=start_at)
     pubstream = Stream(until_eos=True, auth=True)
-    click.secho(f"> Testing your connection to {topic}. \n Should take 4-5 seconds...\n", fg='green')
+    click.secho(f"\n> Testing your connection to {topic}. \n> Should take 4-5 seconds...\n")
 
-    messages = []
-    with pubstream.open(topic, "w") as ps:
+    start_time = datetime.utcnow()
+    confirmed = False
+    with pubstream.open(topic, "w") as ps, substream.open(topic, "r") as ss:
         ps.write(message)
-    with substream.open(topic, "r") as ss:
-        for read in ss:
-            messages.append(read)
-            message_expected = message.copy()
-            message_expected["status"] = "received"
-            if read == message_expected:
-                click.secho(f"You ({read['detector_name']}) have a connection to the server at {read['time']}", fg='green', bold=True)
-                break
+        while datetime.utcnow()-start_time < timedelta(seconds=wait):
+            for read in ss:
+                message_expected = message.copy()
+                message_expected["status"] = "received"
+                if read == message_expected:
+                    read_name = click.style(read['detector_name'], fg='green', bold=True)
+                    read_time = click.style(read['time'], fg='green', bold=True)
+                    click.echo(f"You ({read_name}) have a connection to the server at {read_time}")
+                    confirmed=True
+                    break
+    if not confirmed:
+        click.secho(f"Couldn't get a confirmation in 4 sec", fg='red', bold=True)
+
 
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
