@@ -38,7 +38,6 @@ class Publisher:
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         if firedrill_mode:
             self.obs_broker = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
-        # self.times = snews_pt_utils.TimeStuff()
         self.verbose = verbose
 
     def __enter__(self):
@@ -160,12 +159,12 @@ class SNEWSTiersPublisher:
                              'detector_status': detector_status,
                              'is_pre_sn': is_pre_sn, }
         self.meta = dict(**kwargs)
-        # self.message_data['meta'] = self.meta   # this is already done in tier decider
         self.message_data = {**self.message_data, ** self.meta}
         self.env_file = env_file
         stamp_time = datetime.utcnow().isoformat()
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, sent_time=stamp_time, env_file=env_file)
         self.firedrill_mode = firedrill_mode
+
     @classmethod
     def from_json(cls, jsonfile, env_file=None, **kwargs):
         """ Read the data from a json file
@@ -186,5 +185,5 @@ class SNEWSTiersPublisher:
                 whether to authenticate with hop
 
         """
-        with Publisher(env_path=self.env_file, verbose=verbose,  auth=auth, firedrill_mode=self.firedrill_mode) as pub:
+        with Publisher(env_path=self.env_file, verbose=verbose, auth=auth, firedrill_mode=self.firedrill_mode) as pub:
             pub.send(self.messages)
