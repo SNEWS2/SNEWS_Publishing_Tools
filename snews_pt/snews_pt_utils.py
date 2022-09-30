@@ -4,6 +4,11 @@ Utility tools for snews_pt
 import dotenv
 from dotenv import load_dotenv
 from datetime import datetime
+try:
+    fromisoformat = datetime.fromisoformat
+except AttributeError:
+    from dateutil.parser import isoparser as fromisoformat
+
 from collections import namedtuple
 import os, json, click
 import sys
@@ -519,7 +524,7 @@ def is_snews_format(snews_message):
 
     # Time format check
     try:
-        datetime.fromisoformat(snews_message['neutrino_time'])
+        fromisoformat(snews_message['neutrino_time'])
     except:
         if snews_message['neutrino_time'] is not None:
             warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
@@ -531,14 +536,14 @@ def is_snews_format(snews_message):
     if snews_message['neutrino_time'] is not None:
         log.debug(f"\nChecking neutrino_time: {snews_message['neutrino_time']}\n")
 
-        if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() <= -172800.0:
+        if (fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() <= -172800.0:
             if not "this is a test" in snews_message['meta'].values():
                 warning += f'* neutrino time is more than 48 hrs olds !\n'
                 time_bad = True
                 warnings.warn(warning, UserWarning)
                 log.warning(warning)
 
-        if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() > 0:
+        if (fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() > 0:
             if not "this is a test" in snews_message['meta'].values():
                 warning += f'* neutrino time comes from the future, please stop breaking causality\n'
                 time_bad = True
