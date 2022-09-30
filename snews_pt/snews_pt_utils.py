@@ -7,7 +7,7 @@ from datetime import datetime
 try:
     fromisoformat = datetime.fromisoformat
 except AttributeError:
-    from dateutil.parser import isoparser as fromisoformat
+    from dateutil.parser import isoparse as fromisoformat
 
 from collections import namedtuple
 import os, json, click
