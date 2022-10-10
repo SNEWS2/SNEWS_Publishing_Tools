@@ -58,6 +58,23 @@ def publish(ctx, file, firedrill):
             # maybe just print instead of raising
             raise TypeError(f"Expected json file with .json format! Got {f}")
 
+@main.command()
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--status', '-s', type=str, default='OFF', show_default='OFF', help='Heartbeat at the time of execution')
+@click.option('--time', '-t', type=str, default=None, show_default='None', help='Machine time, format: %Y-%m-%dT%H:%M:%S.%f')
+@click.pass_context
+def heartbeat(ctx, status, time, firedrill):
+    """ Send Heartbeats
+        :para status: Status of the experiment ON/OFF.
+        :param time: (optional) Machine time is appended as the time of execution
+                     different time can be passed following the iso-format
+    """
+    message = SNEWSTiersPublisher(detector_name=ctx.obj['DETECTOR_NAME'],
+                                  machine_time=time,
+                                  detector_status=status,
+                                  firedrill_mode=firedrill)
+    message.send_to_snews()
+
 
 @main.command()
 @click.option('--plugin', '-p', type=str, default="None")
@@ -66,7 +83,7 @@ def publish(ctx, file, firedrill):
 def subscribe(ctx, plugin, firedrill):
     """ Subscribe to Alert topic
         Optionally, `plugin` script can be passed
-        The message content as a single dictionary will be passed to 
+        The message content as a single dictionary will be passed to
         this script as a positional argument.
         dictionary follows the snews_alert message schema
 
@@ -78,7 +95,7 @@ def subscribe(ctx, plugin, firedrill):
             for saved_json in sub.subscribe_and_redirect_alert():
                 os.system(f"python {plugin} {saved_json}")
         else:
-            sub.subscribe()             
+            sub.subscribe()
     except KeyboardInterrupt:
         pass
 
@@ -139,13 +156,15 @@ def run_scenarios(firedrill):
 
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
-@click.option('--start_at', '-s', type=int, default=-2)
+@click.option('--start_at', '-s', type=int, default=-5)
 @click.option('--wait', '-w', type=int, default=4)
 @click.pass_context
 def test_connection(ctx, firedrill, start_at, wait):
     """ test the server connection
         It should prompt your whether the
         coincidence script is running in the server
+        :param start_at: `negative int` the last N number of msg to check
+        :param wait: `int` seconds to wait before terminating the check
     """
     from hop import Stream
     from datetime import datetime, timedelta
@@ -160,7 +179,7 @@ def test_connection(ctx, firedrill, start_at, wait):
         topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
     else:
         topic = os.getenv("OBSERVATION_TOPIC")
-    substream = Stream(until_eos=False, auth=True, start_at=start_at)
+    substream = Stream(until_eos=True, auth=True, start_at=start_at)
     pubstream = Stream(until_eos=True, auth=True)
     click.secho(f"\n> Testing your connection to {topic}. \n> Should take 4-5 seconds...\n")
 
@@ -168,7 +187,7 @@ def test_connection(ctx, firedrill, start_at, wait):
     confirmed = False
     with pubstream.open(topic, "w") as ps, substream.open(topic, "r") as ss:
         ps.write(message)
-        while datetime.utcnow()-start_time < timedelta(seconds=wait):
+        while datetime.utcnow() - start_time < timedelta(seconds=wait):
             for read in ss:
                 message_expected = message.copy()
                 message_expected["status"] = "received"
@@ -179,7 +198,7 @@ def test_connection(ctx, firedrill, start_at, wait):
                     confirmed=True
                     break
     if not confirmed:
-        click.secho(f"Couldn't get a confirmation in 4 sec", fg='red', bold=True)
+        click.secho(f"Couldn't get a confirmation in {wait} sec", fg='red', bold=True)
 
 
 @main.command()
