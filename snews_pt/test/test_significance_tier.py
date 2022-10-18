@@ -6,8 +6,8 @@ def test_significance_expected():
     """Test with example of expected message type."""
     # Create significance tier message.
     sign = SNEWSTiersPublisher(detector_name='DS-20K',
-                               neutrino_times=['2012-06-09T15:31:08.1098', 
-                                               '2012-06-09T15:33:07.8910'],
+                               neutrino_times=['2012-06-09T15:31:08.109876', 
+                                               '2012-06-09T15:33:07.891098'],
                                p_values=[0.4, 0.5],
                                t_bin_width=0.8,
                                firedrill_mode=False,
@@ -28,8 +28,8 @@ def test_significance_expected():
                                  'detector_status': None,
                                  'is_pre_sn': False,
                                  'neutrino_times':
-                                          ['2012-06-09T15:31:08.1098',
-                                           '2012-06-09T15:33:07.8910'],
+                                          ['2012-06-09T15:31:08.109876',
+                                           '2012-06-09T15:33:07.891098'],
                                  'testing': 'this is a test'}
     assert sign.env_file is None
 
