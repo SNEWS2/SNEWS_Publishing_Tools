@@ -522,15 +522,19 @@ def is_snews_format(snews_message):
 
     # Time format check
     try:
-        datetime.fromisoformat(snews_message['neutrino_time'])
+        datetime.fromisoformat(snews_message["neutrino_time"])
 
         # Accept ":" as divider for fractions of a second but change it to "." for CS.
-        split_time = snews_message['neutrino_time'].split(":")
+        split_time = snews_message["neutrino_time"].split(":")
+
         if len(split_time) == 4:
-            snews_message['neutrino_time'] = ".".join([":".join([split_time[:-1]]), split_time[-1]])
+            snews_message["neutrino_time"] = ".".join([":".join([split_time[:-1]]), split_time[-1]])
+
+            # Make sure it was the known issue ":" being used for fractions of a second.
+            datetime.fromisoformat(snews_message["neutrino_time"])
 
     except:
-        if snews_message['neutrino_time'] is not None:
+        if snews_message["neutrino_time"] is not None:
             warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
             warnings.warn(warning, UserWarning)
             log.warning(warning)
