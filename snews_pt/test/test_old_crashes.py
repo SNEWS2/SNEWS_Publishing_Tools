@@ -8,7 +8,7 @@ def test_colon_in_time():
     """
     # Create coincidence tier message.
     coin = SNEWSTiersPublisher(detector_name='XENONnT', neutrino_time='2012-06-09T15:31:07.891011', p_val=0.4,
-                               firedrill_mode=True, testing="this is a test")
+                               firedrill_mode=False, testing="this is a test")
     for message in coin.messages:
         assert is_snews_format(message), "Message is not in the snews format"
     try:
@@ -19,7 +19,7 @@ def test_colon_in_time():
 
 # ------------------------------------------------------------------------------------------------------
     coin2 = SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time='2012-06-09T15:31:08:891011', p_val=0.4,
-                                firedrill_mode=True, testing="this is a test")
+                                firedrill_mode=False, testing="this is a test")
     for message in coin2.messages:
         assert is_snews_format(message), "Message is not in the snews format"
     try:
