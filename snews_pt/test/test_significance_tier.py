@@ -1,6 +1,6 @@
 """Test publishing significane tier messages."""
 from snews_pt.snews_pub import SNEWSTiersPublisher
-from snews_pt._version import version as __version__
+from snews_pt.snews_pt_utils import is_snews_format
 
 def test_significance_expected():
     """Test with example of expected message type."""
@@ -33,6 +33,8 @@ def test_significance_expected():
                                  'testing': 'this is a test'}
     assert sign.env_file is None
 
+    for message in sign.messages:
+        assert is_snews_format(message), "Message is not in the snews format"
     # Try to send message to SNEWS 2.0 server.
     try:
         sign.send_to_snews()
