@@ -448,21 +448,24 @@ def is_snews_format(snews_message):
     contents_bad = False
     time_bad = False
     snews_format = True
+    
+    log.debug(f"\nChecking message: {snews_message}\n")
+    warning = f'The following Message does not meet SNEWS 2.0 standards!\n{snews_message}\n'
 
     # Don't check reset messages or test connection messages for format
     if snews_message['_id'] == '0_hard-reset_' or snews_message['_id'] == '0_test-connection':
+        log.debug("Hard reset or connection test.  Skipping format check.\n")
         return True
 
     elif '_Heartbeat_' in snews_message['_id']:
         if snews_message["detector_status"] in ["ON","OFF"]:
+            log.debug("Heartbeat message.  Skipping format check.\n")
             return True
         else:
-            print(f"Expected detector status to be 'ON' or 'OFF' got {snews_message['detector_status']}")
+            warning += f"Expected detector status to be 'ON' or 'OFF' got {snews_message['detector_status']}"
+            print(warning)
+            log.warning(warning)
             return False
-
-    log.debug(f"\nChecking message: {snews_message}\n")
-    
-    warning = f'The following Message does not meet SNEWS 2.0 standards!\n{snews_message}\n'
 
     # Check if detector name is in registered list.
     detector_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'auxiliary/detector_properties.json'))
@@ -506,6 +509,10 @@ def is_snews_format(snews_message):
             warning += f'* {key_val} is not a valid p value !\n'
             contents_bad = True
 
+    # TODO:
+    # check the p_values content.
+    # check t_bin_width type
+
     if type(snews_message['neutrino_time']) is not str:
         if snews_message['neutrino_time'] is not None:
             contents_bad = True
@@ -519,9 +526,11 @@ def is_snews_format(snews_message):
 
     # Time format check
     try:
-        datetime.fromisoformat(snews_message['neutrino_time'])
+        dateobj = datetime.fromisoformat(snews_message["neutrino_time"])
+        datestr = dateobj.isoformat()
+        snews_message["neutrino_time"] = datestr
     except:
-        if snews_message['neutrino_time'] is not None:
+        if snews_message["neutrino_time"] is not None:
             warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
             warnings.warn(warning, UserWarning)
             log.warning(warning)
