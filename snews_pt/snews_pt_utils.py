@@ -509,6 +509,10 @@ def is_snews_format(snews_message):
             warning += f'* {key_val} is not a valid p value !\n'
             contents_bad = True
 
+    # TODO:
+    # check the p_values content.
+    # check t_bin_width type
+
     if type(snews_message['neutrino_time']) is not str:
         if snews_message['neutrino_time'] is not None:
             contents_bad = True
