@@ -9,12 +9,11 @@ Melih Kara
 Sebastian Torres-Lara
 Joe Smolsky
 """
-
+import warnings
 from datetime import datetime
 import os, click
 from hop import Stream
 from . import snews_pt_utils
-
 
 class Publisher:
 
@@ -65,8 +64,8 @@ class Publisher:
             else:
                 click.secho(f'{"-" * 64}', fg='bright_red')
                 click.secho(f'Skipping message! Improper format!')
-                for k, v in message.items():
-                    print(f'{k:<20s}:{v}')
+                # for k, v in message.items():
+                #     print(f'{k:<20s}:{v}')
             
     def display_message(self, message):
         if self.verbose:
@@ -164,6 +163,12 @@ class SNEWSTiersPublisher:
         stamp_time = datetime.utcnow().isoformat()
         self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, sent_time=stamp_time, env_file=env_file)
         self.firedrill_mode = firedrill_mode
+        for message in self.messages:
+            if snews_pt_utils.is_snews_format(message):
+                # make sure the isoformat is what we want
+                dateobj = datetime.fromisoformat(message["neutrino_time"])
+                datestr = dateobj.isoformat()
+                message["neutrino_time"] = datestr
 
     @classmethod
     def from_json(cls, jsonfile, env_file=None, **kwargs):

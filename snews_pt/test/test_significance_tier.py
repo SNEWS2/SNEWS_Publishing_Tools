@@ -1,11 +1,12 @@
 """Test publishing significane tier messages."""
 from snews_pt.snews_pub import SNEWSTiersPublisher
-from snews_pt._version import version as __version__
+from snews_pt.snews_pt_utils import is_snews_format
 
 def test_significance_expected():
     """Test with example of expected message type."""
     # Create significance tier message.
     sign = SNEWSTiersPublisher(detector_name='DS-20K',
+                               neutrino_time = '2012-06-09T15:31:08.109876',
                                neutrino_times=['2012-06-09T15:31:08.109876', 
                                                '2012-06-09T15:33:07.891098'],
                                p_values=[0.4, 0.5],
@@ -14,10 +15,10 @@ def test_significance_expected():
                                testing='this is a test')
 
     # Check that message has expected structure.
-    assert sign.tiernames == ['SigTier']
+    assert sign.tiernames == ['CoincidenceTier', 'SigTier']
     assert sign.message_data == {'detector_name': 'DS-20K',
                                  'machine_time': None,
-                                 'neutrino_time': None,
+                                 'neutrino_time': '2012-06-09T15:31:08.109876',
                                  'p_val': None,
                                  'p_values': [0.4, 0.5],
                                  't_bin_width': 0.8,
@@ -33,6 +34,8 @@ def test_significance_expected():
                                  'testing': 'this is a test'}
     assert sign.env_file is None
 
+    for message in sign.messages:
+        assert is_snews_format(message), "Message is not in the snews format"
     # Try to send message to SNEWS 2.0 server.
     try:
         sign.send_to_snews()

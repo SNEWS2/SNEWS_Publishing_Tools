@@ -509,6 +509,10 @@ def is_snews_format(snews_message):
             warning += f'* {key_val} is not a valid p value !\n'
             contents_bad = True
 
+    # TODO:
+    # check the p_values content.
+    # check t_bin_width type
+
     if type(snews_message['neutrino_time']) is not str:
         if snews_message['neutrino_time'] is not None:
             contents_bad = True
@@ -522,17 +526,9 @@ def is_snews_format(snews_message):
 
     # Time format check
     try:
-        datetime.fromisoformat(snews_message["neutrino_time"])
-
-        # Accept ":" as divider for fractions of a second but change it to "." for CS.
-        split_time = snews_message["neutrino_time"].split(":")
-
-        if len(split_time) == 4:
-            snews_message["neutrino_time"] = ".".join([":".join([split_time[:-1]]), split_time[-1]])
-
-            # Make sure it was the known issue ":" being used for fractions of a second.
-            datetime.fromisoformat(snews_message["neutrino_time"])
-
+        dateobj = datetime.fromisoformat(snews_message["neutrino_time"])
+        datestr = dateobj.isoformat()
+        snews_message["neutrino_time"] = datestr
     except:
         if snews_message["neutrino_time"] is not None:
             warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
