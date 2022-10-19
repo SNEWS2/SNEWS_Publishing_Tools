@@ -7,7 +7,7 @@ def test_colon_in_time():
         If works properly both format of times should pass
     """
     # Create coincidence tier message.
-    coin = SNEWSTiersPublisher(detector_name='XENONnT', neutrino_time='2012-06-09T15:31:07.99891011', p_val=0.4,
+    coin = SNEWSTiersPublisher(detector_name='XENONnT', neutrino_time='2012-06-09T15:31:07.891011', p_val=0.4,
                                firedrill_mode=True, testing="this is a test")
     for message in coin.messages:
         assert is_snews_format(message), "Message is not in the snews format"
