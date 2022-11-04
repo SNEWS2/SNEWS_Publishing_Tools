@@ -15,7 +15,7 @@ def test_significance_expected():
                                is_test=True)
 
     # Check that message has expected structure.
-    assert sign.tiernames == ['CoincidenceTier', 'SigTier']
+    assert list(sign.tiernames) == ['CoincidenceTier', 'SigTier']
     assert sign.message_data == {'detector_name': 'DS-20K',
                                 'machine_time': None,
                                 'neutrino_time': '2012-06-09T15:31:08.109876',

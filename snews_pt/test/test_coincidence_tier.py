@@ -8,7 +8,7 @@ def test_coincidence_expected():
     coin = SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time='2012-06-09T15:31:08.891011',
                                firedrill_mode=False, is_test=True)
     # Check that message has expected structure.
-    assert coin.tiernames == ['CoincidenceTier']
+    assert list(coin.tiernames) == ['CoincidenceTier']
     assert len(coin.messages) == 1, f"Expected 1 CoincidenceTier Message got {len(coin.messages)}!"
 
     assert coin.message_data == {'detector_name': 'KamLAND', 'machine_time': None,

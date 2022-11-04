@@ -11,7 +11,7 @@ def test_timing_expected():
                                firedrill_mode=False, is_test=True)
 
     # Check that message has expected structure.
-    assert tims.tiernames == ['CoincidenceTier', 'TimeTier']
+    assert list(tims.tiernames) == ['CoincidenceTier', 'TimeTier']
     assert tims.message_data == {'detector_name': 'XENONnT',  'machine_time': None,
                                  'neutrino_time': '2012-06-09T15:31:08.109876',  'p_val': None,
                                  'p_values': None,  't_bin_width': None,
