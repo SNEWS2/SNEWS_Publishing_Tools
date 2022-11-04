@@ -7,7 +7,7 @@ from datetime import datetime
 
 from . import __version__
 from . import snews_pt_utils
-from .snews_pub import Publisher, SNEWSTiersPublisher
+from .snews_pub import SNEWSTiersPublisher
 from .snews_sub import Subscriber
 from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
 from .snews_pt_utils import retraction_data, heartbeat_data
@@ -153,7 +153,16 @@ def run_scenarios(firedrill):
     path = os.path.join(base, 'auxiliary/try_scenarios.py')
     os.system(f'python3 {path} {firedrill}')
 
+@main.command()
+@click.option('--name', '-n', default="TEST", show_default='TEST', help='Set the detectors name')
+def set_name(name):
+    """ Set your detectors name
+    """
+    from .snews_pt_utils import set_name as _set_name
+    _set_name(name)
+    click.secho(f"Your detector name is set to be: {os.environ['DETECTOR_NAME']}", fg='green', bold=True)
 
+###################### Remote Commands
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
 @click.option('--start_at', '-s', type=int, default=-5)
@@ -205,7 +214,7 @@ def test_connection(ctx, firedrill, start_at, wait):
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
 @click.pass_context
 def write_hb_logs(ctx, firedrill):
-    """ REQUIRES AUTHENTICATION
+    """ REQUIRES AUTHORIZATION
         ask to print the HB logs on the server standard output
         later admins can see them remotely
     """
@@ -213,10 +222,7 @@ def write_hb_logs(ctx, firedrill):
     passw = ctx.obj['USER_PASS']
     message = {'_id': '0_display-heartbeats',
                'pass': passw}
-    if firedrill:
-        topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
-    else:
-        topic = os.getenv("OBSERVATION_TOPIC")
+    topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
     pubstream = Stream(until_eos=True, auth=True)
 
     with pubstream.open(topic, "w") as ps:
@@ -225,15 +231,49 @@ def write_hb_logs(ctx, firedrill):
     click.secho(f"> Requested logs. If you have rights, go to remote Purdue server logs\n{logslink}\n",
                 fg='blue', bold=True)
 
+@main.command()
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.pass_context
+def reset_cache(ctx, firedrill):
+    """ REQUIRES AUTHORIZATION
+        If authorized, drop the current cache at the server
+    """
+
+    from hop import Stream
+    passw = ctx.obj['USER_PASS']
+    message = {'_id': '0_hard-reset',
+               'pass': passw}
+
+    topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
+    pubstream = Stream(until_eos=True, auth=True)
+
+    with pubstream.open(topic, "w") as ps:
+        ps.write(message)
+        click.secho(f"> Requesting to Reset the cache. If you have rights, cache will be reset", fg='blue', bold=True)
+
 
 @main.command()
-@click.option('--name', '-n', default="TEST", show_default='TEST', help='Set the detectors name')
-def set_name(name):
-    """ Set your detectors name
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--brokername', '-bn', help='Change the broker')
+@click.pass_context
+def change_broker(ctx, firedrill, brokername):
+    """ REQUIRES AUTHORIZATION
+        If authorized, server changes the broker
     """
-    from .snews_pt_utils import set_name as _set_name
-    _set_name(name)
-    click.secho(f"Your detector name is set to be: {os.environ['DETECTOR_NAME']}", fg='green', bold=True)
+    from hop import Stream
+    passw = ctx.obj['USER_PASS']
+    message = {'_id': '0_broker-change',
+               'pass': passw,
+               'new_broker':brokername}
+
+    current_topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
+    pubstream = Stream(until_eos=True, auth=True)
+
+    with pubstream.open(current_topic, "w") as ps:
+        ps.write(message)
+        click.secho(f"> Requesting to change the broker. If you have rights, broker will be changed", fg='blue', bold=True)
+
+
 
 if __name__ == "__main__":
     main()
