@@ -4,7 +4,8 @@ import subprocess
 
 def test_subscribe_and_direct():
     # Subscribe to SNEWS alters in a subprocess via CLI.
-    p = subprocess.Popen(['snews_pt', 'subscribe', '-p ../auxiliary/custom_script.py', '--no-firedrill'], stdout=subprocess.PIPE, shell=False, preexec_fn=os.setsid)
+    p = subprocess.Popen(['snews_pt', 'subscribe', '-p ../auxiliary/custom_script.py', '--no-firedrill'],
+                         stdout=subprocess.PIPE, shell=False, preexec_fn=os.setsid)
 
     # List for snews_pt echos
     echos = []
