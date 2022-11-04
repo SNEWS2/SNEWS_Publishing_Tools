@@ -12,7 +12,7 @@ try:
     questions = [
     inquirer.Checkbox('scenarios',
                     message=click.style(" Which scenario(s) would you like to run next?", bg='yellow', bold=True),
-                    choices=list(data.keys())+list(["finish & exit"]),
+                    choices=list(data.keys())+list(["finish & exit", "restart cache"]),
                 )
     ]
 
@@ -23,17 +23,21 @@ try:
                 if scenario=="finish & exit":
                     click.secho("Terminating.")
                     sys.exit()
-                click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
-                messages = data[scenario]
-                for msg in messages: # send one by one and sleep in between
-                    msg["testing"] = "this is a test"
-                    SNEWSTiersPublisher(**msg, firedrill_mode=fd_mode).send_to_snews()
-                    time.sleep(1)
-                    # clear cache after each scenario
-                with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
-                    pub.send([{'_id': '0_hard-reset_', 'pass':'very1secret2password', 'detector_name':'TEST'}])
-                    print('> Cache cleaned\n')
-
+                elif scenario=="restart cache":
+                    with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
+                        pub.send([{'_id': '0_hard-reset_', 'pass': 'very1secret2password'}])
+                        print('> Cache cleaned\n')
+                else:
+                    click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
+                    messages = data[scenario]
+                    for msg in messages: # send one by one and sleep in between
+                        msg["testing"] = "this is a test"
+                        SNEWSTiersPublisher(**msg, firedrill_mode=fd_mode).send_to_snews()
+                        time.sleep(1)
+                        # clear cache after each scenario
+                    with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
+                        pub.send([{'_id': '0_hard-reset_', 'pass':'very1secret2password', 'detector_name':'TEST'}])
+                        print('> Cache cleaned\n')
         except KeyboardInterrupt:
             break
 except Exception as e:
