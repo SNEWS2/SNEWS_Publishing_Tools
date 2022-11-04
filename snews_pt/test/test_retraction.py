@@ -19,7 +19,7 @@ def test_retraction():
         assert False, f"Exception raised:\n {exc}"
 
     # Now try to retract it
-    retraction_message = SNEWSTiersPublisher(detector_name='KamLAND', n_retract_latest=1)
+    retraction_message = SNEWSTiersPublisher(detector_name='KamLAND', n_retract_latest=1, is_test=True)
     try:
         # we can only test if the retraction message is send, not if it really retracted.
         retraction_message.send_to_snews()
