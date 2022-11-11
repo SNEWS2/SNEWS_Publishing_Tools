@@ -25,13 +25,13 @@ try:
                     sys.exit()
                 elif scenario=="restart cache":
                     with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
+                        #passw = os.getenv("ADMIN_PASS", "NO_AUTH") # need a better test-broker / test-cache
                         pub.send([{'_id': '0_hard-reset_', 'pass': 'very1secret2password'}])
                         print('> Cache cleaned\n')
                 else:
                     click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                     messages = data[scenario]
                     for msg in messages: # send one by one and sleep in between
-                        msg["testing"] = "this is a test"
                         SNEWSTiersPublisher(**msg, firedrill_mode=fd_mode).send_to_snews()
                         time.sleep(1)
                         # clear cache after each scenario
