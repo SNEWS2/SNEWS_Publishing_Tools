@@ -3,6 +3,7 @@ from datetime import datetime
 import os, json
 from .core.logging import getLogger, log_file
 import warnings
+import click
 
 log_default = getLogger(__name__)
 
@@ -38,12 +39,13 @@ class SnewsFormat:
             return valid
         except AssertionError as ae:
             self.log.error(f"\t> Following check failed: {ae}")
-            warnings.warn(f"\n\n Following check failed: {ae} \nSee the full logs {log_file}", UserWarning)
+            warnings.warn(f"\n\n Following check failed: {click.style(ae, fg='red')} "
+                          f"\nSee the full logs {click.style(log_file, fg='blue')}", UserWarning)
             self.log.debug("*" * 40 + " END OF lOGS\n")
             return False
         except Exception as e:
             self.log.error(f"\t> Something went wrong! {e}")
-            warnings.warn(f"\n\n Something went wrong! \nSee the full logs {log_file}", UserWarning)
+            warnings.warn(f"\n\n Something went wrong! \nSee the full logs {click.style(log_file, fg='blue')}", UserWarning)
             self.log.debug("*" * 40 + " END OF lOGS\n")
             return False
 
