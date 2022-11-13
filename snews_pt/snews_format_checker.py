@@ -180,7 +180,7 @@ class SnewsFormat:
         self.log.debug(f"\t> Checking p_val..")
         if 'p_val' in self.message_keys:
             if self.message['p_val'] is None:
-                self.log.info(f"\t> p_val is deafulted to None.")
+                self.log.info(f"\t> p_val is defaulted to None.")
                 return True # does not exist/default to None
 
             pval = self.message['p_val']
