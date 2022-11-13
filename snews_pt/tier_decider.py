@@ -44,12 +44,15 @@ class TierDecider:
         if type(self.data['n_retract_latest']) == int:
             self.append_messages(retraction_data, 'Retraction')
 
+        # Heartbeat if there is detector status
         if type(self.data['detector_status']) == str:
             self.append_messages(heartbeat_data, 'Heartbeat')
 
         for t in self.decided_tiers.keys():
             print(f"Message Generated for {t}")
 
+        if len(self.decided_tiers.keys())==0:
+            print(f"No valid message is created! Check your input and try again!")
         # Return the names and messages generated
         return self.decided_tiers.values(), self.decided_tiers.keys()
 
@@ -79,6 +82,8 @@ class TierDecider:
             data_for_tier['meta'] = self.meta_data
         else:
             data_for_tier['meta'] = {}
+
+        print(f"in append messages: {name} {data_for_tier}")
         msg = self.schema.get_schema(tier=name, data=data_for_tier, sent_time=self.sent_time)
 
         self.decided_tiers[name] = msg
