@@ -1,6 +1,87 @@
 CHANGES
 =======
 
+v1.2.0
+------
+
+* add logo to readme
+* add new logo ofr RTD
+* minor header adjustment
+* added firedrills page
+* update docs
+* update readme
+* ignore reset messages in format check function
+* adds 'testing' variable to test function calls
+* replace is\_test variable with meta data 'testing'
+* adds 'testing': 'this is a test' to example files
+* adds is\_test check to neutrino time check
+* add snews\_format variable format check
+* typo fix: kev\_val to key\_val
+* quotes typo fix
+* change value type check for flake8
+* fix time checks for p\_val None
+* fix fraction section digits: 4 to 6
+* display warning messages for bad format
+* check if logs dir exists
+* add more log messages
+* add logging at initialization
+* update time for format test
+* fix 'p\_val' test typo
+* add format check to Publisher send()
+* ignore logs
+* copy and modify garbage checker from SNEWS\_CS
+* copy logger from SNEWS\_CS
+* add minimal coincidence example
+* fix example time typos
+* ignore SNEWS\_ALERTS folder
+* test scenarios not verbose
+* ISO time format typo
+* version change
+* remnove TimeStuff
+* update version
+* update time format
+* remove TimeStuff and use utcnow().isoformat()
+
+v1.1.0
+------
+
+* fix CLI publish
+* fix logic
+* Update test-config.env
+* remore idea folder
+* add pytest to requirements
+* remove pandas requirement
+* Delete .idea directory
+* ignore pycharm .idea folder
+* fix id field in test connection and reset
+* Create .gitignore
+* small fix & cleanup
+* small fix
+* test
+* test scenarios improvement
+* test connection improvement
+* fix tests
+* improve name input
+* change the detector name input
+* Update ubuntu20-py39.yml
+* Update ubuntu20-py39.yml
+* remove 'sent\_time' key check
+* change firedrill arg loc
+* Update mac11-py39.yml
+* remove version check from workflow
+* add meta-field to test submissions
+* fix test-connection
+* fix duplicate meta field
+* fully functioning test connection
+* cosmetics
+* add auth as an option
+* add auth as an option
+* add one-time name append
+* ICE -> IceCube
+* ICE -> IceCube
+* Updated env file to include the ms portion of the time format. in message\_schema.py, machine\_time  uses sent\_time if it is None. in snews\_pt\_utils.py, added the ms portion to time format for str\_to\_datetime
+* fix docs
+
 v1.0.1
 ------
 

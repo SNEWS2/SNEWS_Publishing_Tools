@@ -1,5 +1,5 @@
-from datetime import datetime
 
+from datetime import datetime
 import os, json, click
 from hop import Stream
 from . import snews_pt_utils
@@ -8,7 +8,6 @@ def make_file(outputfolder):
     """ Get a proper json file name at a given folder
     """
     os.makedirs(outputfolder, exist_ok=True)
-    # date = snews_pt_utils.TimeStuff().get_date()
     date = datetime.utcnow().isoformat().split('T')[0]
     file = os.path.join(outputfolder, f"0-SNEWS_ALERT_{date}.json")
     while os.path.isfile(file):
@@ -31,12 +30,14 @@ def display(message):
     """
     click.echo(click.style('ALERT MESSAGE'.center(65, '_'), bg='red', bold=True))
     for k, v in message.items():
-        if type(v) == type(None): v = 'None'
-        if type(v) == int or type(v) == float:
+        key_type = type(v)
+        if key_type == type(None):
+            v = 'None'
+
+        if key_type in [int, float, str]:
             click.echo(f'{k:<20s}:{v:<45}')
-        if type(v) == str:
-            click.echo(f'{k:<20s}:{v:<45}')
-        elif type(v) == list:
+
+        elif key_type == list:
             v = [str(item) for item in v]
             items = '\t'.join(v)
             if k == 'detector_names':
@@ -54,7 +55,7 @@ class Subscriber:
     env_path : `str`
         path for the environment file.
         Use default settings if not given
-    firedrill_mode : bool
+    firedrill_mode : `bool`
         tell Subscriber to get messages from the firedrill hop broker, defaults to False
 
     """
@@ -63,12 +64,7 @@ class Subscriber:
         self.alert_topic = os.getenv("ALERT_TOPIC")
         if firedrill_mode:
             self.alert_topic = os.getenv("FIREDRILL_ALERT_TOPIC")
-        # self.times = snews_pt_utils.TimeStuff()
-        # time object/strings
-        # self.times = snews_pt_utils.TimeStuff(env_path)
-        # self.hr = self.times.get_hour()
-        # self.date = self.times.get_date()
-        # self.snews_time = lambda: self.times.get_utcnow()
+
         self.snews_time = datetime.utcnow().isoformat()
         self.default_output = os.path.join(os.getcwd(), os.getenv("ALERT_OUTPUT"))
 
@@ -119,7 +115,6 @@ class Subscriber:
                     file = save_message(message, outputfolder, return_file=True)
                     snews_pt_utils.display_gif()
                     display(message)
-                    # jsonformat = json.dumps(message)
-                    yield file #make_file(outputfolder)
+                    yield file
         except KeyboardInterrupt:
             click.secho('Done', fg='green')

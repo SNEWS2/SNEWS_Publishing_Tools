@@ -1,6 +1,6 @@
 """Test publishing significane tier messages."""
 from snews_pt.snews_pub import SNEWSTiersPublisher
-from snews_pt.snews_pt_utils import is_snews_format
+from snews_pt.snews_format_checker import SnewsFormat
 
 def test_significance_expected():
     """Test with example of expected message type."""
@@ -12,30 +12,34 @@ def test_significance_expected():
                                p_values=[0.4, 0.5],
                                t_bin_width=0.8,
                                firedrill_mode=False,
-                               testing='this is a test')
+                               is_test=True)
 
     # Check that message has expected structure.
-    assert sign.tiernames == ['CoincidenceTier', 'SigTier']
+    assert list(sign.tiernames) == ['CoincidenceTier', 'SigTier']
     assert sign.message_data == {'detector_name': 'DS-20K',
-                                 'machine_time': None,
-                                 'neutrino_time': '2012-06-09T15:31:08.109876',
-                                 'p_val': None,
-                                 'p_values': [0.4, 0.5],
-                                 't_bin_width': 0.8,
-                                 'timing_series': None,
-                                 'which_tier': None,
-                                 'n_retract_latest': None,
-                                 'retraction_reason': None,
-                                 'detector_status': None,
-                                 'is_pre_sn': False,
-                                 'neutrino_times':
-                                          ['2012-06-09T15:31:08.109876',
-                                           '2012-06-09T15:33:07.891098'],
-                                 'testing': 'this is a test'}
+                                'machine_time': None,
+                                'neutrino_time': '2012-06-09T15:31:08.109876',
+                                'p_val': None,
+                                'p_values': [0.4, 0.5],
+                                't_bin_width': 0.8,
+                                'timing_series': None,
+                                'which_tier': None,
+                                'n_retract_latest': None,
+                                'retraction_reason': None,
+                                'detector_status': None,
+                                'is_pre_sn': False,
+                                'neutrino_times': ['2012-06-09T15:31:08.109876',
+                                                   '2012-06-09T15:33:07.891098'],
+                                'is_test':True}
     assert sign.env_file is None
 
+    # the SNEWSTierPublisher already checks this in creation, but we can double check
     for message in sign.messages:
-        assert is_snews_format(message), "Message is not in the snews format"
+        format_checker = SnewsFormat(message)
+        assert format_checker() is True, "Message is not in the snews format"
+
+    assert len(sign.invalid_messages)==0, "There are invalid messages"
+
     # Try to send message to SNEWS 2.0 server.
     try:
         sign.send_to_snews()
