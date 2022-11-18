@@ -64,6 +64,8 @@ jobs:
         send "$PASSWORD\n"
         expect "Hostname (may be empty):"
         send "kafka.scimma.org\n"
+        expect "Token endpoint (empty if not applicable):"
+        send "\n"
         expect eof
         HOP
         hop auth locate
