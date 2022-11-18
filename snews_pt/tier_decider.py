@@ -83,7 +83,6 @@ class TierDecider:
         else:
             data_for_tier['meta'] = {}
 
-        print(f"in append messages: {name} {data_for_tier}")
         msg = self.schema.get_schema(tier=name, data=data_for_tier, sent_time=self.sent_time)
 
         self.decided_tiers[name] = msg
