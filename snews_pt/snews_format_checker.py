@@ -1,5 +1,10 @@
 
 from datetime import datetime
+try:
+    fromisoformat = datetime.fromisoformat
+except AttributeError:
+    from dateutil.parser import isoparse as fromisoformat
+
 import os, json
 from .core.logging import getLogger, log_file
 import warnings
@@ -150,7 +155,7 @@ class SnewsFormat:
 
         # it exists and string, check if ISO format, and reasonable
         try:
-            dateobj = datetime.fromisoformat(self.message["neutrino_time"])
+            dateobj = fromisoformat(self.message["neutrino_time"])
             self.log.info(f"\t> neutrino_time is ISO formattable.")
         except Exception as e:
             self.log.error("\t> neutrino_time does not match "
