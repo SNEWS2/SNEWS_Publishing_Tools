@@ -10,6 +10,10 @@ Sebastian Torres-Lara
 Joe Smolsky
 """
 from datetime import datetime
+try:
+    fromisoformat = datetime.fromisoformat
+except AttributeError:
+    from dateutil.parser import isoparse as fromisoformat
 import os, click
 from hop import Stream
 from . import snews_pt_utils
@@ -22,7 +26,7 @@ def homogenise_time_field(message):
         ISO format.
     """
     # convert to iso-formatted datetime object and revert
-    dateobj = datetime.fromisoformat(message["neutrino_time"])
+    dateobj = fromisoformat(message["neutrino_time"])
     datestr = dateobj.isoformat()
     message["neutrino_time"] = datestr
     return message
