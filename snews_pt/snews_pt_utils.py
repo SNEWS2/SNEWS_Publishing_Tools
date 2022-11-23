@@ -3,12 +3,10 @@ Utility tools for snews_pt
 """
 import dotenv
 from dotenv import load_dotenv
-from datetime import datetime
 from collections import namedtuple
 import os, json, click
 import sys
-from inspect import signature
-import warnings
+
 
 from .core.logging import getLogger
 
@@ -28,28 +26,6 @@ def set_env(env_path=None):
     default_env_path = dirname + '/auxiliary/test-config.env'
     env = env_path or default_env_path
     load_dotenv(env)
-
-
-# class TimeStuff:
-#     """ SNEWS format datetime objects
-
-#     """
-#     def __init__(self, env_path=None):
-#         set_env(env_path)
-#         self.snews_t_format = os.getenv("TIME_STRING_FORMAT")
-#         self.hour_fmt = "%H:%M:%S"
-#         self.date_fmt = "%y_%m_%d"
-#         self.get_utcnow = lambda fmt=self.snews_t_format: datetime.utcnow().strftime(fmt)
-#         self.get_hour = lambda fmt=self.hour_fmt: datetime.utcnow().strftime(fmt)
-#         self.get_date = lambda fmt=self.date_fmt: datetime.utcnow().strftime(fmt)
-
-#     def str_to_datetime(self, nu_time, fmt='%y/%m/%d %H:%M:%S:%f'):
-#         """ string to datetime object """
-#         return datetime.strptime(nu_time, fmt)
-
-#     def str_to_hr(self, nu_time, fmt='%H:%M:%S:%f'):
-#         """ string to datetime hour object """
-#         return datetime.strptime(nu_time, fmt)
 
 
 def set_topic_state(which_topic, env_path=None):
@@ -297,65 +273,6 @@ def _check_aliases(tier):
     return [tier]
 
 
-def _tier_decider(data, sent_time, env_file=None):
-    """ Decide on the tier(s) or commands (Heartbeat/Retraction)
-        Based on the content of the message
-
-    """
-    # this import has to be here, otherwise crashes due to circular import
-    from .message_schema import Message_Schema
-
-    # set environment and assign detector name & pre SN flag
-    set_env(env_file)
-    data["is_pre_sn"] = data.get("is_pre_sn", False)
-    data['detector_name'] = data.get("detector_name", os.getenv('DETECTOR_NAME'))
-    schema = Message_Schema(detector_key=data['detector_name'], is_pre_sn=data['is_pre_sn'])
-    valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series", "which_tier",
-                  "n_retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
-
-    # if there are keys that wouldn't belong to any tier/command pass them as meta
-    meta_keys = [key for key, value in data.items() if sys.getsizeof(value) < 2048]
-    meta_data = {k: data[k] for k in meta_keys if k not in valid_keys}
-    messages, tiernames = [], []
-
-    def _append_messages(tier_function, name):
-        tier_keys = list(signature(tier_function).parameters.keys())
-        data_for_tier = {k: v for k, v in data.items() if k in tier_keys}
-        data_for_tier = tier_function(**data_for_tier)
-        if name not in ['Retraction', 'Heartbeat']:
-            data_for_tier['meta'] = meta_data
-        else:
-            data_for_tier['meta'] = {}
-        msg = schema.get_schema(tier=name, data=data_for_tier, sent_time=sent_time)
-        tiernames.append(name)
-        messages.append(msg)
-
-    # if is_pre_sn:
-    #     print('This is a pre-supernova message')
-    #     _append_messages(time_tier_data, 'TimingTier')
-
-    # CoincidenceTier if it has nu time
-    if type(data['neutrino_time']) == str:
-        _append_messages(coincidence_tier_data, 'CoincidenceTier')
-
-    # SignificanceTier if it has p_values
-    if type(data['p_values']) == list and type(data['t_bin_width']) == float:
-        _append_messages(sig_tier_data, 'SigTier')
-
-    # TimingTier if timing_series exists
-    if type(data['timing_series']) == list:
-        _append_messages(time_tier_data, 'TimeTier')
-
-    # asking which tier doesn't make sense if the user doesn't know the tiers
-    if type(data['n_retract_latest']) == int:
-        _append_messages(retraction_data, 'Retraction')
-
-    if type(data['detector_status']) == str:
-        _append_messages(heartbeat_data, 'Heartbeat')
-
-    return messages, tiernames
-
-
 def _parse_file(filename):
     """ Parse the file to fetch the json data
 
@@ -428,136 +345,12 @@ def get_name():
     """
     return os.getenv("DETECTOR_NAME")
 
-
-def is_snews_format(snews_message):
-    """ This method checks to see if message meets SNEWS standards.
-
-    Parameters
-    ----------
-    snews_message : dict
-        incoming SNEWS message
-
-    Returns
-    -------
-        bool
-            True if message meets SNEWS standards, else False
-
+def prettyprint_dictionary(dictionary, indent=0):
+    """ tabulate the message in prettier form
     """
-    message_keys = snews_message.keys()
-    missing_key = False
-    contents_bad = False
-    time_bad = False
-    snews_format = True
-    
-    log.debug(f"\nChecking message: {snews_message}\n")
-    warning = f'The following Message does not meet SNEWS 2.0 standards!\n{snews_message}\n'
-
-    # Don't check reset messages or test connection messages for format
-    if snews_message['_id'] == '0_hard-reset_' or snews_message['_id'] == '0_test-connection':
-        log.debug("Hard reset or connection test.  Skipping format check.\n")
-        return True
-
-    elif '_Heartbeat_' in snews_message['_id']:
-        if snews_message["detector_status"] in ["ON","OFF"]:
-            log.debug("Heartbeat message.  Skipping format check.\n")
-            return True
+    for key, value in dictionary.items():
+        if isinstance(value, dict):
+            print("\t" * indent + f'{key:<19}:', end="\n" + "\t" * indent)
+            prettyprint_dictionary(value, indent + 1)
         else:
-            warning += f"Expected detector status to be 'ON' or 'OFF' got {snews_message['detector_status']}"
-            print(warning)
-            log.warning(warning)
-            return False
-
-    # Check if detector name is in registered list.
-    detector_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'auxiliary/detector_properties.json'))
-    with open(detector_file) as file:
-        snews_detectors = json.load(file)
-    snews_detectors = list(snews_detectors.keys())
-
-    if 'detector_name' not in message_keys:
-        warning += f'* Does not have required key: "detector_name"\n'
-        snews_format = False
-        missing_key = True
-
-    elif snews_message['detector_name'] not in snews_detectors:
-        warning += f'* Detector not found: {snews_message["detector_name"]}\n'
-        warning += f"Detector options: {snews_detectors}\n"
-        snews_format = False
-
-    # Check for missing keys
-    if 'neutrino_time' not in message_keys:
-        warning += f'* Does not have required key: "neutrino_time"\n'
-        missing_key = True
-        snews_format = False
-
-    if missing_key:
-        warnings.warn(warning, UserWarning)
-        log.warning(warning)
-
-        return snews_format
- 
-    # Check contents
-    if 'p_val' in message_keys and snews_message['p_val'] is not None:
-        log.debug(f"\nChecking p_val: {snews_message['p_val']}\n")
-        key_type = type(snews_message['p_val'])
-        key_val = snews_message['p_val']
-
-        if key_type is not float:
-            contents_bad = True
-            warning += f'* p value needs to be a float type, type given: {key_type}\n'
-
-        if key_type is float and (key_val >= 1.0 or key_val <= 0):
-            warning += f'* {key_val} is not a valid p value !\n'
-            contents_bad = True
-
-    # TODO:
-    # check the p_values content.
-    # check t_bin_width type
-
-    if type(snews_message['neutrino_time']) is not str:
-        if snews_message['neutrino_time'] is not None:
-            contents_bad = True
-            warning += f'* neutrino time must be a str, type given: {type(snews_message["p_val"])}\n'
-
-    if contents_bad:
-        warnings.warn(warning, UserWarning)
-        log.warning(warning)
-
-        return False
-
-    # Time format check
-    try:
-        dateobj = datetime.fromisoformat(snews_message["neutrino_time"])
-        datestr = dateobj.isoformat()
-        snews_message["neutrino_time"] = datestr
-    except:
-        if snews_message["neutrino_time"] is not None:
-            warning += f'* neutrino time: {snews_message["neutrino_time"]} does not match SNEWS 2.0 (ISO) format: "%Y-%m-%dT%H:%M:%S.%f"\n'
-            warnings.warn(warning, UserWarning)
-            log.warning(warning)
-
-            return False
-
-    if snews_message['neutrino_time'] is not None:
-        log.debug(f"\nChecking neutrino_time: {snews_message['neutrino_time']}\n")
-
-        if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() <= -172800.0:
-            if not "this is a test" in snews_message['meta'].values():
-                warning += f'* neutrino time is more than 48 hrs olds !\n'
-                time_bad = True
-                warnings.warn(warning, UserWarning)
-                log.warning(warning)
-
-        if (datetime.fromisoformat(snews_message['neutrino_time']) - datetime.utcnow()).total_seconds() > 0:
-            if not "this is a test" in snews_message['meta'].values():
-                warning += f'* neutrino time comes from the future, please stop breaking causality\n'
-                time_bad = True
-                warnings.warn(warning, UserWarning)
-                log.warning(warning)
-
-    if time_bad:
-        warnings.warn(warning, UserWarning)
-        log.warning(warning)
-
-        return False
-
-    return True
+            print("\t" * indent + f'{key:<19}:{value}')

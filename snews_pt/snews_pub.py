@@ -9,11 +9,45 @@ Melih Kara
 Sebastian Torres-Lara
 Joe Smolsky
 """
-import warnings
 from datetime import datetime
+try:
+    fromisoformat = datetime.fromisoformat
+except AttributeError:
+    from dateutil.parser import isoparse as fromisoformat
 import os, click
 from hop import Stream
 from . import snews_pt_utils
+from .snews_format_checker import SnewsFormat
+from .snews_pt_utils import prettyprint_dictionary
+from .tier_decider import TierDecider
+
+def homogenise_time_field(message):
+    """ Make sure all messages follow the same
+        ISO format.
+    """
+    # convert to iso-formatted datetime object and revert
+    dateobj = fromisoformat(message["neutrino_time"])
+    datestr = dateobj.isoformat()
+    message["neutrino_time"] = datestr
+    return message
+
+def check_format(messages):
+    """ Check if the messages are valid SnewsFormat
+    """
+    valid = []
+    invalid = []
+    for message in messages:
+        if SnewsFormat(message)():
+            if "neutrino_time" in message.keys():
+                # homogenise the valid messages
+                valid.append(homogenise_time_field(message))
+            else:
+                valid.append(message)
+        else:
+            invalid.append(message)
+            click.secho(f'{"-" * 64}', fg='bright_red')
+            click.secho(f'Skipping message! Improper format! see <self.invalid_messages>')
+    return valid, invalid
 
 class Publisher:
 
@@ -34,10 +68,12 @@ class Publisher:
         """
         snews_pt_utils.set_env(env_path)
         self.auth = auth
+        self.verbose = verbose
+
         self.obs_broker = os.getenv("OBSERVATION_TOPIC")
         if firedrill_mode:
             self.obs_broker = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
-        self.verbose = verbose
+
 
     def __enter__(self):
         self.stream = Stream(until_eos=True, auth=self.auth).open(self.obs_broker, 'w')
@@ -51,21 +87,20 @@ class Publisher:
 
         Parameters
         ----------
-        messages: list
+        messages: `list`
             list containing observation message.
 
         """
+        if len(messages) == 0:
+            # None of the messages passed the format checker!
+            raise UserWarning("No valid message exists!")
+
         if type(messages) == dict:
             messages = list(messages)
         for message in messages:
-            if snews_pt_utils.is_snews_format(message):
-                self.stream.write(message)
-                self.display_message(message)
-            else:
-                click.secho(f'{"-" * 64}', fg='bright_red')
-                click.secho(f'Skipping message! Improper format!')
-                # for k, v in message.items():
-                #     print(f'{k:<20s}:{v}')
+            self.stream.write(message)
+            self.display_message(message)
+
             
     def display_message(self, message):
         if self.verbose:
@@ -74,8 +109,7 @@ class Publisher:
             click.secho(f'Sending message to {tier} on {self.obs_broker}', fg='bright_red')
             if tier == 'Retraction':
                 click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
-            for k, v in message.items():
-                print(f'{k:<20s}:{v}')
+            prettyprint_dictionary(message)
 
 
 class SNEWSTiersPublisher:
@@ -94,8 +128,12 @@ class SNEWSTiersPublisher:
                  detector_status=None,
                  is_pre_sn=False,
                  firedrill_mode=True,
+                 is_test=False,
                  **kwargs):
         """
+        SNEWS Publisher Instance, it lets you create message data and interact with them
+        before publishing to snews. Submitting JSON files is also possible see
+        SNEWSTierPublisher.from_json()
         Parameters
         ----------
         env_file: `str`
@@ -116,16 +154,11 @@ class SNEWSTiersPublisher:
             list of floats
         t_bin_width: `float`
             width of time window [sec] ,defaults to None.
-        timing_series: `list`
-            defaults to None
-            list of strings, format: '%y/%m/%d %H:%M:%S:%f'
+        timing_series: `list`,
+            defaults to None, list of strings following ISO format
         which_tier: `str`
             which tier are you trying to retract from, defaults to None.
-            Options:
-                'CoincidenceTier'
-                'SigTier'
-                'TimingTier'
-                'ALL'
+            Options: 'CoincidenceTier' / 'SigTier' / 'TimingTier' / 'ALL'
         n_retract_latest: `int`
             how many of your last messages do you want to retract, defaults to None
         retraction_reason: `str`
@@ -133,13 +166,13 @@ class SNEWSTiersPublisher:
             We won't judge you :)
         detector_status: `str`
             tell SNEWS if your detector is ON or OFF, defaults to None.
-            Options:
-                'ON'
-                'OFF'
+            Options: 'ON' / 'OFF'
         is_pre_sn: `bool`
             Set to True if your detector saw a pre-SN event, defaults to False.
         firedrill_mode : `bool`
-                tell Publisher to send messages to the firedrill hop broker, defaults to True
+            tell Publisher to send messages to the firedrill hop broker, defaults to True
+        is_test : `bool`
+            True if the messages are meant for testing, then time checks are ignored
         kwargs:
             extra stuff you want to send to SNEWS
         """
@@ -156,25 +189,28 @@ class SNEWSTiersPublisher:
                              'n_retract_latest': n_retract_latest,
                              'retraction_reason': retraction_reason,
                              'detector_status': detector_status,
-                             'is_pre_sn': is_pre_sn, }
+                             'is_pre_sn': is_pre_sn,
+                             'is_test':is_test}
         self.meta = dict(**kwargs)
         self.message_data = {**self.message_data, ** self.meta}
         self.env_file = env_file
-        stamp_time = datetime.utcnow().isoformat()
-        self.messages, self.tiernames = snews_pt_utils._tier_decider(self.message_data, sent_time=stamp_time, env_file=env_file)
         self.firedrill_mode = firedrill_mode
-        for message in self.messages:
-            if snews_pt_utils.is_snews_format(message):
-                # make sure the isoformat is what we want
-                dateobj = datetime.fromisoformat(message["neutrino_time"])
-                datestr = dateobj.isoformat()
-                message["neutrino_time"] = datestr
+        # split messages for different tiers, and format properly
+        self.messages, self.tiernames = TierDecider(self.message_data).decide()
+        # check the message contents
+        self.messages, self.invalid_messages = check_format(self.messages)
 
     @classmethod
     def from_json(cls, jsonfile, env_file=None, **kwargs):
         """ Read the data from a json file
-            Additional data / overwrite is allowed
-
+            Additional data / overwrite is allowed, by passing the key-value pair as
+            additional arguments
+            Examples
+            --------
+            > read the data from "myheartbeat.json" and overwrite the detector_name
+            publisher = SNEWSTierPublisher.from_json("myheartbeat.json", detector_name="IceCube")
+            print(publisher.messages)
+            publisher.send_to_snews()
         """
         input_json = snews_pt_utils._parse_file(jsonfile)
         output_data = {**input_json, **kwargs}
@@ -185,7 +221,7 @@ class SNEWSTiersPublisher:
             Parameters
             ----------
             verbose : `bool`
-                Whether to display the sent message
+                Whether to display the message sent
             auth : `bool`
                 whether to authenticate with hop
 
