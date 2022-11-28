@@ -1,9 +1,8 @@
-name: Ubuntu 20.04 Python 3.10
+name: testing
 
 on:
   push:
     branches: 
-      - smolsky/testing
       - main
       
   pull_request:
@@ -17,8 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       # Add a list of python versions we want to use for testing.
+      max-parallel: 1
       matrix:
-        python-version: ['3.10']
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
     - uses: actions/checkout@v2
@@ -41,11 +41,7 @@ jobs:
 
     - name: Install hop-client
       run: |
-        wget https://files.pythonhosted.org/packages/de/a2/1f663c824b7e6ac139110005888cda7e1aea74e3bb8a57d774a00a1802f5/hop-client-0.5.0.tar.gz
-        tar -xzf hop-client-0.5.0.tar.gz
-        cd hop-client-0.5.0
-        python setup.py install
-        cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
+        pip install -U hop-client
 
     - name: Install requirements
       run: |
@@ -53,7 +49,8 @@ jobs:
         pip install wheel
         pip install python-dotenv click tabulate
 
-    - shell: bash
+    - name: Add hop authorization
+      shell: bash
       env:
         USERNAME: ${{ secrets.username }}
         PASSWORD: ${{ secrets.password }}
@@ -68,15 +65,14 @@ jobs:
         send "$PASSWORD\n"
         expect "Hostname (may be empty):"
         send "kafka.scimma.org\n"
+        expect "Token endpoint (empty if not applicable):"
+        send "\n"
         expect eof
         HOP
         hop auth locate
 
     - name: Install snews-pt
       run:  pip install .
-
-    - name: Check version
-      run: snews_pt --version
 
     - name: Run pytest
       run: |
