@@ -77,7 +77,7 @@ class TierDecider:
         tier_keys = list(signature(tier_function).parameters.keys())
         data_for_tier = {k: v for k, v in self.data.items() if k in tier_keys}
         data_for_tier = tier_function(**data_for_tier)
-        if name not in ['Retraction', 'Heartbeat']:
+        if name not in ['Heartbeat']: # 'Retraction',
             # don't append meta field to Retraction and Heartbeat
             data_for_tier['meta'] = self.meta_data
         else:
