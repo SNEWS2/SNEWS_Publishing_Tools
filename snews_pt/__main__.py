@@ -11,9 +11,11 @@ from .snews_pub import SNEWSTiersPublisher
 from .snews_sub import Subscriber
 from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
 from .snews_pt_utils import retraction_data, heartbeat_data
+from hop import Stream
 import click
 import os
 from inspect import signature
+import getpass
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
@@ -182,8 +184,8 @@ def test_connection(ctx, firedrill, start_at, wait):
     message = {'_id': '0_test-connection',
                'detector_name': name,
                'time': stamp_time,
-               'status': 'sending'}
-
+               'status': 'sending',
+               'meta':{}}
     if firedrill:
         topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
     else:
@@ -221,7 +223,9 @@ def write_hb_logs(ctx, firedrill):
     from hop import Stream
     passw = ctx.obj['USER_PASS']
     message = {'_id': '0_display-heartbeats',
-               'pass': passw}
+               'pass': passw,
+               'detector_name':ctx.obj['DETECTOR_NAME'],
+               'meta':{}}
     topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
     pubstream = Stream(until_eos=True, auth=True)
 
@@ -242,7 +246,9 @@ def reset_cache(ctx, firedrill):
     from hop import Stream
     passw = ctx.obj['USER_PASS']
     message = {'_id': '0_hard-reset',
-               'pass': passw}
+               'pass': passw,
+               'detector_name':ctx.obj['DETECTOR_NAME'],
+               'meta':{}}
 
     topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
     pubstream = Stream(until_eos=True, auth=True)
@@ -260,11 +266,12 @@ def change_broker(ctx, firedrill, brokername):
     """ REQUIRES AUTHORIZATION
         If authorized, server changes the broker
     """
-    from hop import Stream
     passw = ctx.obj['USER_PASS']
     message = {'_id': '0_broker-change',
                'pass': passw,
-               'new_broker':brokername}
+               'detector_name': ctx.obj['DETECTOR_NAME'],
+               'new_broker':brokername,
+               'meta':{}}
 
     current_topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
     pubstream = Stream(until_eos=True, auth=True)
@@ -273,7 +280,26 @@ def change_broker(ctx, firedrill, brokername):
         ps.write(message)
         click.secho(f"> Requesting to change the broker. If you have rights, broker will be changed", fg='blue', bold=True)
 
+@main.command()
+@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.pass_context
+def get_feedback(ctx, firedrill):
+    """ REQUIRES AUTHORIZATION
+        Get heartbeat feedback by email
+    """
+    name = ctx.obj['DETECTOR_NAME']
+    pswd = getpass.getpass('Password:')
+    message = {'_id': '0_Get-Feedback',
+               'pass': pswd,
+               'detector_name':name,
+               'meta':{}}
+    topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
+    pubstream = Stream(until_eos=True, auth=True)
 
+    with pubstream.open(topic, "w") as ps:
+        ps.write(message)
+    click.secho(f"> Requesting heartbeat feedback via email for {name}\n"
+                f"> If the password is correct, the contact(s) for your experiment will receive an email.", fg='blue', bold=True)
 
 if __name__ == "__main__":
     main()
