@@ -168,7 +168,7 @@ def set_name(name):
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
 @click.option('--start_at', '-s', type=int, default=-5)
-@click.option('--wait', '-w', type=int, default=4)
+@click.option('--wait', '-w', type=int, default=10)
 @click.pass_context
 def test_connection(ctx, firedrill, start_at, wait):
     """ test the server connection
@@ -177,39 +177,9 @@ def test_connection(ctx, firedrill, start_at, wait):
         :param start_at: `negative int` the last N number of msg to check
         :param wait: `int` seconds to wait before terminating the check
     """
-    from hop import Stream
-    from datetime import datetime, timedelta
-    name = ctx.obj['DETECTOR_NAME']
-    stamp_time = datetime.utcnow().isoformat()
-    message = {'_id': '0_test-connection',
-               'detector_name': name,
-               'time': stamp_time,
-               'status': 'sending',
-               'meta':{}}
-    if firedrill:
-        topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
-    else:
-        topic = os.getenv("OBSERVATION_TOPIC")
-    substream = Stream(until_eos=True, auth=True, start_at=start_at)
-    pubstream = Stream(until_eos=True, auth=True)
-    click.secho(f"\n> Testing your connection to {topic}. \n> Should take 4-5 seconds...\n")
-
-    start_time = datetime.utcnow()
-    confirmed = False
-    with pubstream.open(topic, "w") as ps, substream.open(topic, "r") as ss:
-        ps.write(message)
-        while datetime.utcnow() - start_time < timedelta(seconds=wait):
-            for read in ss:
-                message_expected = message.copy()
-                message_expected["status"] = "received"
-                if read == message_expected:
-                    read_name = click.style(read['detector_name'], fg='green', bold=True)
-                    read_time = click.style(read['time'], fg='green', bold=True)
-                    click.echo(f"You ({read_name}) have a connection to the server at {read_time}")
-                    confirmed=True
-                    break
-    if not confirmed:
-        click.secho(f"Couldn't get a confirmation in {wait} sec", fg='red', bold=True)
+    from .remote_commands import test_connection
+    test_connection(detector_name=ctx.obj['DETECTOR_NAME'],
+                    firedrill=firedrill, start_at=start_at, wait=wait)
 
 
 @main.command()
@@ -220,20 +190,10 @@ def write_hb_logs(ctx, firedrill):
         ask to print the HB logs on the server standard output
         later admins can see them remotely
     """
-    from hop import Stream
-    passw = ctx.obj['USER_PASS']
-    message = {'_id': '0_display-heartbeats',
-               'pass': passw,
-               'detector_name':ctx.obj['DETECTOR_NAME'],
-               'meta':{}}
-    topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
-    pubstream = Stream(until_eos=True, auth=True)
-
-    with pubstream.open(topic, "w") as ps:
-        ps.write(message)
-    logslink = "> https://www.physics.purdue.edu/snews/logs/"
-    click.secho(f"> Requested logs. If you have rights, go to remote Purdue server logs\n{logslink}\n",
-                fg='blue', bold=True)
+    from .remote_commands import write_hb_logs
+    write_hb_logs(detector_name=ctx.obj['DETECTOR_NAME'],
+                  admin_pass=ctx.obj['USER_PASS'],
+                  firedrill=firedrill)
 
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
@@ -242,20 +202,10 @@ def reset_cache(ctx, firedrill):
     """ REQUIRES AUTHORIZATION
         If authorized, drop the current cache at the server
     """
-
-    from hop import Stream
-    passw = ctx.obj['USER_PASS']
-    message = {'_id': '0_hard-reset',
-               'pass': passw,
-               'detector_name':ctx.obj['DETECTOR_NAME'],
-               'meta':{}}
-
-    topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
-    pubstream = Stream(until_eos=True, auth=True)
-
-    with pubstream.open(topic, "w") as ps:
-        ps.write(message)
-        click.secho(f"> Requesting to Reset the cache. If you have rights, cache will be reset", fg='blue', bold=True)
+    from .remote_commands import reset_cache
+    reset_cache(detector_name=ctx.obj['DETECTOR_NAME'],
+                admin_pass=ctx.obj['USER_PASS'],
+                firedrill=firedrill)
 
 
 @main.command()
@@ -266,19 +216,12 @@ def change_broker(ctx, firedrill, brokername):
     """ REQUIRES AUTHORIZATION
         If authorized, server changes the broker
     """
-    passw = ctx.obj['USER_PASS']
-    message = {'_id': '0_broker-change',
-               'pass': passw,
-               'detector_name': ctx.obj['DETECTOR_NAME'],
-               'new_broker':brokername,
-               'meta':{}}
+    from .remote_commands import change_broker
+    change_broker(brokername=brokername,
+                  detector_name=ctx.obj['DETECTOR_NAME'],
+                  admin_pass=ctx.obj['USER_PASS'],
+                  firedrill=firedrill)
 
-    current_topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
-    pubstream = Stream(until_eos=True, auth=True)
-
-    with pubstream.open(current_topic, "w") as ps:
-        ps.write(message)
-        click.secho(f"> Requesting to change the broker. If you have rights, broker will be changed", fg='blue', bold=True)
 
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
@@ -287,19 +230,9 @@ def get_feedback(ctx, firedrill):
     """ REQUIRES AUTHORIZATION
         Get heartbeat feedback by email
     """
-    name = ctx.obj['DETECTOR_NAME']
-    pswd = getpass.getpass('Password:')
-    message = {'_id': '0_Get-Feedback',
-               'pass': pswd,
-               'detector_name':name,
-               'meta':{}}
-    topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
-    pubstream = Stream(until_eos=True, auth=True)
-
-    with pubstream.open(topic, "w") as ps:
-        ps.write(message)
-    click.secho(f"> Requesting heartbeat feedback via email for {name}\n"
-                f"> If the password is correct, the contact(s) for your experiment will receive an email.", fg='blue', bold=True)
+    from .remote_commands import get_feedback
+    get_feedback(detector_name=ctx.obj['DETECTOR_NAME'],
+                 firedrill=firedrill)
 
 if __name__ == "__main__":
     main()
