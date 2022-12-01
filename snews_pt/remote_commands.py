@@ -35,7 +35,7 @@ def test_connection(detector_name=None, firedrill=True, start_at=-5, wait=10):
     confirmed = False
     with pubstream.open(topic, "w") as ps, substream.open(topic, "r") as ss:
         ps.write(message)
-        while datetime.utcnow() - start_time < timedelta(seconds=wait):
+        while (datetime.utcnow() - start_time) < timedelta(seconds=wait):
             for read in ss:
                 message_expected = message.copy()
                 message_expected["status"] = "received"
@@ -45,6 +45,8 @@ def test_connection(detector_name=None, firedrill=True, start_at=-5, wait=10):
                     click.echo(f"You ({read_name}) have a connection to the server at {read_time}")
                     confirmed=True
                     break
+                break
+            break
     if not confirmed:
         click.secho(f"\tCouldn't get a confirmation in {wait} sec. "
                     f"\n\tMaybe increase timeout and try again.", fg='red', bold=True)
