@@ -54,7 +54,7 @@ _id
 detector_name           (user input)          
 false_id                (user input, optional)    
 which_tier              (user input)    
-N_retract_latest        (user input)    
+retract_latest          (user input)    
 retraction_reason       (user input, optional)  
 sent_time           
 ````

@@ -189,7 +189,7 @@ def time_tier_data(machine_time=None, neutrino_time=None, p_val=None, timing_ser
 
 
 def retraction_data(machine_time=None, which_tier=None,
-                    n_retract_latest=0, retraction_reason=None, meta=None):
+                    retract_latest=0, retraction_reason=None, meta=None):
     """ Formats data for Retraction as dict object
 
         Parameters
@@ -198,7 +198,7 @@ def retraction_data(machine_time=None, which_tier=None,
             The machine time at the time of execution of command
         which_tier : 'str'
             OBS type of false message ['CoincidenceTier', 'SigTier', 'TimeTier, 'ALL']
-        n_retract_latest: 'int' or 'str'
+        retract_latest: 'int' or 'str'
             Tells retraction methods to look for N  latest message sent by a detector. can also pass 'ALL'
             to retract all messages in a OBS tier.
         retraction_reason: 'str"
@@ -214,8 +214,8 @@ def retraction_data(machine_time=None, which_tier=None,
 
     """
     keys = ['machine_time',
-            'N_retract_latest', 'which_tier', 'retraction_reason', 'meta']
-    values = [machine_time, n_retract_latest,
+            'retract_latest', 'which_tier', 'retraction_reason', 'meta']
+    values = [machine_time, retract_latest,
               which_tier, retraction_reason, meta]
     zip_iterator = zip(keys, values)
     retraction_dict = dict(zip_iterator)

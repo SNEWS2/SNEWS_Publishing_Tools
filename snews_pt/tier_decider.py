@@ -11,7 +11,7 @@ from datetime import datetime
 import os, sys, click
 
 valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series", "which_tier",
-              "n_retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
+              "retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
 
 class TierDecider:
     def __init__(self, data, env_file=None):
@@ -41,7 +41,7 @@ class TierDecider:
             self.append_messages(time_tier_data, 'TimeTier')
 
         # asking which tier doesn't make sense if the user doesn't know the tiers
-        if type(self.data['n_retract_latest']) == int:
+        if type(self.data['retract_latest']) == int:
             self.append_messages(retraction_data, 'Retraction')
 
         # Heartbeat if there is detector status

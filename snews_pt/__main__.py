@@ -115,7 +115,7 @@ def message_schema(ctx, requested_tier):
     tier_data_pairs = {'CoincidenceTier': (coincidence_tier_data, 'neutrino_time'),
                        'SigTier': (sig_tier_data, 'p_values'),
                        'TimeTier': (time_tier_data, 'timing_series'),
-                       'FalseOBS': (retraction_data, 'n_retract_latest'),
+                       'FalseOBS': (retraction_data, 'retract_latest'),
                        'Heartbeat': (heartbeat_data, 'detector_status')}
 
     if len(requested_tier)>1:

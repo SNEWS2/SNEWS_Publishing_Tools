@@ -100,7 +100,7 @@ class Message_Schema:
 
         if tier == 'Retraction':
             message['which_tier'] = data['which_tier']
-            message['N_retract_latest'] = data['N_retract_latest']
+            message['retract_latest'] = data['retract_latest']
             message['retraction_reason'] = data['retraction_reason']
             message['meta'] = data['meta']
 

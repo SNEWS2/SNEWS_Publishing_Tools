@@ -19,8 +19,8 @@
 
 **Retraction**
 
-* ``n_retract_latest`` and ``which`` need to be passed.
-    * ``n_retract_latest`` must be a ``int (and >0 )``. You can also pass it as a ``'ALL'``.
+* ``retract_latest`` and ``which`` need to be passed.
+    * ``retract_latest`` must be a ``int (and >0 )``. You can also pass it as a ``'ALL'``.
     * ``which_tier`` must be a ``which_tier``
 
 **Pre-SN Timing Tier**
