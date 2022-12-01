@@ -9,6 +9,7 @@ import os, json
 from .core.logging import getLogger, log_file
 import warnings
 import click
+import copy
 
 log_default = getLogger(__name__)
 
@@ -29,7 +30,11 @@ class SnewsFormat:
         self.is_test = self.check_if_test() # if True, don't check if times are reasonable (still checks format!)
 
     def __call__(self, *args, **kwargs):
-        msg_as_json = json.dumps(self.message, sort_keys = True, indent = 4)
+        msg_as_json = json.dumps(self.message, sort_keys=True, indent=4)
+        if "pass" in self.message.keys():
+            _msg = copy.deepcopy(self.message)
+            _msg["pass"] = "*"*len(_msg["pass"])
+            msg_as_json = json.dumps(_msg, sort_keys = True, indent = 4)
         test_str = " -TEST- " if self.is_test else " "
         self.log.debug("*"*40+f" LOGS FOR THE{test_str}MESSAGE\n"+ msg_as_json)
         valid = True
@@ -40,7 +45,7 @@ class SnewsFormat:
             assert self.check_times() is valid, "neutrino_time not valid" # if times are ISO format and reasonable
             assert self.check_pvals() is valid, "p_val not valid"# if exists, pvals are float and reasonable
             self.log.info("\t> All checks are passed. Message is in SnewsFormat.")
-            self.log.debug("*" * 40 + " END OF lOGS\n")
+            # self.log.debug("*" * 40 + " END OF lOGS\n")
             return valid
         except AssertionError as ae:
             self.log.error(f"\t> Following check failed: {ae}")
@@ -77,7 +82,7 @@ class SnewsFormat:
             return True
 
     def check_detector(self):
-        self.log.info(f"\t> Checking detector name.")
+        self.log.debug(f"\t> Checking detector name.")
         if self.bypass:
             self.log.info(f"\t> Detector name check bypassed.")
             return True
@@ -105,15 +110,19 @@ class SnewsFormat:
             self.log.debug("\t> Test Connection. Skipping format check.")
             self.bypass = True
 
+        elif "Retraction" in self.message['_id']:
+            self.log.debug(f"\t> Retraction Passed. Skipping format check.")
+            self.bypass = True
+
+        elif "Get-Feedback" in self.message['_id']:
+            self.log.debug(f"\t> Get-Feedback Passed. Skipping format check.")
+            self.bypass = True
+
         elif 'Heartbeat' in self.message['_id']:
             self.log.debug("\t> Heartbeat Passed. Checking time and status.")
             if not self.check_detector_status(): # if detector_status does not exist, return False
                 self.log.error("\t> Heartbeat not valid!")
                 return False
-            self.bypass = True
-
-        elif "Retraction" in self.message['_id']:
-            self.log.debug(f"\t> Retraction Passed.")
             self.bypass = True
 
         elif [i in self.message['_id'] for i in ['TimeTier', 'SigTier', 'CoincidenceTier']]:
