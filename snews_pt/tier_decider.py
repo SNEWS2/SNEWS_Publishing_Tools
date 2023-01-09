@@ -29,7 +29,7 @@ class TierDecider:
         # handle the meta data first
         self.handle_meta_fields()
         # CoincidenceTier if it has nu time
-        if type(self.data['neutrino_time']) == str:
+        if (type(self.data['neutrino_time']) == str) & ~(type(self.data['retract_latest']) == int):
             self.append_messages(coincidence_tier_data, 'CoincidenceTier')
 
         # SignificanceTier if it has p_values
