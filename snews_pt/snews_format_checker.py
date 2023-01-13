@@ -86,8 +86,6 @@ class SnewsFormat:
         if self.bypass:
             self.log.info(f"\t> Detector name check bypassed.")
             return True
-
-        self.log.debug(f"\t> Checking detector name..")
         if 'detector_name' not in self.message_keys:
             self.log.error(f'\t> Does not have required key: "detector_name"')
             return False
