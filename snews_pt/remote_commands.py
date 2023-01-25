@@ -7,7 +7,7 @@ Melih Kara, kara@kit.edu
 
 from hop import Stream
 from datetime import datetime, timedelta
-import os, click, getpass
+import os, click
 
 def test_connection(detector_name=None, firedrill=True, start_at=-5, wait=10):
     """ test the server connection
@@ -112,22 +112,43 @@ def change_broker(brokername, detector_name=None, admin_pass=None,firedrill=True
         click.secho(f"> Requesting to change the broker. If you have rights, broker will be changed", fg='blue', bold=True)
 
 
-def get_feedback(detector_name=None, firedrill=True):
-    """ REQUIRES AUTHORIZATION
-        Get heartbeat feedback by email
+# def get_feedback(detector_name=None, firedrill=True):
+#     """ REQUIRES AUTHORIZATION
+#         Get heartbeat feedback by email
+#     """
+#     detector_name = detector_name or os.getenv("DETECTOR_NAME")
+#     email_address = input("\t> Your registered email address: ")
+#     pswd = getpass.getpass('\t> Password: ')
+#     message = {'_id': '0_Get-Feedback',
+#                'email': email_address,
+#                'pass': "NOT IMPLEMENTED",
+#                'detector_name': detector_name,
+#                'meta': {}}
+#     topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
+#     pubstream = Stream(until_eos=True, auth=True)
+#
+#     with pubstream.open(topic, "w") as ps:
+#         ps.write(message)
+#     # click.secho(f"> Requesting heartbeat feedback via email for {detector_name}\n"
+#     #             f"> If the password is correct, the contact(s) for your experiment will receive an email.", fg='blue', bold=True)
+#     click.secho(f"This functionality is a Work In Progress and will be available in the future versions.")
+
+def get_feedback(detector_name=None, email_address=None, firedrill=True):
+    """ Get heartbeat feedback by email
+        For a given detector, if your email is registered
+        We are going to send that email address(es) an email with
+        feedback from last 24hours
+        multiple email addresses are allowed with a semicolon delimiter (;)
     """
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
-    email_address = input("Your registered email address: ")
-    pswd = getpass.getpass('Password:')
+    email_address = email_address or input("\t> Your registered email address: ")
     message = {'_id': '0_Get-Feedback',
                'email': email_address,
-               'pass': pswd,
                'detector_name': detector_name,
                'meta': {}}
     topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
     pubstream = Stream(until_eos=True, auth=True)
-
     with pubstream.open(topic, "w") as ps:
         ps.write(message)
-    click.secho(f"> Requesting heartbeat feedback via email for {detector_name}\n"
-                f"> If the password is correct, the contact(s) for your experiment will receive an email.", fg='blue', bold=True)
+
+    click.secho(f"Heartbeat Feedback is requested! Expect an email from us!")

@@ -31,10 +31,10 @@ class SnewsFormat:
 
     def __call__(self, *args, **kwargs):
         msg_as_json = json.dumps(self.message, sort_keys=True, indent=4)
-        if "pass" in self.message.keys():
-            _msg = copy.deepcopy(self.message)
-            _msg["pass"] = "*"*len(_msg["pass"])
-            msg_as_json = json.dumps(_msg, sort_keys = True, indent = 4)
+        # if "pass" in self.message.keys():
+        #     _msg = copy.deepcopy(self.message)
+        #     _msg["pass"] = "*"*len(_msg["pass"])
+        #     msg_as_json = json.dumps(_msg, sort_keys = True, indent = 4)
         test_str = " -TEST- " if self.is_test else " "
         self.log.debug("*"*40+f" LOGS FOR THE{test_str}MESSAGE\n"+ msg_as_json)
         valid = True
