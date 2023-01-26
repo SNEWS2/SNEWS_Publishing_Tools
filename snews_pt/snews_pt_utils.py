@@ -253,8 +253,8 @@ def _check_aliases(tier):
     tier = tier.lower()
     coincidence_aliases = ['coincidence', 'c', 'coincidencetier', 'coinc']
     significance_aliases = ['significance', 's', 'significancetier', 'sigtier']
-    timing_aliases = ['timing', 'time', 'timeingtier', 'timetier', 't']
-    false_aliases = ['false', 'falseobs', 'reatraction', 'retract', 'r', 'f']
+    timing_aliases = ['timing', 'time', 'timingtier', 'timetier', 't']
+    false_aliases = ['false', 'falseobs', 'retraction', 'retract', 'r', 'f']
     heartbeat_aliases = ['heartbeat', 'hb']
 
     if tier in coincidence_aliases:

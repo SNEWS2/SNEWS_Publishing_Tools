@@ -92,7 +92,7 @@ def reset_cache(detector_name=None, admin_pass=None, firedrill=True):
         click.secho(f"> Requesting to Reset the cache. If you have rights, cache will be reset", fg='blue', bold=True)
 
 
-def change_broker(brokername, detector_name=None, admin_pass=None,firedrill=True):
+def change_broker(brokername, detector_name=None, admin_pass=None, firedrill=True):
     """ REQUIRES AUTHORIZATION
         If authorized, server changes the broker
     """
@@ -111,27 +111,6 @@ def change_broker(brokername, detector_name=None, admin_pass=None,firedrill=True
         ps.write(message)
         click.secho(f"> Requesting to change the broker. If you have rights, broker will be changed", fg='blue', bold=True)
 
-
-# def get_feedback(detector_name=None, firedrill=True):
-#     """ REQUIRES AUTHORIZATION
-#         Get heartbeat feedback by email
-#     """
-#     detector_name = detector_name or os.getenv("DETECTOR_NAME")
-#     email_address = input("\t> Your registered email address: ")
-#     pswd = getpass.getpass('\t> Password: ')
-#     message = {'_id': '0_Get-Feedback',
-#                'email': email_address,
-#                'pass': "NOT IMPLEMENTED",
-#                'detector_name': detector_name,
-#                'meta': {}}
-#     topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
-#     pubstream = Stream(until_eos=True, auth=True)
-#
-#     with pubstream.open(topic, "w") as ps:
-#         ps.write(message)
-#     # click.secho(f"> Requesting heartbeat feedback via email for {detector_name}\n"
-#     #             f"> If the password is correct, the contact(s) for your experiment will receive an email.", fg='blue', bold=True)
-#     click.secho(f"This functionality is a Work In Progress and will be available in the future versions.")
 
 def get_feedback(detector_name=None, email_address=None, firedrill=True):
     """ Get heartbeat feedback by email

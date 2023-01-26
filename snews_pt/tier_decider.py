@@ -8,7 +8,7 @@ from .snews_pt_utils import set_env
 from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data, heartbeat_data, retraction_data
 from .message_schema import Message_Schema
 from datetime import datetime
-import os, sys, click
+import os, sys
 
 valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series", "which_tier",
               "retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
