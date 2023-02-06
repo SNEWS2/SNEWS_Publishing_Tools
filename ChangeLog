@@ -1,7 +1,58 @@
 CHANGES
 =======
 
+* stamp time before sending
+* check if detector name valid
+* fix testing
+* updated firedrill notebook
+* improve display
+* cleaning
+* fix hop requirement
+* feedback request simplify
+* remove duplicate line
+* don't create coinc if the request for retraction
+* fix the issue with breaking
+* make remote commands accessible from the API
+* upgrade format checker
+* retraction typo
+* add the meta fields to retraction
+* add required fields to commands
+* test python 3.9 all branches and 3.7-3.10 on main
+* fix confluent-kafka typo
+* update requirements
+* update change long
+* matrix unit tests for python 3.7-3.10
+* matrix python 3.7-3.11 for unit tests
+* matrix python versions in unit tests
+* update requirements
+* move Spencers changes to new branch
+* updates workflow hop authorization
+* install hop-client with pip
+* updates requirements for hop-client 0.7.0
+* remove \`pwd\` debugging command
+* remove print statement
+* make more verbose
+* fix tests
+* fix typo
+* make warning more prominent
+* comment out plugin and subs tests
+* fix scenarios
 * ignore firedrill folder
+* fix retraction test
+* clean the tests
+* remove stale file
+* clean snews\_sub
+* make log flexible
+* changelog
+* adjust pub according to new checker
+* add admin\_pass placeholder
+* update tests for new checker
+* scenarios allow reset
+* new standalone tier decider
+* clean utils from format checker and tier decider
+* standalone format checker
+* remove TEST from valid detectors
+* add remote commands to CLI
 * Update test\_old\_crashes.py
 * fix significance tier test
 * fix mix
