@@ -35,7 +35,15 @@ def display(message):
             v = 'None'
 
         if key_type in [int, float, str]:
-            click.echo(f'{k:<20s}:{v:<45}')
+            if k=='alert_type':
+                if v=='RETRACTION':
+                    click.echo(f'{k:<20s}' + click.style(f':{v:<45}', bg='red'))
+                elif v=='UPDATE':
+                    click.echo(f'{k:<20s}' + click.style(f':{v:<45}', bg='blue'))
+                else:
+                    click.echo(f'{k:<20s}:{v:<45}')
+            else:
+                click.echo(f'{k:<20s}:{v:<45}')
 
         elif key_type == list:
             v = [str(item) for item in v]
