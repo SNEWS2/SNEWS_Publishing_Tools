@@ -1,6 +1,28 @@
 CHANGES
 =======
 
+* ignore firedrill folder
+* Update test\_old\_crashes.py
+* fix significance tier test
+* fix mix
+* add todo for missing checks
+* test message as they created
+* split test
+* fixes and additions
+* changes python\_requires='>=3.7.\*' from 3.6.\*
+* remove python version from requirements file
+* change python version requirement to >=3.7
+* add check for "." in ISO format times
+* log when format checks are skipped
+* fixes time format typos
+* add HB-CLI
+* fix test connection
+* clean empty lines
+* bypass format check if test-connection or HB
+* add admin hb check function
+* typo correction
+* fix displayed content
+
 v1.2.0
 ------
 

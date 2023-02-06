@@ -1,6 +1,7 @@
 # Alerts and logs
 SNEWS_ALERTS/
 logs/
+firedrill/
 
 # Visual Studio Code
 .vscode/
