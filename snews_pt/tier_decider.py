@@ -8,10 +8,10 @@ from .snews_pt_utils import set_env
 from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data, heartbeat_data, retraction_data
 from .message_schema import Message_Schema
 from datetime import datetime
-import os, sys, click
+import os, sys
 
 valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series", "which_tier",
-              "n_retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
+              "retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
 
 class TierDecider:
     def __init__(self, data, env_file=None):
@@ -29,7 +29,7 @@ class TierDecider:
         # handle the meta data first
         self.handle_meta_fields()
         # CoincidenceTier if it has nu time
-        if type(self.data['neutrino_time']) == str:
+        if (type(self.data['neutrino_time']) == str) & ~(type(self.data['retract_latest']) == int):
             self.append_messages(coincidence_tier_data, 'CoincidenceTier')
 
         # SignificanceTier if it has p_values
@@ -41,7 +41,7 @@ class TierDecider:
             self.append_messages(time_tier_data, 'TimeTier')
 
         # asking which tier doesn't make sense if the user doesn't know the tiers
-        if type(self.data['n_retract_latest']) == int:
+        if type(self.data['retract_latest']) == int:
             self.append_messages(retraction_data, 'Retraction')
 
         # Heartbeat if there is detector status
@@ -77,7 +77,7 @@ class TierDecider:
         tier_keys = list(signature(tier_function).parameters.keys())
         data_for_tier = {k: v for k, v in self.data.items() if k in tier_keys}
         data_for_tier = tier_function(**data_for_tier)
-        if name not in ['Retraction', 'Heartbeat']:
+        if name not in ['Heartbeat']: # 'Retraction',
             # don't append meta field to Retraction and Heartbeat
             data_for_tier['meta'] = self.meta_data
         else:

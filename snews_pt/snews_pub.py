@@ -98,6 +98,7 @@ class Publisher:
         if type(messages) == dict:
             messages = list(messages)
         for message in messages:
+            message["sent_time"] = datetime.utcnow().isoformat()
             self.stream.write(message)
             self.display_message(message)
 
@@ -123,7 +124,7 @@ class SNEWSTiersPublisher:
                  t_bin_width=None,
                  timing_series=None,
                  which_tier=None,
-                 n_retract_latest=None,
+                 retract_latest=None,
                  retraction_reason=None,
                  detector_status=None,
                  is_pre_sn=False,
@@ -159,7 +160,7 @@ class SNEWSTiersPublisher:
         which_tier: `str`
             which tier are you trying to retract from, defaults to None.
             Options: 'CoincidenceTier' / 'SigTier' / 'TimingTier' / 'ALL'
-        n_retract_latest: `int`
+        retract_latest: `int`
             how many of your last messages do you want to retract, defaults to None
         retraction_reason: `str`
             (optional) share with SNEWS what caused your false observation, defaults to None.
@@ -186,7 +187,7 @@ class SNEWSTiersPublisher:
                              't_bin_width': t_bin_width,
                              'timing_series': timing_series,
                              'which_tier': which_tier,
-                             'n_retract_latest': n_retract_latest,
+                             'retract_latest': retract_latest,
                              'retraction_reason': retraction_reason,
                              'detector_status': detector_status,
                              'is_pre_sn': is_pre_sn,

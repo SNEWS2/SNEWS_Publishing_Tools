@@ -189,7 +189,7 @@ def time_tier_data(machine_time=None, neutrino_time=None, p_val=None, timing_ser
 
 
 def retraction_data(machine_time=None, which_tier=None,
-                    n_retract_latest=0, retraction_reason=None, meta=None):
+                    retract_latest=0, retraction_reason=None, meta=None):
     """ Formats data for Retraction as dict object
 
         Parameters
@@ -198,7 +198,7 @@ def retraction_data(machine_time=None, which_tier=None,
             The machine time at the time of execution of command
         which_tier : 'str'
             OBS type of false message ['CoincidenceTier', 'SigTier', 'TimeTier, 'ALL']
-        n_retract_latest: 'int' or 'str'
+        retract_latest: 'int' or 'str'
             Tells retraction methods to look for N  latest message sent by a detector. can also pass 'ALL'
             to retract all messages in a OBS tier.
         retraction_reason: 'str"
@@ -214,8 +214,8 @@ def retraction_data(machine_time=None, which_tier=None,
 
     """
     keys = ['machine_time',
-            'N_retract_latest', 'which_tier', 'retraction_reason', 'meta']
-    values = [machine_time, n_retract_latest,
+            'retract_latest', 'which_tier', 'retraction_reason', 'meta']
+    values = [machine_time, retract_latest,
               which_tier, retraction_reason, meta]
     zip_iterator = zip(keys, values)
     retraction_dict = dict(zip_iterator)
@@ -253,8 +253,8 @@ def _check_aliases(tier):
     tier = tier.lower()
     coincidence_aliases = ['coincidence', 'c', 'coincidencetier', 'coinc']
     significance_aliases = ['significance', 's', 'significancetier', 'sigtier']
-    timing_aliases = ['timing', 'time', 'timeingtier', 'timetier', 't']
-    false_aliases = ['false', 'falseobs', 'reatraction', 'retract', 'r', 'f']
+    timing_aliases = ['timing', 'time', 'timingtier', 'timetier', 't']
+    false_aliases = ['false', 'falseobs', 'retraction', 'retract', 'r', 'f']
     heartbeat_aliases = ['heartbeat', 'hb']
 
     if tier in coincidence_aliases:
@@ -332,6 +332,8 @@ def set_name(detector_name='TEST'):
         else:
             click.secho(f'You are {os.environ["DETECTOR_NAME"]}')
     else:
+        if not detector_name in detectors:
+            raise KeyError(f"{detector_name} is not a valid detector. \nChoose from {detectors}")
         os.environ["DETECTOR_NAME"] = detector_name
         os.environ["HAS_NAME_CHANGED"] = "1"
         dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
