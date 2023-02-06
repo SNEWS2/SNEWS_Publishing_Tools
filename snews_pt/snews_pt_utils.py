@@ -332,6 +332,8 @@ def set_name(detector_name='TEST'):
         else:
             click.secho(f'You are {os.environ["DETECTOR_NAME"]}')
     else:
+        if not detector_name in detectors:
+            raise KeyError(f"{detector_name} is not a valid detector. \nChoose from {detectors}")
         os.environ["DETECTOR_NAME"] = detector_name
         os.environ["HAS_NAME_CHANGED"] = "1"
         dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
