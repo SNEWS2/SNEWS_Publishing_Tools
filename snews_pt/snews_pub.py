@@ -98,6 +98,7 @@ class Publisher:
         if type(messages) == dict:
             messages = list(messages)
         for message in messages:
+            message["sent_time"] = datetime.utcnow().isoformat()
             self.stream.write(message)
             self.display_message(message)
 
