@@ -109,7 +109,7 @@
       "is_test": true
     },
     {
-      "detector_name": "ICE",
+      "detector_name": "IceCube",
       "neutrino_time": "2030-01-01T12:30:19.678999",
       "p_val": 0.98,
       "is_test": true

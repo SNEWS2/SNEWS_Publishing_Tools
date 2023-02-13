@@ -36,7 +36,7 @@ msg7 = {"detector_name": "Borexino",
         "p_val": 0.98,
         "is_test":True}
 
-msg8 = {"detector_name": "ICE",
+msg8 = {"detector_name": "IceCube",
         "neutrino_time": "2030-01-01T12:30:19.678999",
         "p_val": 0.98,
         "is_test":True}
