@@ -27,7 +27,8 @@ def test_connection(detector_name=None, firedrill=True, start_at=-5, wait=10):
         topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
     else:
         topic = os.getenv("OBSERVATION_TOPIC")
-    substream = Stream(until_eos=False, auth=True, start_at=start_at)
+    # substream = Stream(until_eos=False, auth=True, start_at=start_at) # when False, while loop doesn't break
+    substream = Stream(until_eos=True, auth=True, start_at=start_at)
     pubstream = Stream(until_eos=True, auth=True)
     click.secho(f"\n> Testing your connection to {topic}. \n> Should take ~{wait} seconds...\n")
 
