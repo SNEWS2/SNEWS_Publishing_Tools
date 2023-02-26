@@ -16,6 +16,7 @@ except AttributeError:
     from dateutil.parser import isoparse as fromisoformat
 import os, click
 from hop import Stream
+from hop.models import JSONBlob
 from . import snews_pt_utils
 from .snews_format_checker import SnewsFormat
 from .snews_pt_utils import prettyprint_dictionary
@@ -99,7 +100,7 @@ class Publisher:
             messages = list(messages)
         for message in messages:
             message["sent_time"] = datetime.utcnow().isoformat()
-            self.stream.write(message)
+            self.stream.write(JSONBlob(message))
             self.display_message(message)
 
             
