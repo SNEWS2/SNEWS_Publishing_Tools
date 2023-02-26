@@ -13,7 +13,7 @@ testtools==2.5.0
 virtualenv==20.13.0
 wheel==0.34.2
 inquirer>=2.8.0
-hop-client<=0.5.1
+hop-client<=0.8.0
 attrs~=21.4.0
 docutils==0.17.1
 myst-parser==0.16.1
