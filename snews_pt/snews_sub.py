@@ -2,6 +2,7 @@
 from datetime import datetime
 import os, json, click
 from hop import Stream
+from hop.models import JSONBlob
 from . import snews_pt_utils
 
 def make_file(outputfolder):
@@ -21,10 +22,12 @@ def save_message(message, outputfolder, return_file=False):
     """
     file = make_file(outputfolder)
     with open(file, 'w') as outfile:
-        try:
-            json.dump(message, outfile, indent=4, sort_keys=True)
-        except TypeError as te:
-            json.dump(message.content, outfile, indent=4, sort_keys=True)
+        
+        if isinstance(message, JSONBlob):
+            message = message.content
+
+        json.dump(message, outfile, indent=4, sort_keys=True)
+
     if return_file:
         return file
 
@@ -32,55 +35,33 @@ def display(message):
     """ Function to format output messages
     """
     click.echo(click.style('ALERT MESSAGE'.center(65, '_'), bg='red', bold=True))
-    try:
-        for k, v in message.items():
-            key_type = type(v)
-            if key_type == type(None):
-                v = 'None'
 
-            if key_type in [int, float, str]:
-                if k=='alert_type':
-                    if v=='RETRACTION':
-                        click.echo(f'{k:<20s}' + click.style(f':{v:<45}', bg='red'))
-                    elif v=='UPDATE':
-                        click.echo(f'{k:<20s}' + click.style(f':{v:<45}', bg='blue'))
-                    else:
-                        click.echo(f'{k:<20s}:{v:<45}')
+    if isinstance(message, JSONBlob):
+        message = message.content
+
+    for k, v in message.items():
+        key_type = type(v)
+        if key_type == type(None):
+            v = 'None'
+
+        if key_type in [int, float, str]:
+            if k=='alert_type':
+                if v=='RETRACTION':
+                    click.echo(f'{k:<20s}' + click.style(f':{v:<45}', bg='red'))
+                elif v=='UPDATE':
+                    click.echo(f'{k:<20s}' + click.style(f':{v:<45}', bg='blue'))
                 else:
                     click.echo(f'{k:<20s}:{v:<45}')
+            else:
+                click.echo(f'{k:<20s}:{v:<45}')
 
-            elif key_type == list:
-                v = [str(item) for item in v]
-                items = '\t'.join(v)
-                if k == 'detector_names':
-                    click.echo(f'{k:<20s}' + click.style(f':{items:<45}', bg='blue'))
-                else:
-                    click.echo(f'{k:<20s}:{items:<45}')
-
-    except AttributeError as ae:
-        for k, v in message.content.items():
-            key_type = type(v)
-            if key_type == type(None):
-                v = 'None'
-
-            if key_type in [int, float, str]:
-                if k=='alert_type':
-                    if v=='RETRACTION':
-                        click.echo(f'{k:<20s}' + click.style(f':{v:<45}', bg='red'))
-                    elif v=='UPDATE':
-                        click.echo(f'{k:<20s}' + click.style(f':{v:<45}', bg='blue'))
-                    else:
-                        click.echo(f'{k:<20s}:{v:<45}')
-                else:
-                    click.echo(f'{k:<20s}:{v:<45}')
-
-            elif key_type == list:
-                v = [str(item) for item in v]
-                items = '\t'.join(v)
-                if k == 'detector_names':
-                    click.echo(f'{k:<20s}' + click.style(f':{items:<45}', bg='blue'))
-                else:
-                    click.echo(f'{k:<20s}:{items:<45}')
+        elif key_type == list:
+            v = [str(item) for item in v]
+            items = '\t'.join(v)
+            if k == 'detector_names':
+                click.echo(f'{k:<20s}' + click.style(f':{items:<45}', bg='blue'))
+            else:
+                click.echo(f'{k:<20s}:{items:<45}')
 
     click.secho('_'.center(65, '_'), bg='bright_red')
 
