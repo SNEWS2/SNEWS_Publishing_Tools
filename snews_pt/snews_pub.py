@@ -16,7 +16,11 @@ except AttributeError:
     from dateutil.parser import isoparse as fromisoformat
 import os, click
 from hop import Stream
-from hop.models import JSONBlob
+try:
+    from hop.models import JSONBlob
+    hop8 = True
+except ImportError:
+    hop8 = False
 from . import snews_pt_utils
 from .snews_format_checker import SnewsFormat
 from .snews_pt_utils import prettyprint_dictionary
@@ -100,7 +104,10 @@ class Publisher:
             messages = list(messages)
         for message in messages:
             message["sent_time"] = datetime.utcnow().isoformat()
-            self.stream.write(JSONBlob(message))
+            if hop8:
+                self.stream.write(JSONBlob(message))
+            else:
+                self.stream.write(message)
             self.display_message(message)
 
             
