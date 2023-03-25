@@ -104,10 +104,7 @@ class Publisher:
             messages = list(messages)
         for message in messages:
             message["sent_time"] = datetime.utcnow().isoformat()
-            if hop8:
-                self.stream.write(JSONBlob(message))
-            else:
-                self.stream.write(message)
+            self.stream.write(JSONBlob(message))
             self.display_message(message)
 
             

@@ -2,11 +2,6 @@
 from datetime import datetime
 import os, json, click
 from hop import Stream
-try:
-    from hop.models import JSONBlob
-    hop8 = True
-except ImportError:
-    hop8 = False
 from . import snews_pt_utils
 
 def make_file(outputfolder):
@@ -26,10 +21,6 @@ def save_message(message, outputfolder, return_file=False):
     """
     file = make_file(outputfolder)
     with open(file, 'w') as outfile:
-        
-        if hop8:
-            message = message.content
-
         json.dump(message, outfile, indent=4, sort_keys=True)
 
     if return_file:
@@ -40,8 +31,8 @@ def display(message):
     """
     click.echo(click.style('ALERT MESSAGE'.center(65, '_'), bg='red', bold=True))
 
-    if hop8:
-        message = message.content
+    # Access message dictionary from JSONBlob
+    message = message.content
 
     for k, v in message.items():
         key_type = type(v)
@@ -115,6 +106,9 @@ class Subscriber:
         try:
             with stream.open(self.alert_topic, "r") as s:
                 for message in s:
+                    # Access message dictionary from JSOBlob
+                    message = message.content
+                    # Save and display
                     save_message(message, outputfolder)
                     snews_pt_utils.display_gif()
                     display(message)
@@ -135,6 +129,9 @@ class Subscriber:
         try:
             with stream.open(self.alert_topic, "r") as s:
                 for message in s:
+                    # Access message dictionary from JSONBlobg
+                    message = message.content
+                    # Save and display
                     file = save_message(message, outputfolder, return_file=True)
                     snews_pt_utils.display_gif()
                     display(message)
