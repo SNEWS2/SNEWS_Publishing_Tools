@@ -14,7 +14,7 @@ def test_coincidence_expected():
     assert coin.message_data == {'detector_name': 'KamLAND', 'machine_time': None,
                                  'neutrino_time': '2012-06-09T15:31:08.891011',
                                  'p_val': None, 'p_values': None, 't_bin_width': None, 'timing_series': None,
-                                 'which_tier': None, 'retract_latest': None, 'retraction_reason': None,
+                                 'retract_latest': None, 'retraction_reason': None,
                                  'detector_status': None, 'is_pre_sn': False, 'is_test':True}
 
     # the SNEWSTierPublisher already checks this in creation, but we can double check
