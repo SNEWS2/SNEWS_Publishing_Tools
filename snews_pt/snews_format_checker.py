@@ -59,6 +59,7 @@ class SnewsFormat:
         if "meta" in self.message_keys:
             if "is_test" in self.message['meta'].keys():
                 return self.message["meta"]["is_test"]
+        return False
 
     def check_id(self):
         """ check if the format is correct
@@ -117,6 +118,10 @@ class SnewsFormat:
             if not self.check_detector_status(): # if detector_status does not exist, return False
                 self.log.error("\t> Heartbeat not valid!")
                 return False
+            self.bypass = True
+
+        elif "display-heartbeats" in self.message['_id']:
+            self.log.debug(f"\t> display-heartbeat is passed. Skipping format check.")
             self.bypass = True
 
         elif [i in self.message['_id'] for i in ['TimeTier', 'SigTier', 'CoincidenceTier']]:
