@@ -128,7 +128,6 @@ class SNEWSTiersPublisher:
                  p_values=None,
                  t_bin_width=None,
                  timing_series=None,
-                 which_tier=None,
                  retract_latest=None,
                  retraction_reason=None,
                  detector_status=None,
@@ -162,9 +161,6 @@ class SNEWSTiersPublisher:
             width of time window [sec] ,defaults to None.
         timing_series: `list`,
             defaults to None, list of strings following ISO format
-        which_tier: `str`
-            which tier are you trying to retract from, defaults to None.
-            Options: 'CoincidenceTier' / 'SigTier' / 'TimingTier' / 'ALL'
         retract_latest: `int`
             how many of your last messages do you want to retract, defaults to None
         retraction_reason: `str`
@@ -191,7 +187,6 @@ class SNEWSTiersPublisher:
                              'p_values': p_values,
                              't_bin_width': t_bin_width,
                              'timing_series': timing_series,
-                             'which_tier': which_tier,
                              'retract_latest': retract_latest,
                              'retraction_reason': retraction_reason,
                              'detector_status': detector_status,
