@@ -18,9 +18,9 @@ import os, click
 from hop import Stream
 try:
     from hop.models import JSONBlob
-    hop8 = True
 except ImportError:
-    hop8 = False
+    raise ImportError(f"SNEWS Publishing Tools and Coincidence System requires hop version>=0.8.0\n"
+                      f"Please upgrade your `pip install -U hop-client`")
 from . import snews_pt_utils
 from .snews_format_checker import SnewsFormat
 from .snews_pt_utils import prettyprint_dictionary
