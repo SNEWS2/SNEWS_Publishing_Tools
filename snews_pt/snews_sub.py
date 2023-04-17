@@ -31,9 +31,6 @@ def display(message):
     """
     click.echo(click.style('ALERT MESSAGE'.center(65, '_'), bg='red', bold=True))
 
-    # Access message dictionary from JSONBlob
-    message = message.content
-
     for k, v in message.items():
         key_type = type(v)
         if key_type == type(None):
