@@ -17,6 +17,8 @@ def test_connection(detector_name=None, firedrill=True, start_at=-5, wait=10):
         :param wait: `int` seconds to wait before terminating the check
     """
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
+    default_connection_topic = "kafka://kafka.scimma.org/snews.connection-testing"
+    connection_broker = os.getenv("CONNECTION_TEST_TOPIC", default_connection_topic)
     stamp_time = datetime.utcnow().isoformat()
     message = {'_id': '0_test-connection',
                'detector_name': detector_name,
@@ -27,14 +29,17 @@ def test_connection(detector_name=None, firedrill=True, start_at=-5, wait=10):
         topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
     else:
         topic = os.getenv("OBSERVATION_TOPIC")
+
     # substream = Stream(until_eos=False, auth=True, start_at=start_at) # when False, while loop doesn't break
     substream = Stream(until_eos=True, auth=True, start_at=start_at)
     pubstream = Stream(until_eos=True, auth=True)
-    click.secho(f"\n> Testing your connection to {topic}. \n> Should take ~{wait} seconds...\n")
+    click.secho(f"\n> Testing your connection.\n> Sending to {topic}\n"
+                f"> Expecting from {connection_broker}. \n> Should take ~{wait} seconds...\n")
 
     start_time = datetime.utcnow()
     confirmed = False
-    with pubstream.open(topic, "w") as ps, substream.open(topic, "r") as ss:
+    # with pubstream.open(topic, "w") as ps, substream.open(topic, "r") as ss:
+    with pubstream.open(topic, "w") as ps, substream.open(connection_broker, "r") as ss:
         ps.write(message)
         while (datetime.utcnow() - start_time) < timedelta(seconds=wait):
             for read in ss:
