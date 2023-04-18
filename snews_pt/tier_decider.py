@@ -10,7 +10,7 @@ from .message_schema import Message_Schema
 from datetime import datetime
 import os, sys
 
-valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series", "which_tier",
+valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_values", "timing_series",
               "retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
 
 class TierDecider:

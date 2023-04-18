@@ -23,7 +23,6 @@ def test_significance_expected():
                                 'p_values': [0.4, 0.5],
                                 't_bin_width': 0.8,
                                 'timing_series': None,
-                                'which_tier': None,
                                 'retract_latest': None,
                                 'retraction_reason': None,
                                 'detector_status': None,

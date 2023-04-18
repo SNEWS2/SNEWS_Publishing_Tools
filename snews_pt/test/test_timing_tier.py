@@ -16,7 +16,7 @@ def test_timing_expected():
                                  'neutrino_time': '2012-06-09T15:31:08.109876',  'p_val': None,
                                  'p_values': None,  't_bin_width': None,
                                  'timing_series': ['2012-06-09T15:31:08.109876', '2012-06-09T15:33:07.891011'],
-                                 'which_tier': None, 'retract_latest': None, 'retraction_reason': None,
+                                 'retract_latest': None, 'retraction_reason': None,
                                  'detector_status': None, 'is_pre_sn': False, 'is_test':True}
     assert tims.env_file == None
 
