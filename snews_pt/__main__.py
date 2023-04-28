@@ -167,19 +167,19 @@ def set_name(name):
 ###################### Remote Commands
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
-@click.option('--start_at', '-s', type=int, default=-5)
-@click.option('--wait', '-w', type=int, default=10)
+@click.option('--start_at', '-s', type=str, default="LATEST", help='either LATEST or EARLIEST')
+@click.option('--patience', '-p', type=int, default=8)
 @click.pass_context
-def test_connection(ctx, firedrill, start_at, wait):
+def test_connection(ctx, firedrill, start_at, patience):
     """ test the server connection
-        It should prompt your whether the
-        coincidence script is running in the server
+        It should prompt your whether the coincidence script is running in the server
         :param start_at: `negative int` the last N number of msg to check
-        :param wait: `int` seconds to wait before terminating the check
+        :param patience: `int` seconds to wait before the check
+            Sometime, it takes time for server to respond, increase patience
     """
     from .remote_commands import test_connection
     test_connection(detector_name=ctx.obj['DETECTOR_NAME'],
-                    firedrill=firedrill, start_at=start_at, wait=wait)
+                    firedrill=firedrill, start_at=start_at, patience=patience)
 
 
 @main.command()

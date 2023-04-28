@@ -4,18 +4,20 @@ Easy handle remote commands
 
 Melih Kara, kara@kit.edu
 """
+import time
+
 from hop import Stream
 from hop.models import JSONBlob
 from hop.io import StartPosition
 from datetime import datetime, timedelta
 import os, click
 
-def test_connection(detector_name=None, firedrill=True, start_at="LATEST", wait=10):
+def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patience=8):
     """ test the server connection
         It should prompt your whether the
         coincidence script is running in the server
         :param start_at: "LATEST" or "EARLIEST"
-        :param wait: `int` seconds to wait before terminating the check
+        :param patience: `int` seconds to wait before the check
     """
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
     default_connection_topic = "kafka://kafka.scimma.org/snews.connection-testing"
@@ -35,28 +37,30 @@ def test_connection(detector_name=None, firedrill=True, start_at="LATEST", wait=
     substream = Stream(until_eos=True, auth=True, start_at=_start_at)
     pubstream = Stream(until_eos=True, auth=True)
     click.secho(f"\n> Testing your connection.\n> Sending to {topic}\n"
-                f"> Expecting from {connection_broker}. \n> Should take ~{wait} seconds...\n")
+                f"> Expecting from {connection_broker}. \n> Should take ~a few seconds...\n")
 
-    start_time = datetime.utcnow()
+    # start_time = datetime.utcnow()
     confirmed = False
     message_expected = message.copy()
     message_expected["status"] = "received"
 
     with pubstream.open(topic, "w") as ps, substream.open(connection_broker, "r") as ss:
         ps.write(JSONBlob(message))
-        while (datetime.utcnow() - start_time) < timedelta(seconds=wait):
-            for read in ss:
-                read = read.content
-                if read == message_expected:
-                    read_name = click.style(read['detector_name'], fg='green', bold=True)
-                    read_time = click.style(read['time'], fg='green', bold=True)
-                    click.echo(f"You ({read_name}) have a connection to the server at {read_time}")
-                    confirmed=True
-                    break
-                else: # if there is no else: continue statement, it does not work
-                    continue
+        # while (datetime.utcnow() - start_time) < timedelta(seconds=wait):
+        time.sleep(patience)
+        for read in ss:
+            read = read.content
+            if read == message_expected:
+                read_name = click.style(read['detector_name'], fg='green', bold=True)
+                read_time = click.style(read['time'], fg='green', bold=True)
+                click.echo(f"You ({read_name}) have a connection to the server at {read_time}")
+                confirmed=True
+                break
+            else: # if there is no else: continue statement, it does not work
+                continue
     if not confirmed:
-        click.secho(f"\tCouldn't get a confirmation in {wait} sec. "
+        click.secho(f"\tWaited for {patience} sec and checked from {start_at},"
+                    f" couldn't get a confirmation"
                     f"\n\tMaybe increase timeout and try again.", fg='red', bold=True)
 
 
