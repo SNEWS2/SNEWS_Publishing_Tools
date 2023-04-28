@@ -37,7 +37,8 @@ def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patie
     substream = Stream(until_eos=True, auth=True, start_at=_start_at)
     pubstream = Stream(until_eos=True, auth=True)
     click.secho(f"\n> Testing your connection.\n> Sending to {topic}\n"
-                f"> Expecting from {connection_broker}. \n> Should take ~a few seconds...\n")
+                f"> Expecting from {connection_broker}. \n"
+                f"> Going to wait {patience} seconds before checking for confirmation...\n")
 
     # start_time = datetime.utcnow()
     confirmed = False
