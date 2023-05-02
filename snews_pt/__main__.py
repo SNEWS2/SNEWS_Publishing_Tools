@@ -173,7 +173,7 @@ def set_name(name):
 def test_connection(ctx, firedrill, start_at, patience):
     """ test the server connection
         It should prompt your whether the coincidence script is running in the server
-        :param start_at: `negative int` the last N number of msg to check
+        :param start_at: `str` Where to start looking for the confirmation LATEST or EARLIEST
         :param patience: `int` seconds to wait before the check
             Sometime, it takes time for server to respond, increase patience
     """
