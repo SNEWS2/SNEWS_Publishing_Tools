@@ -217,6 +217,16 @@ class SNEWSTiersPublisher:
         output_data = {**input_json, **kwargs}
         return cls(env_file=env_file, **output_data)
 
+    def to_json(self, jsonfile):
+        """ Serialize message to JSON.
+
+        Parameters
+        ----------
+        jsonfile : str
+            path to JSON output
+        """
+        snews_pt_utils._dump_json(jsonfile, self.message_data)
+
     def send_to_snews(self, auth=True, verbose=True):
         """ Send the message to SNEWS
             Parameters
