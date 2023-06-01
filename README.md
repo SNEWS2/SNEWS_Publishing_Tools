@@ -9,7 +9,7 @@
 | ------------ | ------ |
 | **Docs:**    | https://snews-publishing-tools.readthedocs.io/en/latest/  |
 
-This packages provides users with a Python API and CLI to publish observation messages to SNEWS
+This packages provides users with a Python API and CLI to **publish observation messages** to SNEWS and **subscribe to receive alerts** from the SNEWS servers.
 
 > Note: Make sure your hop credentials are set up !!<br>
 > Follow the instructions [**here**](https://github.com/scimma/hop-client) if needed<br>

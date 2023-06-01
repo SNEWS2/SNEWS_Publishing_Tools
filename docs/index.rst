@@ -7,6 +7,7 @@ User's Guide
 .. toctree::
    :maxdepth: 2
 
+   index
    user/installation
    user/quickstart
    user/firedrills
