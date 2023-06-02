@@ -66,7 +66,7 @@ def publish(ctx, file, firedrill):
 @click.pass_context
 def heartbeat(ctx, status, time, firedrill):
     """ Send Heartbeats
-        :para status: Status of the experiment ON/OFF.
+        :param status: Status of the experiment ON/OFF.
         :param time: (optional) Machine time is appended as the time of execution
                      different time can be passed following the iso-format
     """
