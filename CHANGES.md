@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+## v1.3.4 (unreleased)
+
+## v1.3.0 (2023-02-06)
+
 * stamp time before sending
 * check if detector name valid
 * fix testing
@@ -74,8 +78,7 @@ CHANGES
 * typo correction
 * fix displayed content
 
-v1.2.0
-------
+## v1.2.0 (2022-09-27)
 
 * add logo to readme
 * add new logo ofr RTD
@@ -115,8 +118,7 @@ v1.2.0
 * update time format
 * remove TimeStuff and use utcnow().isoformat()
 
-v1.1.0
-------
+## v1.1.0 (2022-08-03)
 
 * fix CLI publish
 * fix logic
@@ -155,14 +157,12 @@ v1.1.0
 * Updated env file to include the ms portion of the time format. in message\_schema.py, machine\_time  uses sent\_time if it is None. in snews\_pt\_utils.py, added the ms portion to time format for str\_to\_datetime
 * fix docs
 
-v1.0.1
-------
+## v1.0.1 (2022-05-20)
 
 * fix naming in workflow
 * change the names
 
-v1.0.0
-------
+## v1.0.0 (2022-05-19)
 
 * minor change
 * fix plugin method
