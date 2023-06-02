@@ -1,6 +1,61 @@
 CHANGES
 =======
 
+* update docstring
+* update docstring
+* update docstring
+* update docstring
+* update docstring
+* update docstring
+* update docstring
+* minor
+* replace images
+* improve docs
+* improve docs
+* improve docs
+* improve docs
+* add screenshots
+* start changind the docs
+
+v1.3.3
+------
+
+* fix docstring
+* add doc
+* add patience
+* update notebook
+* fix testing
+
+v1.3.2
+------
+
+* Update snews\_sub.py
+* add correct topic
+* add correct topic
+* add write hb logs command
+* raise error if not hop0.8.0
+* add connection topic
+* remove redundant whcih tier
+* remove redundant whcih tier
+* change requirements to hop-client v0.8.0
+* change version for hop-client 0.8.0
+* change messaging to hop-client v0.8.0 syntax only
+* put JSONBlob import in try/except, add hop8 flag
+* replace try/except with if isinstance(JSONBlob)
+* add try, except blocks for hop-0.8.0 messages
+* update requirements for new hop-client version
+* write messages to stream as JSONBlob, hop>=0.6.0
+* fix test-connection
+* testing fixes
+
+v1.3.1
+------
+
+* stamp time before sending
+
+v1.3.0
+------
+
 * stamp time before sending
 * check if detector name valid
 * fix testing

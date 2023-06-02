@@ -30,7 +30,6 @@ extras_require = {
         'pytest-mongodb',
         'pytest-runner',
         'twine',
-        'schedule',
     ],
     'docs': [
         'sphinx',
