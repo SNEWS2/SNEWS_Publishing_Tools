@@ -14,6 +14,9 @@ valid_keys = ["detector_name", "machine_time", "neutrino_time", "p_val", "p_valu
               "retract_latest", "retraction_reason", "detector_status", "is_pre_sn", 't_bin_width']
 
 class TierDecider:
+    """ Class to decide on the tiers based on the input arguments of SNEWSTierPublisher
+
+    """
     def __init__(self, data, env_file=None):
         set_env(env_file)
         self.data = data
@@ -23,8 +26,14 @@ class TierDecider:
         self.decided_tiers = {}
 
     def decide(self):
-        """ Decide how many messages need to be generated
-            based on the contents.
+        """ Decide how many messages need to be generated based on the contents.
+            The key-value pairs that do not belong to any of the tiers are packed in the "meta" field
+
+            Returns
+            -------
+            list of dictionaries : message contents for each tier that is selected
+            list of strings : Decided tier names
+
         """
         # handle the meta data first
         self.handle_meta_fields()
@@ -62,8 +71,8 @@ class TierDecider:
         return Message_Schema(detector_key=self.data['detector_name'], is_pre_sn=self.data['is_pre_sn'])
 
     def handle_meta_fields(self):
-        """ make a meta dict for all key-value pairs
-            that don't belong any known keys
+        """ make a meta dict for all key-value pairs that don't belong any known keys
+
         """
         # if there are keys that wouldn't belong to any tier/command pass them as meta
         meta_keys = [key for key, value in self.data.items() if sys.getsizeof(value) < 2048]
@@ -73,6 +82,7 @@ class TierDecider:
     def append_messages(self, tier_function, name):
         """ This function takes the relevant inputs and formats
         a message accordingly. The messages are collected in a list
+
         """
         tier_keys = list(signature(tier_function).parameters.keys())
         data_for_tier = {k: v for k, v in self.data.items() if k in tier_keys}
