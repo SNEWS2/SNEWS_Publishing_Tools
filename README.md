@@ -39,39 +39,3 @@ There also exists tools for command line interactions. These are explained in de
 
 ### [Remote commands](https://snews-publishing-tools.readthedocs.io/en/latest/user/remote_commands.html)
 
-
-[//]: # (There also exists tools for command line interactions. These are explained in detail [here]&#40;docs/cli_docs.md&#41;)
-
-[//]: # (### Extension for follow-up plugins &#40;only with CLI for now&#41;)
-
-[//]: # (`snews_pt subscribe` also allows for other scripts to be plugged in and act on alerts. The *CLI* command `snews_pt subscribe` takes the custom made script via `--plugin` &#40;`-p`&#41; option.)
-
-[//]: # ()
-[//]: # (```bash )
-
-[//]: # (user/home$: snews_pt subscribe -p ./auxiliary/custom_script.py)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (`snews_pt subscribe` saves the alert messages to a local JSON file with the date stamp of the received time. When a custom plugin is provided, as soon as an alert is received and JSON is created, the name of this unique-JSON file is passed to the script and executed.)
-
-[//]: # ()
-[//]: # (Therefore, all custom-made scripts should contain the following two lines;)
-
-[//]: # ()
-[//]: # (```python)
-
-[//]: # (# in "custom_made_script.py")
-
-[//]: # (import sys, json)
-
-[//]: # (data = json.load&#40;open&#40;sys.argv[1]&#41;&#41;)
-
-[//]: # (```)
-
-[//]: # (and do the follow-up work using the `data` dictionary as the alert message. See [this dummy example]https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/test/random_plugin.py&#41; which )
-
-[//]: # (only brags about itself and displays you the content of the alert message.)
-
-[//]: # ()
