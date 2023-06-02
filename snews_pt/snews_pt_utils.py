@@ -277,6 +277,20 @@ def _parse_file(filename):
     return data
 
 
+def _dump_json(filename, data):
+    """ Dump data to a JSON file.
+
+    Parameters
+    ----------
+    filename : str
+        JSON output file name.
+    data : dict
+        Dictionary to serialize.
+    """
+    with open(filename, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
+
+
 def isnotebook():
     """ Tell if the script is running on a notebook
 
