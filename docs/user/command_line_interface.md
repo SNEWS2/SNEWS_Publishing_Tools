@@ -137,7 +137,7 @@ retract_latest      :(User Input*)
 retraction_reason   :(User Input)
 **kwargs            :(APPENDED AS 'META')  
 ```
-The fields with the asterisk `*` determines the tier. In this case, input should have `retract_latest` key in order to create a retraction message. 
+The fields with the asterisk `*` is the keyword that is needed to select this tier. In this case, input should have `retract_latest` key in order to create a retraction message. 
 ```json
 # in retract_message.json
 {

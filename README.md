@@ -25,34 +25,6 @@ This packages provides users with a Python API and CLI to **publish observation 
 
 ### [Installation Guide](https://snews-publishing-tools.readthedocs.io/en/latest/user/installation.html)
 
-[//]: # (- #### From source <br>)
-
-[//]: # (  First you need to clone this repo. In your terminal run the following:)
-
-[//]: # ()
-[//]: # (  ```bash )
-
-[//]: # (  git clone https://github.com/SNEWS2/SNEWS_Publishing_Tools.git)
-
-[//]: # (  ```)
-
-[//]: # (  Once cloned, install the package using pip &#40;make sure you're in the cloned dir&#41;)
-
-[//]: # (  ```bash)
-
-[//]: # (  pip install .)
-
-[//]: # (  ```)
-
-[//]: # ()
-[//]: # (- #### From PyPi <br>)
-
-[//]: # (  ```bash)
-
-[//]: # (  pip install -U snews-pt)
-
-[//]: # (  ```)
-
 ## How to Publish and Subscribe
 
 ### [Publishing Guide](https://snews-publishing-tools.readthedocs.io/en/latest/user/publishing_protocols.html)
