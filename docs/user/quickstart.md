@@ -28,10 +28,12 @@ conda install -c conda-forge hop-client
 You will need to request access to the SNEWS user group in SCIMMA Hopskotch via CILogon at https://my.hop.scimma.org/hopauth. 
 For more information, see the [SCiMMA IAM docs](https://hop.scimma.org/IAM/Instructions/JoinInstitute) or the [Hopskotch Authenticator docs](https://github.com/scimma/scimma-admin/blob/master/doc/hopauth_guide.md#hopauth-for-users) for account management help.
 
-Once you are on [hop's page](https://my.hop.scimma.org/hopauth) add credentials and store your username and password. On your local machine, you need to add this credentials to your `hop-client`.
+Once you are on [hop's page](https://my.hop.scimma.org/hopauth) login with to your account add credentials (the plus icon on the top left) and store your username and password. On your local machine, you need to add this credentials to your `hop-client`.
 Checkout `hop auth --help` on your terminal for instructions. You can add your username-password using `hop auth add`. Once it is done, your local computer knows about your credentials, and it can interact with the topics that credential has access to.
 
 ### 1.2) Request permissions
+You now have a hop account and newly created credentials, however, you still do not have access to SNEWS topics. For that, you are first required to be added to the 
+SNEWS User group by one of the admins. For that please contact us on SNEWS slack, on the implementation channel. <br>
 Once you have access to SNEWS user group, you can add permissions to the following topics;<br>
 (These topics might change during the development)<br>
 - snews.alert
@@ -72,7 +74,7 @@ Similarly, if you wish to use a different topic as the "alert topic" or "observa
 your test message and send back a confirmation to you. Simply run the following on your terminal,
 
 ```bash
-snews_pt test-coincidence --no-firedrill
+snews_pt test-connection --no-firedrill
 ```
 Sometimes the "firedrill" broker is running, if that is the case you can omit `--no-firedrill` flag.
 

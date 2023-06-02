@@ -87,8 +87,8 @@ observation.send_to_snews()
 
 ***See this [`examples notebook`](./examples.ipynb) for more tutorial scripts***
 
-- ### [See Publishing Protocols here](docs/user/message_schema.md)
-- ### [See Message Schemas here](docs/user/message_schema.md)
+- ### [See Publishing Protocols here](docs/user/publishing_protocols.md)
+
 
 ## How to Subscribe
 
