@@ -9,7 +9,6 @@ import os, json
 from .core.logging import getLogger, log_file
 import warnings
 import click
-import copy
 
 log_default = getLogger(__name__)
 
@@ -21,7 +20,14 @@ snews_detectors = list(snews_detectors.keys())
 
 
 class SnewsFormat:
+    """ Class to validate message formats. It checks;
+        ID
+        Detector name
+        Message type
+        Times in the message
+        p values
 
+    """
     def __init__(self, message, log=None):
         self.message = message
         self.message_keys = message.keys()
@@ -56,15 +62,21 @@ class SnewsFormat:
             return False
 
     def check_if_test(self):
+        """ Check if the submitted message is a test message
+
+        Returns
+        -------
+            True if the message contains ['meta']['is_test'] = True, else False
+        """
         if "meta" in self.message_keys:
             if "is_test" in self.message['meta'].keys():
                 return self.message["meta"]["is_test"]
         return False
 
     def check_id(self):
-        """ check if the format is correct
+        """ check if the id is correct
             snews_pt sends messages in mongodb format
-            which HAS TO contain an _id field
+            which has ti contain an _id field
         """
         self.log.debug(f"\t> Checking _id ..")
         if "_id" not in self.message_keys:
@@ -79,6 +91,8 @@ class SnewsFormat:
             return True
 
     def check_detector(self):
+        """ Check if the detector name is valid
+        """
         self.log.debug(f"\t> Checking detector name.")
         if self.bypass:
             self.log.info(f"\t> Detector name check bypassed.")
@@ -93,8 +107,8 @@ class SnewsFormat:
         return True
 
     def check_message_type(self):
-        """ We expect Tier messages, and Commands,
-            and Tier messages require different checks
+        """ We expect Tier messages, and Commands, and Tier messages require different checks.
+            Check what the message type is.
         """
         self.log.debug(f"\t> Checking message type..")
         if "hard-reset" in self.message['_id']:
@@ -134,7 +148,8 @@ class SnewsFormat:
         return True
 
     def check_detector_status(self):
-        """ if _id is for HB, check detector status field and neutrino time
+        """ if _id is for heartbeat,
+            check detector status field and neutrino time
         """
         self.log.debug(f"\t> Checking detector status..")
         if "detector_status" not in self.message_keys:
@@ -147,6 +162,10 @@ class SnewsFormat:
         return True
 
     def check_times(self):
+        """ Check the neutrino times. Unless it is a test message,
+        the times should be within last 24 hours to be valid.
+
+        """
         self.log.debug(f"\t> Checking Times..")
         if self.bypass:
             self.log.info(f"\t> Time checks bypassed.")
@@ -188,7 +207,8 @@ class SnewsFormat:
         return True
 
     def check_pvals(self):
-        """ check if p_val exists, and valid
+        """ check if `p_val` exists, and valid
+
         """
         self.log.debug(f"\t> Checking p_val..")
         if 'p_val' in self.message_keys:
