@@ -1,201 +1,123 @@
 # Quickstart
 
+Install the `snews_pt` package with its dependancies following the [installation guide](./installation.md).
+The `snews_pt` package allows you to interact with the SNEWS server. As a user you can `subscribe` to receive alert messages 
+issued by the server, `publish` the observation messages of your experiment, and send some `commands` to server to e.g. test your connection, request feedback regarding your previous heartbeats.
 
-The module allows you to `publish` observation messages and `retract` them if needed. 
-You can also `subscribe` to _alert topics_. The default configuration file using the snews-test kafka servers and a 
-_TEST_ detector is stored in [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/test-config.env)
-please **change the configuration** to your needs before using the tools. Once set, `snews_pt` can fetch from this file at each execution. 
-Alternatively, custom made configuration file can also be passed to functions.   
+There are 2 main data streams that we use, as a SNEWS member, you have a *write-only* access to one of them so you can `publish` 
+your observation messages triggered by your experiment, and you have a *read-only* access to the other so that you can `subscribe` and receive the alerts triggered by the server.
 
+There is a third topic used for connection testing. Users also have *read-only* access to this topic. The connection testing is explained in the remote-commands section.
 
-Below, we present a quick start for the Supernova Early Warning System communication tools [Python API](#Python-Api) using both [Jupyter Notebooks](#snews-on-jupyter-notebooks), and also the [command line interface](#command-line-interface)(CLI).
+In order to have access to these topics, hop-client credentials are required.
 
-
-
-**Table of Contents**
-1. [Python API](#python-api)
-    1. [Publish](#how-to-publish)
-    2. [Subscribe](#how-to-subscribe)
-    
-    
-2. [Command Line Interface-(CLI)](#command-line-interface-(cli))
-    1. [Subscribe](#subscribing-to-alert-topics)
-    2. [Message Schema](#message-schema)
-    3. [Publish](#publishing-observation-messages)
-    4. [Publish Heartbeat](#publishing-heartbeat-messages)
-    7. [Retraction](#retraction-ressages)
-
-
-## Python-Api
-### How to Publish
-Keep in mind that currently the topic set under `/auxiliary/test_config.env` is set to a test kafka server. 
-This can be changed, new environment file can be passed to tools.
-
-First you need to import Publisher and  your desired Observation class:
-
-````Python
-# Import the Publisher class
-from snews_pt.snews_pub import Publisher
-# Import the constructor for Coincidence Tier
-from snews_pt.snews_pub import CoincidenceTier
-# Import the constructor for Significance Tier
-from snews_pt.snews_pub import SignificanceTier
-# Import the constructor for Timing Tier
-from snews_pt.snews_pub import TimingTier
-````
-
-First let's make a dummy nu time method (optional)
-
-    Note: datetime object will be used to create a dummy nu times
-
-```Python
-from datetime import datetime
-
-def nu_t():
-    return datetime.utcnow().strftime("%H:%M:%S:%f")
+## 1) Hop-Credentials
+### 1.1) Setup hop-client 
+`hop-client` is installed as a requirement for `snews_pt` test if you have it using your terminal.
+```bash
+hop --version
 ```
+if this successfully returns you the version then you have the package. (_Notice `snews_pt` might require a specific version_)
 
-Let's define the name of our detector.
-```Python
-my_detector = 'DS-20K'
+If not install the hop-client via pip or conda
+```bash
+pip install -U hop-client
+----------------------- OR
+conda install -c conda-forge hop-client
 ```
+You will need to request access to the SNEWS user group in SCIMMA Hopskotch via CILogon at https://my.hop.scimma.org/hopauth. 
+For more information, see the [SCiMMA IAM docs](https://hop.scimma.org/IAM/Instructions/JoinInstitute) or the [Hopskotch Authenticator docs](https://github.com/scimma/scimma-admin/blob/master/doc/hopauth_guide.md#hopauth-for-users) for account management help.
 
+Once you are on [hop's page](https://my.hop.scimma.org/hopauth) login with to your account add credentials (the plus icon on the top left) and store your username and password. On your local machine, you need to add this credentials to your `hop-client`.
+Checkout `hop auth --help` on your terminal for instructions. You can add your username-password using `hop auth add`. Once it is done, your local computer knows about your credentials, and it can interact with the topics that credential has access to.
 
-Finally, to send a message you need initialize the Publisher, construct your message, and send it to Publisher.
-```Python
-with Publisher() as pub:
-    message = CoincidenceTier(detector_name=my_detector, neutrino_time=nu_t(), p_value = 0.98).message()
-    pub.send(message)
-```
-> Notice that each tier accepts a predefined set of keys. See message schema.
-> 
-See also this [examples notebook](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/examples.ipynb) for more examples.
+### 1.2) Request permissions
+You now have a hop account and newly created credentials, however, you still do not have access to SNEWS topics. For that, you are first required to be added to the 
+SNEWS User group by one of the admins. For that please contact us on SNEWS slack, on the implementation channel. <br>
+Once you have access to SNEWS user group, you can add permissions to the following topics;<br>
+(These topics might change during the development)<br>
+- snews.alert
+- snews.alert-firedrill
+- snews.experiments
+- snews.experiments-firedrill
+- snews.connection-testing
 
-### How to Subscribe
+<img src="../required_permissions.png" alt="Required Permissions" width="2000"/>
+"alert" topics are to be subscribed and "experiments" to be published. Once you have access to these topics, they can be set in `snews_pt` once within the environment file to ease process.
 
-In two lines, one can subscribe to the alert topic specified in the default configuration. <br>
-This starts a stream, and waits for alert messages to be received.
+## 2) Configurations
 
+There are a few simple settings that can be modified depending on your needs like the `detector name` or the 
+`output path` to store the incoming alert messages, or the topic names. These are stored in [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/test-config.env) file. 
+
+Once you install the `snews_pt` you can set your experiments name either by changing this file, or running the following command on a python API;
 ```python
-from snews_pt.snews_sub import Subscriber
-
-Subscriber().subscribe()
+import snews_pt
+snews_pt.snews_pt_utils.set_name()
 ```
+Here `set_name()` can take the name as a string, but if executed without an argument, it will display the accepted detector names and request an input based on the index of your detector.
 
-Should there be an alert message, this will be both displayed on the screen and saved into your local machine as `SNEWS_MSGs/<today fmt="%y_%m_%d">/subscribed_messages.json` and if there are multiple messages in the same day e.g. hype-mode is on and for the same supernova you kept receiving alerts with every coincidence message, these will be appended in this file with the sent time as the first key. An example (partly missing) can be found [here](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/doc/subscribed_messages.json)
-
-
-## Command Line Interface (CLI)
-
-It is also possible to interact with `snews_pt` through the command line. <br>
-All the commands have their short descriptions accessible via `--help` flag. 
+Or you can also set your detectors name using the terminal;
 ```bash
-(venv) User$: snews_pt --help 
-```
-```bash
-Usage: snews_pt [OPTIONS] COMMAND [ARGS]...
-  User interface for snews_pt tools
-
-Options:
-  --version   Show the version and exit.
-  --env TEXT  environment file containing the configurations  [default: (auxiliary/test-config.env)]
-  --help      Show this message and exit.
-
-Commands:
-  heartbeat       Publish heartbeat messages.
-  message-schema  Display the message format for `tier`, default 'all'
-  publish         Publish a message using snews_pub
-  retract         Retract N latest message
-  subscribe       Subscribe to Alert topic 
-```
-The main command `snews_pt` serves an entry point. It is also possible to set an _environment_ by passing it to this with any other command. 
-E.g. `snews_pt --env myenvfile.env subscribe` will set the variables in _myenvfile.env_  and subscribe to the _ALERT_TOPIC_ specified in this file. <br>
-By default, it uses the environment file that comes with the package.
-
----
-### Subscribing to Alert Topics
-The subscription command can be called without any arguments.
-```bash 
-(venv) User$: snews_pt subscribe 
-```
-```bash
-> You are subscribing to ALERT 
-> Broker:kafka://kafka.scimma.org/snews.alert-test
-```
----
-### Message Schema
-`snews_pt message-schema` can tell you the required contents for each tiers. You can display the contents of a single tier by calling e.g.
-```bash
-(venv) User$: snews_pt message-schema time
-```
-In which case it displays the following
-```bash
-         >The Message Schema for TimeTier 
-_id                 :(SNEWS SETS)
-detector_name       :(SNEWS SETS)
-sent_time           :(SNEWS SETS)
-machine_time        :(User Input)
-neutrino_time       :(User Input)
-timing_series       :(User Input)  
-```
-or you can simply call `snews_pt message-schema` without any positional arguments in which case it displays all the message schemes. <br>
-
----
-
-### Publishing Observation Messages
-User can publish observation messages to one of the 'CoincidenceTier', 'TimeTier', or 'SigTier'. It is also possible to publish _Heartbeat_ and _Retraction_ messages, see respective section below.
-
-To publish one or more tier user can request arbitrary number of tiers in one line
-```bash
-(venv) User$: snews_pt publish coincidence time time significance s
-```
-The `publish` tool takes all the request and queries known aliases e.g. `s` is accepted as `SignificanceTier`, and returns a list of unique requested tiers.<br>
-Without any additional _options_ this by default publishes a dummy observation to each of the requested tiers with their required data fields.
-
-For a more realistic case, we would want to submit a message that is saved by our experiment as a _json_ file. This can be passed with a `--file` (or `-f`) flag.
-```bash
-(venv) User$: snews_pt publish coincidence -f my_coincidence_message.json
-```
-There are several dummy examples [here](../test/) that can be used as a reference. In principle, SNEWS only accept specific fields (see `snews_pt message-schema`), however the tools does not fail if you provide additional arguments. It kindly warns you about them and publishes the remaining parts.
-
-Try publishing the following file which contains an `extra_key` field.
-```bash
-(venv) User$: snews_pt publish coincidence -f snews_pt/test/example_coincidence_tier_message.json
+snews_pt set-name
 ```
 
-It should give the following
-```bash
-Requested tiers are;
-                > CoincidenceTier
-Publishing to CoincidenceTier;
-extra_key not a valid key for CoincidenceTier
----------------------------------------------------------
-_id                 :0_CoincidenceTier_22/01/01_20:19:06:356690
-detector_name       :TEST
-sent_time           :22/01/01 20:19:06
-machine_time        :test machine time
-neutrino_time       :test nu time
-p_value             :test p-values 
-```
-----
+**You only need to this once**. As long as you do not set a valid name, `snews_pt` will keep complaining. Once the name is set, the `HAS_NAME_CHANGED` argument will be changed to 1 to indicate the program not to ask again.
 
-### Publishing Heartbeat messages
+Similarly, if you wish to use a different topic as the "alert topic" or "observation topic" instead of the default ones. You can change these entries in the environment file.
 
-`snews_pt heartbeat`  can be used to publish heartbeat messages. It is up to the user to invoke this function with a desired frequency, however it is recommended to publish heartbeats consistently and with couple of minutes intervals.
+> Once you set these, you are ready to publish your observations and subscribe to alerts!
 
-The `heartbeat` command takes a `status` argument which can either be 'ON' or 'OFF'. 
-Additionaly, `machine_time` can be passed using `--machine_time` (`-mt`) flag as a string. Each heartbeat message is appended with a `sent_time`, if machine time is also provided, the latency can be tracked.
+## 3) Interact with the Server
+### 3.1) Test your connection
+`snews_pt` has a tool to test your connection, if the topic that you are trying to test is running on the server it should see 
+your test message and send back a confirmation to you. Simply run the following on your terminal,
 
 ```bash
-(venv) User$: snews_pt heartbeat ON -mt '22/01/01 20:19:06' --verbose False
+snews_pt test-connection --no-firedrill
 ```
----
+Sometimes the "firedrill" broker is running, if that is the case you can omit `--no-firedrill` flag.
 
-### Retraction Messages
+<img src="../test-connection-screenshot.png" alt="test connection" width="2000"/>
 
-It can happen that user publishes a message by accident or with wrong input. In these cases `snews_pt` allows for retraction messages. <br>
-While the specific message id can be passed, it is also possible to publish a retraction message for the last `n` number of messages. This
+### 3.2) Subscribe and Publish
+Here is a quick start for subscribing to alert messages and sending 
+your observation messages using the command line interface. For Python API and more see the table of contents below.
 
 ```bash
-(venv) User$: snews_pt retract --tier Coinc -n 3 --reason 'daq failure' 
+snews_pt subscribe
 ```
+
+```bash
+snews_pt publish my_json_message.json
+```
+
+## 4) Further Use  
+
+You can find further documentation regarding the use of `snews_pt` in index. 
+We provide both a python API and a
+command line access to most of `snews_pt` functionalities. 
+
+[//]: # (**Table of Contents**)
+
+[//]: # (1. [Python API]&#40;#python-api&#41;)
+
+[//]: # (    1. [Publish]&#40;#how-to-publish&#41;)
+
+[//]: # (    2. [Subscribe]&#40;#how-to-subscribe&#41;)
+
+[//]: # (    )
+[//]: # (    )
+[//]: # (2. [Command Line Interface-&#40;CLI&#41;]&#40;#command-line-interface-&#40;cli&#41;&#41;)
+
+[//]: # (    1. [Subscribe]&#40;#subscribing-to-alert-topics&#41;)
+
+[//]: # (    2. [Message Schema]&#40;#message-schema&#41;)
+
+[//]: # (    3. [Publish]&#40;#publishing-observation-messages&#41;)
+
+[//]: # (    4. [Publish Heartbeat]&#40;#publishing-heartbeat-messages&#41;)
+
+[//]: # (    7. [Retraction]&#40;#retraction-ressages&#41;)
+
+[//]: # ()

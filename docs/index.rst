@@ -7,11 +7,14 @@ User's Guide
 .. toctree::
    :maxdepth: 2
 
+   index
    user/installation
    user/quickstart
-   user/firedrills
-   user/message_schema
    user/publishing_protocols
+   user/subscribing
+   user/remote_commands
+   user/command_line_interface
+   user/firedrills
 
 
 API Reference

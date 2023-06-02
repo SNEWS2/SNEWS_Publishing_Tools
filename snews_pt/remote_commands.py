@@ -9,15 +9,25 @@ import time
 from hop import Stream
 from hop.models import JSONBlob
 from hop.io import StartPosition
-from datetime import datetime, timedelta
+from datetime import datetime
 import os, click
 
 def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patience=8):
     """ test the server connection
         It should prompt your whether the
         coincidence script is running in the server
-        :param start_at: "LATEST" or "EARLIEST"
-        :param patience: `int` seconds to wait before the check
+
+        Parameters
+        ----------
+        start_at : str
+            Where hop starts looking for messages can either be  "LATEST" or "EARLIEST"
+        patience : int
+            Seconds to wait before the check
+
+        Returns
+        -------
+            None
+
     """
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
     default_connection_topic = "kafka://kafka.scimma.org/snews.connection-testing"
@@ -66,9 +76,18 @@ def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patie
 
 
 def write_hb_logs(detector_name=None, admin_pass=None, firedrill=True):
-    """ REQUIRES AUTHORIZATION
-        ask to print the HB logs on the server standard output
-        later admins can see them remotely
+    """ Ask server to print the heartbeat logs on the server as standard output
+        later admins can see them remotely. Requires admin password
+
+        Parameters
+        ----------
+        detector_name : str
+            Name of the detector requesting the write operation
+        admin_pass : str
+            Simple password as a string
+        firedrill : bool
+            Whether to use the firedrill broker
+
     """
     passw = admin_pass or os.getenv("ADMIN_PASS", "NO_AUTH")
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
@@ -87,8 +106,17 @@ def write_hb_logs(detector_name=None, admin_pass=None, firedrill=True):
 
 
 def reset_cache(detector_name=None, admin_pass=None, firedrill=True):
-    """ REQUIRES AUTHORIZATION
-        If authorized, drop the current cache at the server
+    """ If authorized, drop the current cache at the server
+
+        Parameters
+        ----------
+        detector_name : str
+            Name of the detector
+        admin_pass : str
+            Simple password as a string
+        firedrill : bool
+            Whether to use the firedrill broker
+
     """
     passw = admin_pass or os.getenv("ADMIN_PASS", "NO_AUTH")
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
@@ -106,8 +134,17 @@ def reset_cache(detector_name=None, admin_pass=None, firedrill=True):
 
 
 def change_broker(brokername, detector_name=None, admin_pass=None, firedrill=True):
-    """ REQUIRES AUTHORIZATION
-        If authorized, server changes the broker
+    """ If authorized, server changes the broker
+        === Not implemented yet ===
+        brokername : str
+            name of the broker to replace
+        detector_name : str
+            Name of the detector
+        admin_pass : str
+            Simple password as a string
+        firedrill : bool
+            Whether to use the firedrill broker
+
     """
     passw = admin_pass or os.getenv("ADMIN_PASS", "NO_AUTH")
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
@@ -128,9 +165,18 @@ def change_broker(brokername, detector_name=None, admin_pass=None, firedrill=Tru
 def get_feedback(detector_name=None, email_address=None, firedrill=True):
     """ Get heartbeat feedback by email
         For a given detector, if your email is registered
-        We are going to send that email address(es) an email with
-        feedback from last 24hours
+        We are going to send that email address(es) an email with feedback from last 24hours.
         multiple email addresses are allowed with a semicolon delimiter (;)
+
+        Parameters
+        ----------
+        detector_name : str
+            Name of your detector
+        email_address : str or list
+            Registered e-mail adress(es)
+        firedrill : bool
+            Whether to use firedrill broker or not
+
     """
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
     email_address = email_address or input("\t> Your registered email address: ")

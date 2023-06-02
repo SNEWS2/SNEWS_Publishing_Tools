@@ -18,6 +18,8 @@ selecting a candidate star and computing the time delays from such star to add a
 ----
 
 ## To Do's for the Detectors
+First, please follow the [Installation Guide](https://snews-publishing-tools.readthedocs.io/en/latest/user/installation.html) and 
+[**Quick Start**](https://snews-publishing-tools.readthedocs.io/en/latest/user/quickstart.html)
 
 In order to participate in the firedrills, the detectors should have the latest version of the publishing tools `snews_pt`.
 
@@ -43,10 +45,12 @@ We would like to test two main interactions; **subscribing**  & **publishing** t
 - API:
     ```python
      from snews_pt.snews_pub import SNEWSTiersPublisher
-     SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time="2022-02-28T04:31:08.678999",
+     SNEWSTiersPublisher(detector_name='KamLAND', 
+                         neutrino_time="2022-02-28T04:31:08.678999",
                          p_val=0.000007,
                          machine_time="2022-02-28T04:31:09.778859", 
                          firedrill_mode=True,
+                         is_test=True,
                          ).send_to_snews()
     ```
   or 
@@ -54,7 +58,8 @@ We would like to test two main interactions; **subscribing**  & **publishing** t
   from snews_pt.snews_pub import SNEWSTiersPublisher
   observation = SNEWSTiersPublisher.from_json('somejsonfile.json', 
                                               detector_name='XENONnT',
-                                              firedrill_mode=True, 
+                                              firedrill_mode=True,
+                                              is_test=True, 
                                               comment="This is submitted from a json file")
   observation.send_to_snews()
   ```

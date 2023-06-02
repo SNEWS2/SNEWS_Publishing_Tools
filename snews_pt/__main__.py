@@ -3,7 +3,6 @@
     Notes to dev team
     https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
 """
-from datetime import datetime
 
 from . import __version__
 from . import snews_pt_utils
@@ -15,7 +14,7 @@ from hop import Stream
 import click
 import os
 from inspect import signature
-import getpass
+
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
@@ -67,7 +66,7 @@ def publish(ctx, file, firedrill):
 @click.pass_context
 def heartbeat(ctx, status, time, firedrill):
     """ Send Heartbeats
-        :para status: Status of the experiment ON/OFF.
+        :param status: Status of the experiment ON/OFF.
         :param time: (optional) Machine time is appended as the time of execution
                      different time can be passed following the iso-format
     """
@@ -80,9 +79,10 @@ def heartbeat(ctx, status, time, firedrill):
 
 @main.command()
 @click.option('--plugin', '-p', type=str, default="None")
+@click.option('--outputfolder', '-o', type=str, default="None")
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
 @click.pass_context
-def subscribe(ctx, plugin, firedrill):
+def subscribe(ctx, plugin, outputfolder, firedrill):
     """ Subscribe to Alert topic
         Optionally, `plugin` script can be passed
         The message content as a single dictionary will be passed to
@@ -90,14 +90,15 @@ def subscribe(ctx, plugin, firedrill):
         dictionary follows the snews_alert message schema
 
     """
+    outputfolder = None if type(outputfolder)==type(None) else outputfolder
     sub = Subscriber(ctx.obj['env'], firedrill_mode=firedrill)
     try:
         if plugin != "None":
             print(f"Redirecting output to {plugin}")
-            for saved_json in sub.subscribe_and_redirect_alert():
+            for saved_json in sub.subscribe_and_redirect_alert(outputfolder=outputfolder):
                 os.system(f"python {plugin} {saved_json}")
         else:
-            sub.subscribe()
+            sub.subscribe(outputfolder=outputfolder)
     except KeyboardInterrupt:
         pass
 

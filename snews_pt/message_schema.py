@@ -4,14 +4,12 @@ from ._version import version as __version__
 
 class Message_Schema:
     """ The Message scheme for the alert and observations
-
-    Parameters
-    ----------
-    detector_key : `str`, optional
-        The name of the detector. If "TEST", looks in the env file
+        Parameters
+        ----------
+        detector_key : str
+            Optional. The name of the detector. If "TEST", looks in the env file
 
     """
-
     def __init__(self, detector_key='TEST', is_pre_sn=False):
         if detector_key == "TEST":
             detector_key = get_name()
@@ -21,27 +19,17 @@ class Message_Schema:
 
     def id_format(self, tier, machine_time):
         """ Returns formatted message ID
-            time format should always be same for all detectors.
-            The heartbeats and observation messages have the 
-            same id format.
+            time format should always be ISO-Format for all detectors.
+            Parameters
+            ----------
+            tier : str
+                The decided tier name
+            machine_time: str
+                Machine time in ISO format
 
-        Parameters
-        ----------
-        topic_state : `str`
-            Can either be 'OBS', or  'ALERT'
-        tier : `str`
-            type of the message to be published. Can be;
-            'TimeTier', 'SigTier', 'CoincidenceTier' for
-            observation messages and, 'HeartBeat' for 
-            heartbeat messages, and 'FalseOBS' for false
-            observations.
-        is_pre_sn : 'bool'
-            Tell SNEWS whether signal is pre supernova
-        time_received :
-
-        Returns
-            :`str`
-                The formatted id as a string
+            Returns
+            -------
+                formatted id : str
 
         """
         if self.is_pre_sn:
@@ -56,18 +44,17 @@ class Message_Schema:
             Parameters
             ----------
             tier : `str`
-                type of the message to be published. Can be;
+                type of message to be published. Can be;
                 'TimeTier', 'SigTier', 'CoincidenceTier' for
                 observation messages and, 'HeartBeat' for
                 heartbeat messages
-            data      : dict
-                dict object that contains message information.
-
+            data : `dict`
+                object with message information
 
             Returns
             -------
-               :`dict`
-                message with the correct scheme 
+            message : dict
+                Message using the correct schema
 
         """
         if data['machine_time'] is None:
@@ -102,11 +89,6 @@ class Message_Schema:
             message['retract_latest'] = data['retract_latest']
             message['retraction_reason'] = data['retraction_reason']
             message['meta'] = data['meta']
-
-        # if len(data.keys()) > len(message.keys()):
-        #     for key in data.keys():
-        #         if key not in message.keys():
-        #             message['_extra_' + key] = data[key]
 
         message["schema_version"] = version
         message["sent_time"] = sent_time
