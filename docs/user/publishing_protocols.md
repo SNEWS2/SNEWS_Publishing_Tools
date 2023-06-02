@@ -84,4 +84,16 @@ There is a `tier_decider` module that decides and generates different messages w
     * ``is_pre_sn`` must be a ``bool``.
     * ``timing_series`` must be a ``list (string)``, ISO format: ``"%Y-%m-%dT%H:%M:%S.%f"``
 
-Notice that your message can contain fields that corresponds to several tiers e.g. if you have ``p_value``, ``neutrino_time``, and ``p_values`` we submit two separate messages to _Coincidence_ and _Significance_ tiers by selecting the relevant fields from your input.
+Notice that your message can contain fields that correspond to several tiers e.g. if you have ``p_value``, ``neutrino_time``, and ``p_values`` we submit two separate messages to _Coincidence_ and _Significance_ tiers by selecting the relevant fields from your input.
+
+
+#### Example;
+
+In the example below `SNEWSTierPublisher` creates a message for "CoincidenceTier" because the `neutrino_time` is passed, and it creates 
+another message for the "Significance Tier" because the `p_values` together with the `t_bin_width` is passed. 
+
+Here the `p_val` is the p value of the detection and it is optional. The `detector_name` can be passed manually, however, if the name is initially set, this is also not needed.
+
+<img src="../example_publishing.png" alt="Publication example" width="2000"/>
+
+
