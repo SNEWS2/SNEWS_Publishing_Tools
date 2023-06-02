@@ -6,6 +6,8 @@ from . import snews_pt_utils
 
 def make_file(outputfolder):
     """ Get a proper json file name at a given folder
+        It applies an increment to the file name at a given folder to avoid overwrite
+
     """
     os.makedirs(outputfolder, exist_ok=True)
     date = datetime.utcnow().isoformat().split('T')[0]
@@ -17,6 +19,14 @@ def make_file(outputfolder):
 
 def save_message(message, outputfolder, return_file=False):
     """ Save messages to a json file.
+        Parameters
+        ----------
+        message : dict
+            The incoming alert message
+        outputfolder : str
+            The path where to save the incoming alerts
+        return_file : bool
+            Whether to return file name as a string
 
     """
     file = make_file(outputfolder)
@@ -27,7 +37,8 @@ def save_message(message, outputfolder, return_file=False):
         return file
 
 def display(message):
-    """ Function to format output messages
+    """ Display the incoming alert message on screen
+
     """
     click.echo(click.style('ALERT MESSAGE'.center(65, '_'), bg='red', bold=True))
 
@@ -63,10 +74,9 @@ class Subscriber:
 
     Parameters
     ----------
-    env_path : `str`
-        path for the environment file.
-        Use default settings if not given
-    firedrill_mode : `bool`
+    env_path : str
+        path for the environment file. Use default settings if not given
+    firedrill_mode : bool
         tell Subscriber to get messages from the firedrill hop broker, defaults to False
 
     """
@@ -85,9 +95,8 @@ class Subscriber:
 
         Parameters
         ----------
-        outputfolder: `str`
-            where to save the alert messages, if None
-            creates a file based on env file
+        outputfolder: str
+            where to save the alert messages, if None, creates a file based on env file
         auth: A `bool` or :class:`Auth <hop.auth.Auth>` instance. Defaults to
             loading from :meth:`auth.load_auth <hop.auth.load_auth>` if set to
             True. To disable authentication, set to False.
@@ -113,7 +122,7 @@ class Subscriber:
             click.secho('Done', fg='green')
 
 
-    def subscribe_and_redirect_alert(self, outputfolder=None,  auth=True):
+    def subscribe_and_redirect_alert(self, outputfolder=None, auth=True):
         """ subscribe generator
         """
         outputfolder = outputfolder or self.default_output
