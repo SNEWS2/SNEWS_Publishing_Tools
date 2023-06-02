@@ -27,8 +27,8 @@ from .snews_pt_utils import prettyprint_dictionary
 from .tier_decider import TierDecider
 
 def homogenise_time_field(message):
-    """ Make sure all messages follow the same
-        ISO format.
+    """ Make sure all messages follow the same ISO format.
+
     """
     # convert to iso-formatted datetime object and revert
     dateobj = fromisoformat(message["neutrino_time"])
@@ -38,6 +38,16 @@ def homogenise_time_field(message):
 
 def check_format(messages):
     """ Check if the messages are valid SnewsFormat
+        Parameters
+        ----------
+        messages : dict
+            The generated messages
+
+        Returns
+        -------
+        valid, invalid : dict
+            The valid/invalid messages
+
     """
     valid = []
     invalid = []
@@ -62,14 +72,15 @@ class Publisher:
 
         Parameters
         ----------
-        env_path: 'str'
+        env_path: str
             path to SNEWS env file, defaults to tes_config.env if None is passed.
-        verbose: `bool`
+        verbose: bool
             Option to display message when publishing.
-        auth: `bool`
+        auth: bool
             Option to run hop-Stream without authentication. Pass False to do so
-        firedrill_mode :`bool`
+        firedrill_mode :bool
             whether to use firedrill broker
+
         """
         snews_pt_utils.set_env(env_path)
         self.auth = auth
@@ -88,7 +99,7 @@ class Publisher:
         self.stream.close()
 
     def send(self, messages):
-        """This method will set the sent_time and send the message to the hop broker.
+        """ This method will set the sent_time and send the message to the hop broker.
 
         Parameters
         ----------
@@ -135,48 +146,48 @@ class SNEWSTiersPublisher:
                  firedrill_mode=True,
                  is_test=False,
                  **kwargs):
-        """
-        SNEWS Publisher Instance, it lets you create message data and interact with them
+        """ SNEWS Publisher Instance, it lets you create message data and interact with them
         before publishing to snews. Submitting JSON files is also possible see
         SNEWSTierPublisher.from_json()
+
         Parameters
         ----------
-        env_file: `str`
-            path to env file, defaults to None
-        detector_name: `str`
+        env_file: str
+            path to env file, when None, uses the default env file
+        detector_name: str
             Name of your detector,defaults to None.
             See auxiliary/detector_properties.json for available detector names.
-        machine_time: `str`
+        machine_time: str
             time recorded by your detector, defaults to None
             format: '%y/%m/%d %H:%M:%S:%f'
-        neutrino_time: `str`
+        neutrino_time: str
             time stamp of initial neutrino signal, defaults to None
             format: '%y/%m/%d %H:%M:%S:%f'
-        p_val: `float`
-            p value of possible neutrino observation(s), defaults to None
+        p_val: float
+            p value of possible observation, defaults to None
         p_values: `list`
-            p values of possible neutrino observation(s),defaults to None.
-            list of floats
-        t_bin_width: `float`
-            width of time window [sec] ,defaults to None.
-        timing_series: `list`,
-            defaults to None, list of strings following ISO format
-        retract_latest: `int`
+            p values of individual neutrino observations, defaults to None.
+            If passed, `t_bin_width` is also expected.
+        t_bin_width: float
+            width of time window [sec], required for significance tier, defaults to None.
+            If passed, `p_values` is also expected.
+        timing_series: list
+            list of strings with individual neutrino times following ISO format defaults to None
+        retract_latest: int
             how many of your last messages do you want to retract, defaults to None
-        retraction_reason: `str`
+        retraction_reason: str
             (optional) share with SNEWS what caused your false observation, defaults to None.
             We won't judge you :)
-        detector_status: `str`
-            tell SNEWS if your detector is ON or OFF, defaults to None.
-            Options: 'ON' / 'OFF'
-        is_pre_sn: `bool`
-            Set to True if your detector saw a pre-SN event, defaults to False.
-        firedrill_mode : `bool`
+        detector_status: str
+            Send "ON" or "OFF" heartbeats.
+        is_pre_sn: bool
+            Whether the message is triggered by pre-supernova neutrinos.
+        firedrill_mode : bool
             tell Publisher to send messages to the firedrill hop broker, defaults to True
-        is_test : `bool`
-            True if the messages are meant for testing, then time checks are ignored
+        is_test : bool
+            True if the messages are meant for testing, then the time checks are ignored
         kwargs:
-            extra stuff you want to send to SNEWS
+            Any additional key-word argument you want to send to SNEWS
         """
         if detector_name == "TEST":
             detector_name = snews_pt_utils.get_name()
@@ -204,14 +215,24 @@ class SNEWSTiersPublisher:
     @classmethod
     def from_json(cls, jsonfile, env_file=None, **kwargs):
         """ Read the data from a json file
-            Additional data / overwrite is allowed, by passing the key-value pair as
-            additional arguments
+            Additional data / overwrite is allowed, by passing the key-value pair as additional arguments
+
+            Parameters
+            ----------
+            jsonfile : str
+                Path to your local JSON file
+            env_file : str
+                Path to your local environment file. If none, uses the default.
+            **kwargs : key-value pairs
+                Any other key-value pairs you want to pass or overwrite the ones in your JSON file
+
             Examples
             --------
             > read the data from "myheartbeat.json" and overwrite the detector_name
             publisher = SNEWSTierPublisher.from_json("myheartbeat.json", detector_name="IceCube")
             print(publisher.messages)
             publisher.send_to_snews()
+
         """
         input_json = snews_pt_utils._parse_file(jsonfile)
         output_data = {**input_json, **kwargs}
@@ -219,11 +240,12 @@ class SNEWSTiersPublisher:
 
     def send_to_snews(self, auth=True, verbose=True):
         """ Send the message to SNEWS
+
             Parameters
             ----------
-            verbose : `bool`
+            verbose : bool
                 Whether to display the message sent
-            auth : `bool`
+            auth : bool
                 whether to authenticate with hop
 
         """
