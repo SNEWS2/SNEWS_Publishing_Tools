@@ -71,7 +71,17 @@ class SNEWSMessage(ABC):
                 self.meta[kw] = kwargs[kw]
 
         # Check that required fields are present and valid.
-        self.validate()
+        self.has_required_fields()
+
+    def print_schema(self):
+        click.secho(f'Message schema for {self.__class__.__name__}', bg='white', fg='blue')
+        for f in self.fields:
+            if f in self.basefields:
+                click.secho(f'{f:<20s} : (SET AUTOMATICALLY)', fg='bright_red')
+            elif f in self.reqfields:
+                click.secho(f'{f:<20s} : (REQUIRED USER INPUT)', fg='bright_blue')
+            else:
+                click.secho(f'{f:<20s} : (USER INPUT)', fg='bright_cyan')
 
     def get_detector_name(self, detector_name):
         """Get formatted detector name.
@@ -111,8 +121,8 @@ class SNEWSMessage(ABC):
 
         return time.isoformat()
 
-    def validate(self):
-        """Check for any missing required fields in the message constructed.
+    def has_required_fields(self):
+        """Validate the message on construction.
         """
         missing = []
         for f in self.reqfields:
@@ -125,6 +135,10 @@ class SNEWSMessage(ABC):
         if missing:
             raise RuntimeError(f'{self.__class__.__name__} missing ' \
                                f'required field(s): {", ".join(missing)}.')
+
+    @abstractmethod
+    def is_valid(self):
+        pass
 
 #    @classmethod
 #    def from_json(cls, jsonfile, **kwargs):
@@ -151,6 +165,9 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
             p_val=p_val,
             **kwargs)
 
+    def is_valid(self):
+        return True
+
 
 class SNEWSSignificanceTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 significance tier."""
@@ -170,6 +187,9 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
             t_bin_width=t_bin_width,
             **kwargs)
 
+    def is_valid(self):
+        return True
+
 
 class SNEWSTimingTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 timing tier."""
@@ -187,6 +207,9 @@ class SNEWSTimingTierMessage(SNEWSMessage):
             timing_series=timing_series,
             **kwargs)
 
+    def is_valid(self):
+        return True
+
 
 class SNEWSRetractionMessage(SNEWSMessage):
     """Message for SNEWS 2.0 retractions."""
@@ -202,6 +225,9 @@ class SNEWSRetractionMessage(SNEWSMessage):
             retraction_reason=retraction_reason,
             **kwargs)
 
+    def is_valid(self):
+        return True
+
 
 class SNEWSHeartbeatMessage(SNEWSMessage):
     """Message for SNEWS 2.0 heartbeats."""
@@ -216,27 +242,49 @@ class SNEWSHeartbeatMessage(SNEWSMessage):
             detector_status=detector_status,
             **kwargs)
 
+    def is_valid(self):
+        return True
+
+
+#class SNEWSMessagePublisher:
+#
+#    def __init__(self, env_file=None,
+#                 detector_name='TEST',
+#                 machine_time=None,
+#                 neutrino_time=None,
+#                 p_val=None,
+#                 p_values=None,
+#                 t_bin_width=None,
+#                 timing_series=None,
+#                 retract_latest=None,
+#                 retraction_reason=None,
+#                 detector_status=None,
+#                 is_pre_sn=False,
+#                 firedrill_mode=True,
+#                 is_test=False,
+#                 **kwargs):
+
 
 if __name__ == '__main__':
     try:
         sn = SNEWSCoincidenceTierMessage(neutrino_time=datetime.utcnow(), dude=5)
-        print(SNEWSCoincidenceTierMessage.fields)
+        sn.print_schema()
         print(f'{sn.message_data}\n\n')
 
         sn = SNEWSSignificanceTierMessage(p_values=[1], t_bin_width=1)
-        print(SNEWSSignificanceTierMessage.fields)
+        sn.print_schema()
         print(f'{sn.message_data}\n\n')
 
         sn = SNEWSTimingTierMessage(timing_series=[1,2,3])
-        print(SNEWSTimingTierMessage.fields)
+        sn.print_schema()
         print(f'{sn.message_data}\n\n')
 
         sn = SNEWSRetractionMessage(retract_latest=1)
-        print(SNEWSRetractionMessage.fields)
+        sn.print_schema()
         print(f'{sn.message_data}\n\n')
 
         sn = SNEWSHeartbeatMessage(detector_status='ON')
-        print(SNEWSHeartbeatMessage.fields)
+        sn.print_schema()
         print(f'{sn.message_data}')
     except RuntimeError as e:
         print(e)
