@@ -138,6 +138,7 @@ class SNEWSMessage(ABC):
 
     @abstractmethod
     def is_valid(self):
+        """Check that parameter values are valid for this tier."""
         pass
 
 #    @classmethod
@@ -246,27 +247,69 @@ class SNEWSHeartbeatMessage(SNEWSMessage):
         return True
 
 
-#class SNEWSMessagePublisher:
-#
-#    def __init__(self, env_file=None,
-#                 detector_name='TEST',
-#                 machine_time=None,
-#                 neutrino_time=None,
-#                 p_val=None,
-#                 p_values=None,
-#                 t_bin_width=None,
-#                 timing_series=None,
-#                 retract_latest=None,
-#                 retraction_reason=None,
-#                 detector_status=None,
-#                 is_pre_sn=False,
-#                 firedrill_mode=True,
-#                 is_test=False,
-#                 **kwargs):
+class SNEWSMessageBuilder:
+    """Builder class that takes a list of message fields and builds all
+    appropriate messages for SNEWS 2.0 tiers based on the child classes of
+    SNEWSMessage. The class contains a messages parameter that stores the list
+    of SNEWSMessage child instances.
+    """
+
+    def __init__(self, env_file=None,
+                 detector_name='TEST',
+                 machine_time=None,
+                 neutrino_time=None,
+                 p_val=None,
+                 p_values=None,
+                 t_bin_width=None,
+                 timing_series=None,
+                 retract_latest=None,
+                 retraction_reason=None,
+                 detector_status=None):
+
+        self.messages = None
+
+        def _build_messages(**kwargs):
+            """Utility function to create messages for all appropriate tiers.
+            """
+            # Identify all non-null keyword arguments passed to the class constructor.
+            nonull_keys = [k for k in kwargs if kwargs[k] is not None]
+            nonull_kwargs = {k: kwargs[k] for k in nonull_keys}
+
+            # Loop through all message types.
+            # To do: create a message type registry in this module?
+            for smc in [SNEWSCoincidenceTierMessage,
+                        SNEWSSignificanceTierMessage,
+                        SNEWSTimingTierMessage,
+                        SNEWSRetractionMessage,
+                        SNEWSHeartbeatMessage]:
+
+                # If the required fields for a given message tier are present
+                # in this class, create a list of message objects.
+                hasreqfields = all(_ in nonull_keys for _ in smc.reqfields)
+                if hasreqfields:
+                    if self.messages is None:
+                        self.messages = [smc(**nonull_kwargs)]
+                    else:
+                        self.messages.append(smc(**nonull_kwargs))
+
+        return _build_messages(
+                      env_file=env_file,
+                      detector_name=detector_name,
+                      machine_time=machine_time,
+                      neutrino_time=neutrino_time,
+                      p_val=p_val,
+                      p_values=p_values,
+                      t_bin_width=t_bin_width,
+                      timing_series=timing_series,
+                      retract_latest=retract_latest,
+                      retraction_reason=retraction_reason,
+                      detector_status=detector_status
+                      )
 
 
 if __name__ == '__main__':
     try:
+        # Build the individual message classes.
         sn = SNEWSCoincidenceTierMessage(neutrino_time=datetime.utcnow(), dude=5)
         sn.print_schema()
         print(f'{sn.message_data}\n\n')
@@ -286,5 +329,18 @@ if __name__ == '__main__':
         sn = SNEWSHeartbeatMessage(detector_status='ON')
         sn.print_schema()
         print(f'{sn.message_data}')
+
+        # Use the builder class.
+        print('\nExercise the SNEWSMessageBuilder:\n')
+        sm = SNEWSMessageBuilder(
+                neutrino_time=datetime.utcnow(),
+                p_values=[1],
+                t_bin_width=1,
+                timing_series=[1,2,3]
+                )
+
+        print('Messages created:')
+        for j, msg in enumerate(sm.messages):
+            print(j, msg.message_data)
     except RuntimeError as e:
         print(e)
