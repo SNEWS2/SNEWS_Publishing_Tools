@@ -141,15 +141,9 @@ class SNEWSMessage(ABC):
         """Check that parameter values are valid for this tier."""
         pass
 
-#    @classmethod
-#    def from_json(cls, jsonfile, **kwargs):
-#        with open(jsonfile, 'r') as infile:
-#            jdata = json.load(infile)
-#            return cls(*jdata, **kwargs) 
-#
-#    def to_json(self, jsonfile):
-#        with open(jsonfile, 'w') as outfile:
-#            json.dump(self.message_data, outfile, indent=4)
+    def to_json(self, jsonfile):
+        with open(jsonfile, 'w') as outfile:
+            json.dump(self.message_data, outfile, indent=4)
 
 
 class SNEWSCoincidenceTierMessage(SNEWSMessage):
@@ -268,43 +262,56 @@ class SNEWSMessageBuilder:
 
         self.messages = None
 
-        def _build_messages(**kwargs):
-            """Utility function to create messages for all appropriate tiers.
-            """
-            # Identify all non-null keyword arguments passed to the class constructor.
-            nonull_keys = [k for k in kwargs if kwargs[k] is not None]
-            nonull_kwargs = {k: kwargs[k] for k in nonull_keys}
+        self._build_messages(env_file=env_file,
+                             detector_name=detector_name,
+                             machine_time=machine_time,
+                             neutrino_time=neutrino_time,
+                             p_val=p_val,
+                             p_values=p_values,
+                             t_bin_width=t_bin_width,
+                             timing_series=timing_series,
+                             retract_latest=retract_latest,
+                             retraction_reason=retraction_reason,
+                             detector_status=detector_status)
 
-            # Loop through all message types.
-            # To do: create a message type registry in this module?
-            for smc in [SNEWSCoincidenceTierMessage,
-                        SNEWSSignificanceTierMessage,
-                        SNEWSTimingTierMessage,
-                        SNEWSRetractionMessage,
-                        SNEWSHeartbeatMessage]:
+    def _build_messages(self, **kwargs):
+        """Utility function to create messages for all appropriate tiers.
+        """
+        # Initialize the message list.
+        self.messages = None
 
-                # If the required fields for a given message tier are present
-                # in this class, create a list of message objects.
-                hasreqfields = all(_ in nonull_keys for _ in smc.reqfields)
-                if hasreqfields:
-                    if self.messages is None:
-                        self.messages = [smc(**nonull_kwargs)]
-                    else:
-                        self.messages.append(smc(**nonull_kwargs))
+        # Identify all non-null keyword arguments passed to the class constructor.
+        nonull_keys = [k for k in kwargs if kwargs[k] is not None]
+        nonull_kwargs = {k: kwargs[k] for k in nonull_keys}
 
-        return _build_messages(
-                      env_file=env_file,
-                      detector_name=detector_name,
-                      machine_time=machine_time,
-                      neutrino_time=neutrino_time,
-                      p_val=p_val,
-                      p_values=p_values,
-                      t_bin_width=t_bin_width,
-                      timing_series=timing_series,
-                      retract_latest=retract_latest,
-                      retraction_reason=retraction_reason,
-                      detector_status=detector_status
-                      )
+        # Loop through all message types.
+        # To do: create a message type registry in this module?
+        for smc in [SNEWSCoincidenceTierMessage,
+                    SNEWSSignificanceTierMessage,
+                    SNEWSTimingTierMessage,
+                    SNEWSRetractionMessage,
+                    SNEWSHeartbeatMessage]:
+
+            # If the required fields for a given message tier are present
+            # in this class, create a list of message objects.
+            hasreqfields = all(_ in nonull_keys for _ in smc.reqfields)
+            if hasreqfields:
+                if self.messages is None:
+                    self.messages = [smc(**nonull_kwargs)]
+                else:
+                    self.messages.append(smc(**nonull_kwargs))
+
+    def from_json(self, jsonfile, **kwargs):
+        """Build SNEWSMessage instances using a message in JSON format.
+
+        Parameters
+        ----------
+        jsonfile : str
+            Name of JSON file.
+        """
+        with open(jsonfile, 'r') as infile:
+            jdata = json.load(infile)
+            self._build_messages(**jdata, **kwargs) 
 
 
 if __name__ == '__main__':
@@ -328,10 +335,10 @@ if __name__ == '__main__':
 
         sn = SNEWSHeartbeatMessage(detector_status='ON')
         sn.print_schema()
-        print(f'{sn.message_data}')
+        print(f'{sn.message_data}\n\n')
 
         # Use the builder class.
-        print('\nExercise the SNEWSMessageBuilder:\n')
+        print('Exercise the SNEWSMessageBuilder:\n')
         sm = SNEWSMessageBuilder(
                 neutrino_time=datetime.utcnow(),
                 p_values=[1],
@@ -339,8 +346,22 @@ if __name__ == '__main__':
                 timing_series=[1,2,3]
                 )
 
-        print('Messages created:')
+        # Print generated messages in the SNEWSMessageBuilder, save to JSON.
+        print('Messages created and saved to JSON:')
         for j, msg in enumerate(sm.messages):
-            print(j, msg.message_data)
+            jsonfile = f'{msg.__class__.__name__}.json'
+            print(j, msg.__class__.__name__, msg.message_data)
+            msg.to_json(jsonfile)
+
+        # Instantiate messages from JSON.
+        from glob import glob
+        jsonfiles = sorted(glob('*.json'))
+        for jsonfile in jsonfiles:
+            print(f'\nMessages from JSON file {jsonfile}:\n')
+            sm.from_json(jsonfile)
+            for j, msg in enumerate(sm.messages):
+                jsonfile = f'{msg.__class__.__name__}.json'
+                print(j, msg.__class__.__name__, msg.message_data, '\n')
+
     except RuntimeError as e:
         print(e)
