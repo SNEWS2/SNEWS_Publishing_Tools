@@ -96,7 +96,7 @@ class SNEWSMessage(ABC):
         detector_name : str
             Correctly formatted detector name.
         """
-        if detector_name == 'TEST' or detector_name == None:
+        if detector_name == 'TEST' or detector_name is None:
             detector_name = snews_pt_utils.get_name()
         return detector_name
 
@@ -133,8 +133,30 @@ class SNEWSMessage(ABC):
                 missing.append(f)
 
         if missing:
-            raise RuntimeError(f'{self.__class__.__name__} missing ' \
+            raise RuntimeError(f'{self.__class__.__name__} missing '
                                f'required field(s): {", ".join(missing)}.')
+
+    def __repr__(self):
+        _repr_str = click.style(f'{self.__class__.__name__}\n', bold=True)
+        _repr_str += f'{"-"*len(self.__class__.__name__)}\n'
+        for k, v in self.message_data.items():
+            if k in self.basefields:
+                _repr_str += click.style(f"{k:>15} : {v}\n", fg='bright_red')
+            elif k in self.reqfields:
+                _repr_str += click.style(f"{k:>15} : {v}\n", fg='bright_blue')
+        _repr_str += f'{"-"*len(self.__class__.__name__)}\n'
+        for k, v in self.meta.items():
+            _repr_str += click.style(f"{k:>15} : {v}\n", fg='bright_cyan')
+        return _repr_str
+
+    def __repr_markdown__(self):
+        _repr_str = f'### {self.__class__.__name__}\n'
+        for k, v in self.message_data.items():
+            _repr_str += f"**{k}** : {v}\n"
+        _repr_str += f'---\n'
+        for k, v in self.meta.items():
+            _repr_str += f"**{k}** : {v}\n"
+        return _repr_str
 
     @abstractmethod
     def is_valid(self):
@@ -150,15 +172,13 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 coincidence tier."""
 
     reqfields = [ 'neutrino_time' ]
-
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time',
-                                                     'p_val' ] 
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val' ]
 
     def __init__(self, neutrino_time=None, p_val=None, **kwargs):
         super().__init__(self.fields,
-            neutrino_time=self.clean_time_input(neutrino_time),
-            p_val=p_val,
-            **kwargs)
+                         neutrino_time=self.clean_time_input(neutrino_time),
+                         p_val=p_val,
+                         **kwargs)
 
     def is_valid(self):
         return True
@@ -167,9 +187,7 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
 class SNEWSSignificanceTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 significance tier."""
 
-    reqfields = [ 'p_values',
-                  't_bin_width' ]
-
+    reqfields = [ 'p_values', 't_bin_width' ]
     fields = SNEWSMessage.basefields + reqfields + [ 'machine_time' ]
 
     def __init__(self, p_values=None, t_bin_width=None, **kwargs):
@@ -178,9 +196,9 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
             raise RuntimeError(f'{self.__class__.__name__} p_values must be a list.')
 
         super().__init__(self.fields,
-            p_values=p_values,
-            t_bin_width=t_bin_width,
-            **kwargs)
+                         p_values=p_values,
+                         t_bin_width=t_bin_width,
+                         **kwargs)
 
     def is_valid(self):
         return True
@@ -190,17 +208,14 @@ class SNEWSTimingTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 timing tier."""
 
     reqfields = [ 'timing_series' ]
-
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time',
-                                                     'neutrino_time',
-                                                     'p_val' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'neutrino_time', 'p_val' ]
 
     def __init__(self, neutrino_time=None, p_val=None, timing_series=None, **kwargs):
         super().__init__(self.fields,
-            neutrino_time=self.clean_time_input(neutrino_time),
-            p_val=p_val,
-            timing_series=timing_series,
-            **kwargs)
+                         neutrino_time=self.clean_time_input(neutrino_time),
+                         p_val=p_val,
+                         timing_series=timing_series,
+                         **kwargs)
 
     def is_valid(self):
         return True
@@ -210,15 +225,13 @@ class SNEWSRetractionMessage(SNEWSMessage):
     """Message for SNEWS 2.0 retractions."""
 
     reqfields = [ 'retract_latest' ]
-
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time',
-                                                     'retraction_reason' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'retraction_reason' ]
 
     def __init__(self, retract_latest=None, retraction_reason=None, **kwargs):
         super().__init__(self.fields,
-            retract_latest=retract_latest,
-            retraction_reason=retraction_reason,
-            **kwargs)
+                         retract_latest=retract_latest,
+                         retraction_reason=retraction_reason,
+                         **kwargs)
 
     def is_valid(self):
         return True
@@ -228,14 +241,13 @@ class SNEWSHeartbeatMessage(SNEWSMessage):
     """Message for SNEWS 2.0 heartbeats."""
 
     reqfields = [ 'detector_status' ]
-
     fields = SNEWSMessage.basefields + reqfields + [ 'machine_time' ]
 
     def __init__(self, machine_time=None, detector_status=None, **kwargs):
         super().__init__(self.fields,
-            machine_time=machine_time,
-            detector_status=detector_status,
-            **kwargs)
+                         machine_time=machine_time,
+                         detector_status=detector_status,
+                         **kwargs)
 
     def is_valid(self):
         return True
@@ -273,6 +285,31 @@ class SNEWSMessageBuilder:
                              retract_latest=retract_latest,
                              retraction_reason=retraction_reason,
                              detector_status=detector_status)
+
+    def __repr__(self):
+        _repr_str = f'{self.__class__.__name__}:\n'
+        if self.messages is None:
+            _repr_str += 'No messages have been built.'
+        else:
+            for m in self.messages:
+                _repr_str += f'{m.__class__.__name__}:\n'
+                for k, v in m.message_data.items():
+                    _repr_str += f"  **{k}** : {v}\n"
+                _repr_str += f'---\n'
+                for k, v in m.meta.items():
+                    _repr_str += f"  **{k}** : {v}\n"
+        return _repr_str
+
+    def __repr_markdown__(self):
+        _repr_str = click.style(f'{self.__class__.__name__}:\n', bold=True)
+        if self.messages is None:
+            _repr_str += 'No messages have been built.'
+        else:
+            for m in self.messages:
+                _repr_str += m.__repr_markdown__()
+                _repr_str += 30*'-'+'\n'
+        return _repr_str
+
 
     def _build_messages(self, **kwargs):
         """Utility function to create messages for all appropriate tiers.
