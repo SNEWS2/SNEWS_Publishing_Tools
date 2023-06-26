@@ -72,7 +72,6 @@ class Publisher:
         if type(messages) == dict:
             messages = list(messages)
         for message in messages:
-            message = message.message_data
             message["sent_time"] = datetime.utcnow().isoformat()
             self.stream.write(JSONBlob(message))
             self.display_message(message)
@@ -333,7 +332,8 @@ class SNEWSMessageBuilder:
                  timing_series=None,
                  retract_latest=None,
                  retraction_reason=None,
-                 detector_status=None):
+                 detector_status=None,
+                 **kwargs):
 
         self.messages = None
 
@@ -347,7 +347,8 @@ class SNEWSMessageBuilder:
                              timing_series=timing_series,
                              retract_latest=retract_latest,
                              retraction_reason=retraction_reason,
-                             detector_status=detector_status)
+                             detector_status=detector_status,
+                             **kwargs)
 
     def __repr__(self):
         _repr_str = f'{self.__class__.__name__}:\n'
@@ -415,11 +416,24 @@ class SNEWSMessageBuilder:
 
     def send_messages(self, firedrill_mode=True, env_file=None, verbose=True, auth=True):
         """Send all messages in the messages list to the SNEWS server."""
+        # all req fields
+        fields_set = set({k: v for m in self.messages for k, v in m.message_data.items()})
+        messages_to_send = []
+
+        # append meta fields if the meta field is not in the other messages
+        for m in self.messages:
+            mes = m.message_data
+            met = m.meta
+            for k, v in met.items():
+                if k not in fields_set:
+                    mes[k] = v
+            messages_to_send.append(mes)
+
         with Publisher(env_path=env_file,
                        verbose=verbose,
                        auth=auth,
                        firedrill_mode=firedrill_mode) as pub:
-            pub.send(self.messages)
+            pub.send(messages_to_send)
 
 
 if __name__ == '__main__':
