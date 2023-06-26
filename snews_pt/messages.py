@@ -214,7 +214,7 @@ class SNEWSTimingTierMessage(SNEWSMessage):
         super().__init__(self.fields,
                          neutrino_time=self.clean_time_input(neutrino_time),
                          p_val=p_val,
-                         timing_series=timing_series,
+                         timing_series=[self.clean_time_input(t) for t in timing_series],
                          **kwargs)
 
     def is_valid(self):
