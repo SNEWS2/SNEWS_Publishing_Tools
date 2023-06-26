@@ -22,6 +22,69 @@ except ImportError as e:
 from snews_pt import snews_pt_utils
 from snews_pt._version import version as __version__
 
+class Publisher:
+
+    def __init__(self, env_path=None, verbose=True, auth=True, firedrill_mode=True):
+        """Class in charge of publishing messages to SNEWS-hop sever.
+        This class acts as a context manager.
+
+        Parameters
+        ----------
+        env_path: str
+            path to SNEWS env file, defaults to tes_config.env if None is passed.
+        verbose: bool
+            Option to display message when publishing.
+        auth: bool
+            Option to run hop-Stream without authentication. Pass False to do so
+        firedrill_mode :bool
+            whether to use firedrill broker
+
+        """
+        snews_pt_utils.set_env(env_path)
+        self.auth = auth
+        self.verbose = verbose
+
+        self.obs_broker = os.getenv("OBSERVATION_TOPIC")
+        if firedrill_mode:
+            self.obs_broker = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
+
+
+    def __enter__(self):
+        self.stream = Stream(until_eos=True, auth=self.auth).open(self.obs_broker, 'w')
+        return self
+
+    def __exit__(self, *args):
+        self.stream.close()
+
+    def send(self, messages):
+        """ This method will set the sent_time and send the message to the hop broker.
+
+        Parameters
+        ----------
+        messages: `list`
+            list containing observation message.
+
+        """
+        if len(messages) == 0:
+            # None of the messages passed the format checker!
+            raise UserWarning("No valid message exists!")
+
+        if type(messages) == dict:
+            messages = list(messages)
+        for message in messages:
+            message = message.message_data
+            message["sent_time"] = datetime.utcnow().isoformat()
+            self.stream.write(JSONBlob(message))
+            self.display_message(message)
+
+    def display_message(self, message):
+        if self.verbose:
+            tier = message['_id'].split('_')[1]
+            click.secho(f'{"-" * 64}', fg='bright_blue')
+            click.secho(f'Sending message to {tier} on {self.obs_broker}', fg='bright_red')
+            if tier == 'Retraction':
+                click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
+            snews_pt_utils.prettyprint_dictionary(message)
 
 class SNEWSMessage(ABC):
     """SNEWS 2.0 message interface. Defines base fields common to all messages and performs validation on messages during construction.
@@ -349,6 +412,14 @@ class SNEWSMessageBuilder:
         with open(jsonfile, 'r') as infile:
             jdata = json.load(infile)
             self._build_messages(**jdata, **kwargs) 
+
+    def send_messages(self, firedrill_mode=True, env_file=None, verbose=True, auth=True):
+        """Send all messages in the messages list to the SNEWS server."""
+        with Publisher(env_path=env_file,
+                       verbose=verbose,
+                       auth=auth,
+                       firedrill_mode=firedrill_mode) as pub:
+            pub.send(self.messages)
 
 
 if __name__ == '__main__':
