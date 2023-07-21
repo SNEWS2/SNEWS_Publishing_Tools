@@ -301,7 +301,18 @@ class SNEWSTimingTierMessage(SNEWSMessage):
                          **kwargs)
 
     def is_valid(self):
-        return True
+        """Check that parameter values are valid for this tier."""
+        for time in self.message_data['timing_series']:
+            if isinstance(time, str):
+                time = fromisoformat(time)
+            time = time.isoformat()
+            if not self.is_test:
+                # time format is corrected at the base class, check if reasonable
+                timeobj = fromisoformat(time)
+                duration = (timeobj - datetime.utcnow()).total_seconds()
+                if (duration <= -172800.0) or (duration > 0.0):
+                    raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
+
 
 
 class SNEWSRetractionMessage(SNEWSMessage):
@@ -317,7 +328,9 @@ class SNEWSRetractionMessage(SNEWSMessage):
                          **kwargs)
 
     def is_valid(self):
-        return True
+        """Check that parameter values are valid for this tier."""
+        if not isinstance(self.message_data['retract_latest'], int):
+            raise ValueError(f'{self.__class__.__name__} retract_latest must be a positive integer.')
 
 
 class SNEWSHeartbeatMessage(SNEWSMessage):
@@ -333,7 +346,10 @@ class SNEWSHeartbeatMessage(SNEWSMessage):
                          **kwargs)
 
     def is_valid(self):
-        return True
+        """Check that parameter values are valid for this tier."""
+        status = self.message_data['detector_status']
+        if not isinstance(status, str) or status not in ['ON', 'OFF']:
+            raise ValueError(f'{self.__class__.__name__} detector_status must be either "ON" or "OFF".')
 
 
 class SNEWSMessageBuilder:
@@ -422,7 +438,7 @@ class SNEWSMessageBuilder:
             if hasreqfields:
                 if self.messages is None:
                     # check is valid at creation
-                    # print(smc(**nonull_kwargs).is_valid())
+                    smc(**nonull_kwargs).is_valid()
                     self.messages = [smc(**nonull_kwargs)]
                 else:
                     self.messages.append(smc(**nonull_kwargs))
@@ -453,11 +469,6 @@ class SNEWSMessageBuilder:
                 if k not in fields_set:
                     mes[k] = v
             messages_to_send.append(mes)
-
-        # from snews_pt.snews_format_checker import SnewsFormat
-        # for message in messages_to_send:
-        #     if SnewsFormat(message)():
-        #         print("Valid Message Format")
 
         with Publisher(env_path=env_file,
                        verbose=verbose,
