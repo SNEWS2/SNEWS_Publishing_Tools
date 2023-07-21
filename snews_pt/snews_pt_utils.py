@@ -292,7 +292,7 @@ def display_gif():
         display(HTML(f'<img src={giphy_snews}>'))
 
 
-def set_name(detector_name='TEST'):
+def set_name(detector_name='TEST', _return=False):
     """ set your detector's name.
     Messages sent with detector_name="TEST" will be ignored at the server
     Alerts can still be subscribed and listened as "TEST"
@@ -307,8 +307,8 @@ def set_name(detector_name='TEST'):
             for i,d in enumerate(detectors):
                 click.secho(f"[{i:2d}] {d}")
             inp = input(click.secho("Please put select your detector's index\n", bold=True))
-            selected_name = detectors[int(inp)]
-            os.environ["DETECTOR_NAME"] = selected_name
+            detector_name = detectors[int(inp)]
+            os.environ["DETECTOR_NAME"] = detector_name
             os.environ["HAS_NAME_CHANGED"] = "1"
             dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
             dotenv.set_key(envpath, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
@@ -321,7 +321,8 @@ def set_name(detector_name='TEST'):
         os.environ["HAS_NAME_CHANGED"] = "1"
         dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
         dotenv.set_key(envpath, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
-
+    if _return:
+        return detector_name
 
 def get_name():
     """ Get the name of the detector from the env file
