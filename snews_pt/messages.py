@@ -85,6 +85,7 @@ class Publisher:
                 click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
             snews_pt_utils.prettyprint_dictionary(message)
 
+
 class SNEWSMessage(ABC):
     """SNEWS 2.0 message interface. Defines base fields common to all messages and performs validation on messages during construction.
 
@@ -255,7 +256,6 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
                 raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
 
 
-
 class SNEWSSignificanceTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 significance tier."""
 
@@ -312,7 +312,6 @@ class SNEWSTimingTierMessage(SNEWSMessage):
                 duration = (timeobj - datetime.utcnow()).total_seconds()
                 if (duration <= -172800.0) or (duration > 0.0):
                     raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
-
 
 
 class SNEWSRetractionMessage(SNEWSMessage):
