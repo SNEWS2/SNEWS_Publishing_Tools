@@ -114,7 +114,8 @@ class SNEWSMessage(ABC):
         tier = self.__class__.__name__.replace('SNEWS','').replace('Message','')
 
         # Get the detector name from the input.
-        det = self.get_detector_name(detector_name)
+        # det = self.get_detector_name(detector_name)
+        det = snews_pt_utils.set_name(detector_name, _return=True)
         mt = self.clean_time_input(machine_time)
 
         # Store basic message ID, detector name, and schema in a dictionary.
@@ -132,6 +133,7 @@ class SNEWSMessage(ABC):
                 # Append all non-matching kwargs to meta.
                 self.meta[kw] = kwargs[kw]
 
+        self.is_test = kwargs.get('is_test', False)
         # Check that required fields are present and valid.
         self.has_required_fields()
 
@@ -245,15 +247,13 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
     def is_valid(self):
         """Check that parameter values are valid for this tier.
             Detector name must be known, neutrino times must make sense, etc. if not test"""
-        snews_pt_utils.set_name(self.message_data['detector_name'])
-        is_test = self.meta.get('is_test', False)
-        if not is_test:
+        if not self.is_test:
             # time format is corrected at the base class, check if reasonable
             dateobj = fromisoformat(self.message_data['neutrino_time'])
             duration = (dateobj - datetime.utcnow()).total_seconds()
             if (duration <= -172800.0) or (duration > 0.0):
-                return False
-        return True
+                raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
+
 
 
 class SNEWSSignificanceTierMessage(SNEWSMessage):
@@ -273,7 +273,18 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
                          **kwargs)
 
     def is_valid(self):
-        return True
+        """Check that parameter values are valid for this tier."""
+        if not self.is_test:
+            for pv in self.message_data['p_values']:
+                if isinstance(pv, str):
+                    pv = float(pv)
+                if not (0.0 <= pv <= 1.0):
+                    raise ValueError(f'{self.__class__.__name__} p_values must be between 0 and 1.')
+            if isinstance(self.message_data['t_bin_width'], str):
+                if not self.message_data['t_bin_width'].replace('.','',1).isdigit():
+                    raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
+            elif not isinstance(self.message_data['t_bin_width'], float):
+                raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
 
 
 class SNEWSTimingTierMessage(SNEWSMessage):
