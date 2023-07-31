@@ -6,11 +6,10 @@
 
 from . import __version__
 from . import snews_pt_utils
-from .snews_pub import SNEWSTiersPublisher
+from .messages import SNEWSMessageBuilder
 from .snews_sub import Subscriber
 from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
 from .snews_pt_utils import retraction_data, heartbeat_data
-from hop import Stream
 import click
 import os
 from inspect import signature
@@ -53,7 +52,7 @@ def publish(ctx, file, firedrill):
     click.clear()
     for f in file:
         if f.endswith('.json'):
-            SNEWSTiersPublisher.from_json(jsonfile=f, env_file=ctx.obj['env'], firedrill_mode=firedrill).send_to_snews()
+            SNEWSMessageBuilder.from_json(jsonfile=f, env_file=ctx.obj['env'], firedrill_mode=firedrill).send_messages()
 
         else:
             # maybe just print instead of raising
@@ -70,11 +69,11 @@ def heartbeat(ctx, status, time, firedrill):
         :param time: (optional) Machine time is appended as the time of execution
                      different time can be passed following the iso-format
     """
-    message = SNEWSTiersPublisher(detector_name=ctx.obj['DETECTOR_NAME'],
+    message = SNEWSMessageBuilder(detector_name=ctx.obj['DETECTOR_NAME'],
                                   machine_time=time,
                                   detector_status=status,
                                   firedrill_mode=firedrill)
-    message.send_to_snews()
+    message.send_messages()
 
 
 @main.command()
