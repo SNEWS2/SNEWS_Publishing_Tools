@@ -1,28 +1,42 @@
 
 """Test publishing coincidence tier message and then retracting it"""
-from snews_pt.snews_pub import SNEWSTiersPublisher
+from snews_pt.messages import SNEWSMessageBuilder
 
 def test_retraction():
     """Test with example of expected message type."""
-    # Create coincidence tier message.
-    coin = SNEWSTiersPublisher(detector_name='KamLAND', neutrino_time='2012-06-09T15:31:08.891011',
+    coin = SNEWSMessageBuilder(detector_name='KamLAND', neutrino_time='2012-06-09T15:31:08.891011',
                                firedrill_mode=False, is_test=True)
 
     # Check that message has expected structure.
-    assert list(coin.tiernames) == ['CoincidenceTier']
-    assert len(coin.messages) == 1, f"Expected 1 CoincidenceTier Message got {len(coin.messages)}!"
+    assert coin.selected_tiers == ["SNEWSCoincidenceTierMessage"]
+    assert coin.messages[0].is_valid() is True, "Invalid coincidence message created"
     # Try to send message to SNEWS 2.0 server.
     try:
-        coin.send_to_snews()
+        coin.send_messages()
     except Exception as exc:
         print('SNEWSTiersPublisher.send_to_snews() test failed!\n')
         assert False, f"Exception raised:\n {exc}"
 
     # Now try to retract it
-    retraction_message = SNEWSTiersPublisher(detector_name='KamLAND', retract_latest=1, is_test=True, firedrill_mode=False)
+    retraction_message = SNEWSMessageBuilder(detector_name='KamLAND', retract_latest=1,
+                                             machine_time='2012-06-09T15:30:00.000501',
+                                             is_test=True, firedrill_mode=False)
+    assert retraction_message.selected_tiers == ["SNEWSRetractionMessage"]
+    assert retraction_message.messages[0].message_data == {'_id': 'KamLAND_Retraction_2012-06-09T15:30:00.000501',
+                                                           'schema_version': '1.3.0',
+                                                           'detector_name': 'KamLAND',
+                                                           'machine_time': '2012-06-09T15:30:00.000501',
+                                                           'retract_latest': 1,
+                                                           'retraction_reason': None,
+                                                           'is_test': True,
+                                                           'firedrill_mode': False,
+                                                           'sent_time': '2023-07-31T08:33:48.793260'}
+
+    assert retraction_message.messages[0].is_valid() is True, "Invalid retraction message created"
+
     try:
         # we can only test if the retraction message is send, not if it really retracted.
-        retraction_message.send_to_snews()
+        retraction_message.send_messages()
     except Exception as exc:
         print('Retraction test failed!\n')
         assert False, f"Exception raised:\n {exc}"
