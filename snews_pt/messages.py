@@ -97,7 +97,7 @@ class SNEWSMessage(ABC):
     # Fields used in every message.
     basefields = [ '_id', 'schema_version', 'detector_name' ]
 
-    def __init__(self, fields, detector_name='TEST', machine_time=None, **kwargs):
+    def __init__(self, fields, detector_name='TEST', **kwargs):
         """Build a generic abstract message object for SNEWS 2.0.
 
         Parameters
@@ -117,13 +117,16 @@ class SNEWSMessage(ABC):
         # Get the detector name from the input.
         # det = self.get_detector_name(detector_name)
         det = snews_pt_utils.set_name(detector_name, _return=True)
-        mt = self.clean_time_input(machine_time)
+        raw_mt = kwargs.get('machine_time', None)
+        mt = self.clean_time_input(raw_mt)
+        raw_mt = mt if isinstance(raw_mt, str) else None
 
         # Store basic message ID, detector name, and schema in a dictionary.
         self.message_data = dict(
             _id = f'{det}_{tier}_{mt}',
             schema_version = __version__,
-            detector_name = det
+            detector_name = det,
+            machine_time = raw_mt
             )
 
         for kw in kwargs:
@@ -461,7 +464,8 @@ class SNEWSMessageBuilder:
             self._build_messages(**jdata, **kwargs) 
 
     def send_messages(self, firedrill_mode=True, env_file=None, verbose=True, auth=True):
-        """Send all messages in the messages list to the SNEWS server."""
+        """Send all messages in the messages list to the SNEWS server.
+            Merges the meta fields accordingly before sending."""
         # all req fields
         fields_set = set({k: v for m in self.messages for k, v in m.message_data.items()})
         messages_to_send = []
