@@ -8,11 +8,8 @@ from . import __version__
 from . import snews_pt_utils
 from .messages import SNEWSMessageBuilder
 from .snews_sub import Subscriber
-from .snews_pt_utils import coincidence_tier_data, sig_tier_data, time_tier_data
-from .snews_pt_utils import retraction_data, heartbeat_data
 import click
 import os
-from inspect import signature
 
 
 @click.group(invoke_without_command=True)
@@ -101,22 +98,20 @@ def subscribe(ctx, plugin, outputfolder, firedrill):
     except KeyboardInterrupt:
         pass
 
-
 @main.command()
 @click.argument('requested_tier', nargs=-1)
 @click.pass_context
 def message_schema(ctx, requested_tier):
     """ Display the message format for `tier` if 'all'
         displays everything
-
     """
-    detector = ctx.obj['DETECTOR_NAME']
-    detector_str = click.style(detector, fg='yellow')
-    tier_data_pairs = {'CoincidenceTier': (coincidence_tier_data, 'neutrino_time'),
-                       'SigTier': (sig_tier_data, 'p_values'),
-                       'TimeTier': (time_tier_data, 'timing_series'),
-                       'FalseOBS': (retraction_data, 'retract_latest'),
-                       'Heartbeat': (heartbeat_data, 'detector_status')}
+    from .messages import SNEWSHeartbeatMessage, SNEWSTimingTierMessage, SNEWSSignificanceTierMessage, \
+        SNEWSCoincidenceTierMessage, SNEWSRetractionMessage
+    tier_data_pairs = {'CoincidenceTier': SNEWSCoincidenceTierMessage,
+                       'SigTier': SNEWSSignificanceTierMessage,
+                       'TimeTier': SNEWSTimingTierMessage,
+                       'FalseOBS': SNEWSRetractionMessage,
+                       'Heartbeat': SNEWSHeartbeatMessage,}
 
     if len(requested_tier)>1:
         tier = []
@@ -131,19 +126,15 @@ def message_schema(ctx, requested_tier):
             tier = snews_pt_utils._check_aliases(requested_tier[0])
 
     for t in tier:
-        tier_keys = list(signature(tier_data_pairs[t][0]).parameters.keys())
-        tier_keys.pop(tier_keys.index('meta'))
-        must_key = tier_data_pairs[t][1]
-        click.secho(f'\t >The Message Schema for {t}', bg='white', fg='blue')
-        click.secho(f"{'_id':<20s}:(SNEWS SETS)", fg='bright_red')
-        click.secho(f"{'schema_version':<20s}:(SNEWS SETS)", fg='bright_red')
-        click.echo(click.style(f"{'detector_name':<20s}:(FETCHED FROM ENV {detector_str})", fg='red'))
-        for key in tier_keys:
-            if key == must_key:
-                click.secho(f'{key:<20s}:(User Input*)', fg='bright_cyan')
+        TierMessage = tier_data_pairs[t]
+        click.secho(f'Message schema for {TierMessage.__name__}', bg='white', fg='blue')
+        for f in TierMessage.fields:
+            if f in TierMessage.basefields:
+                click.secho(f'{f:<20s} : (SET AUTOMATICALLY)', fg='bright_red')
+            elif f in TierMessage.reqfields:
+                click.secho(f'{f:<20s} : (REQUIRED USER INPUT)', fg='bright_blue')
             else:
-                click.secho(f'{key:<20s}:(User Input)', fg='bright_cyan')
-        click.secho(f"{'**kwargs':<20s}:(APPENDED AS 'META')\n", fg='red')
+                click.secho(f'{f:<20s} : (USER INPUT)', fg='bright_cyan')
         
 
 @main.command()
