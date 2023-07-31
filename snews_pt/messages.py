@@ -450,7 +450,8 @@ class SNEWSMessageBuilder:
                     self.messages.append(smc(**nonull_kwargs))
                 self.selected_tiers.append(smc.__name__)
 
-    def from_json(self, jsonfile, **kwargs):
+    @classmethod
+    def from_json(cls, jsonfile, **kwargs):
         """Build SNEWSMessage instances using a message in JSON format.
 
         Parameters
@@ -460,7 +461,7 @@ class SNEWSMessageBuilder:
         """
         with open(jsonfile, 'r') as infile:
             jdata = json.load(infile)
-            self._build_messages(**jdata, **kwargs) 
+        return cls(**jdata, **kwargs)
 
     def send_messages(self, firedrill_mode=True, env_file=None, verbose=True, auth=True):
         """Send all messages in the messages list to the SNEWS server.
