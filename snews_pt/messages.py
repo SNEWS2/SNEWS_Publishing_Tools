@@ -296,11 +296,10 @@ class SNEWSTimingTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 timing tier."""
 
     reqfields = [ 'timing_series' ]
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'neutrino_time', 'p_val' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val' ]
 
-    def __init__(self, neutrino_time=None, p_val=None, timing_series=None, **kwargs):
+    def __init__(self, p_val=None, timing_series=None, **kwargs):
         super().__init__(self.fields,
-                         neutrino_time=self.clean_time_input(neutrino_time),
                          p_val=p_val,
                          timing_series=[self.clean_time_input(t) for t in timing_series],
                          **kwargs)
