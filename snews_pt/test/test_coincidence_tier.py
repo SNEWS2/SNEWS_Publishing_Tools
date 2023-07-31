@@ -8,7 +8,7 @@ def test_coincidence_expected():
                                neutrino_time='2012-06-09T15:31:08.891011',
                                firedrill_mode=False, is_test=True)
     # Check that message has expected structure.
-    assert list(coin.selected_tiers) == ['SNEWSCoincidenceTierMessage']
+    assert coin.selected_tiers == ['SNEWSCoincidenceTierMessage']
     assert len(coin.messages) == 1, f"Expected 1 CoincidenceTier Message got {len(coin.messages)}!"
 
     assert coin.messages[0].message_data == {'_id': 'KamLAND_CoincidenceTier_2012-06-09T15:30:00.000501',
@@ -26,5 +26,5 @@ def test_coincidence_expected():
     try:
         coin.send_messages()
     except Exception as exc:
-        print('SNEWSTiersPublisher.send_to_snews() test failed!\n')
+        print('SNEWSMessageBuilder.send_messages() test failed!\n')
         assert False, f"Exception raised:\n {exc}"

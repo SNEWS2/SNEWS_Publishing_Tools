@@ -26,5 +26,5 @@ def test_timing_expected():
     try:
         tims.send_messages()
     except Exception as exc:
-        print('SNEWSTiersPublisher.send_to_snews() test failed!\n')
+        print('SNEWSMessageBuilder.send_messages() test failed!\n')
         assert False, f"Exception raised:\n {exc}"
