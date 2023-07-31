@@ -254,6 +254,7 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
             duration = (dateobj - datetime.utcnow()).total_seconds()
             if (duration <= -172800.0) or (duration > 0.0):
                 raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
+        return True
 
 
 class SNEWSSignificanceTierMessage(SNEWSMessage):
@@ -285,6 +286,7 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
                     raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
             elif not isinstance(self.message_data['t_bin_width'], float):
                 raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
+        return True
 
 
 class SNEWSTimingTierMessage(SNEWSMessage):
@@ -312,6 +314,7 @@ class SNEWSTimingTierMessage(SNEWSMessage):
                 duration = (timeobj - datetime.utcnow()).total_seconds()
                 if (duration <= -172800.0) or (duration > 0.0):
                     raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
+        return True
 
 
 class SNEWSRetractionMessage(SNEWSMessage):
@@ -330,6 +333,7 @@ class SNEWSRetractionMessage(SNEWSMessage):
         """Check that parameter values are valid for this tier."""
         if not isinstance(self.message_data['retract_latest'], int):
             raise ValueError(f'{self.__class__.__name__} retract_latest must be a positive integer.')
+        return True
 
 
 class SNEWSHeartbeatMessage(SNEWSMessage):
@@ -349,6 +353,7 @@ class SNEWSHeartbeatMessage(SNEWSMessage):
         status = self.message_data['detector_status']
         if not isinstance(status, str) or status not in ['ON', 'OFF']:
             raise ValueError(f'{self.__class__.__name__} detector_status must be either "ON" or "OFF".')
+        return True
 
 
 class SNEWSMessageBuilder:
@@ -373,6 +378,7 @@ class SNEWSMessageBuilder:
                  **kwargs):
 
         self.messages = None
+        self.selected_tiers = []
 
         self._build_messages(env_file=env_file,
                              detector_name=detector_name,
@@ -412,7 +418,6 @@ class SNEWSMessageBuilder:
                 _repr_str += 30*'-'+'\n'
         return _repr_str
 
-
     def _build_messages(self, **kwargs):
         """Utility function to create messages for all appropriate tiers.
         """
@@ -441,6 +446,7 @@ class SNEWSMessageBuilder:
                     self.messages = [smc(**nonull_kwargs)]
                 else:
                     self.messages.append(smc(**nonull_kwargs))
+                self.selected_tiers.append(smc.__name__)
 
     def from_json(self, jsonfile, **kwargs):
         """Build SNEWSMessage instances using a message in JSON format.
