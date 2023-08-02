@@ -27,11 +27,8 @@ def test_retraction():
                                                            'detector_name': 'KamLAND',
                                                            'machine_time': '2012-06-09T15:30:00.000501',
                                                            'retract_latest': 1,
-                                                           'retraction_reason': None,
-                                                           'is_test': True,
-                                                           'firedrill_mode': False,
-                                                           'sent_time': '2023-07-31T08:33:48.793260'}
-
+                                                           'retraction_reason': None}, "created message data is wrong"
+    assert retraction_message.messages[0].meta == {'is_test': True, 'firedrill_mode': False}, "created meta is wrong"
     assert retraction_message.messages[0].is_valid() is True, "Invalid retraction message created"
 
     try:
