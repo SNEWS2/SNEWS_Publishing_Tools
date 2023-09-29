@@ -44,24 +44,24 @@ We would like to test two main interactions; **subscribing**  & **publishing** t
 
 - API:
     ```python
-     from snews_pt.snews_pub import SNEWSTiersPublisher
-     SNEWSTiersPublisher(detector_name='KamLAND', 
+     from snews_pt.messages import SNEWSMessageBuilder
+     SNEWSMessageBuilder(detector_name='KamLAND', 
                          neutrino_time="2022-02-28T04:31:08.678999",
                          p_val=0.000007,
                          machine_time="2022-02-28T04:31:09.778859", 
                          firedrill_mode=True,
                          is_test=True,
-                         ).send_to_snews()
+                         ).send_messages()
     ```
-  or 
+  or
   ```python
-  from snews_pt.snews_pub import SNEWSTiersPublisher
-  observation = SNEWSTiersPublisher.from_json('somejsonfile.json', 
+  from snews_pt.messages import SNEWSMessageBuilder
+  observation = SNEWSMessageBuilder.from_json('somejsonfile.json', 
                                               detector_name='XENONnT',
                                               firedrill_mode=True,
                                               is_test=True, 
                                               comment="This is submitted from a json file")
-  observation.send_to_snews()
+  observation.send_messages()
   ```
 Notice that `SNEWSTiersPublisher` returns an object which actually contains the decided tiers, and formatted messages. 
 One can play with this object before finally `send_to_snews()`.  

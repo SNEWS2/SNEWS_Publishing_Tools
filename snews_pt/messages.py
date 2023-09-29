@@ -85,6 +85,7 @@ class Publisher:
                 click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
             snews_pt_utils.prettyprint_dictionary(message)
 
+
 class SNEWSMessage(ABC):
     """SNEWS 2.0 message interface. Defines base fields common to all messages and performs validation on messages during construction.
 
@@ -96,7 +97,7 @@ class SNEWSMessage(ABC):
     # Fields used in every message.
     basefields = [ '_id', 'schema_version', 'detector_name' ]
 
-    def __init__(self, fields, detector_name='TEST', machine_time=None, **kwargs):
+    def __init__(self, fields, detector_name='TEST', **kwargs):
         """Build a generic abstract message object for SNEWS 2.0.
 
         Parameters
@@ -114,14 +115,18 @@ class SNEWSMessage(ABC):
         tier = self.__class__.__name__.replace('SNEWS','').replace('Message','')
 
         # Get the detector name from the input.
-        det = self.get_detector_name(detector_name)
-        mt = self.clean_time_input(machine_time)
+        # det = self.get_detector_name(detector_name)
+        det = snews_pt_utils.set_name(detector_name, _return=True)
+        raw_mt = kwargs.get('machine_time', None)
+        mt = self.clean_time_input(raw_mt)
+        raw_mt = mt if isinstance(raw_mt, str) else None
 
         # Store basic message ID, detector name, and schema in a dictionary.
         self.message_data = dict(
             _id = f'{det}_{tier}_{mt}',
             schema_version = __version__,
-            detector_name = det
+            detector_name = det,
+            machine_time = raw_mt
             )
 
         for kw in kwargs:
@@ -132,6 +137,7 @@ class SNEWSMessage(ABC):
                 # Append all non-matching kwargs to meta.
                 self.meta[kw] = kwargs[kw]
 
+        self.is_test = kwargs.get('is_test', False)
         # Check that required fields are present and valid.
         self.has_required_fields()
 
@@ -243,6 +249,14 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
                          **kwargs)
 
     def is_valid(self):
+        """Check that parameter values are valid for this tier.
+            Detector name must be known, neutrino times must make sense, etc. if not test"""
+        if not self.is_test:
+            # time format is corrected at the base class, check if reasonable
+            dateobj = fromisoformat(self.message_data['neutrino_time'])
+            duration = (dateobj - datetime.utcnow()).total_seconds()
+            if (duration <= -172800.0) or (duration > 0.0):
+                raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
         return True
 
 
@@ -263,6 +277,18 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
                          **kwargs)
 
     def is_valid(self):
+        """Check that parameter values are valid for this tier."""
+        if not self.is_test:
+            for pv in self.message_data['p_values']:
+                if isinstance(pv, str):
+                    pv = float(pv)
+                if not (0.0 <= pv <= 1.0):
+                    raise ValueError(f'{self.__class__.__name__} p_values must be between 0 and 1.')
+            if isinstance(self.message_data['t_bin_width'], str):
+                if not self.message_data['t_bin_width'].replace('.','',1).isdigit():
+                    raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
+            elif not isinstance(self.message_data['t_bin_width'], float):
+                raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
         return True
 
 
@@ -270,16 +296,26 @@ class SNEWSTimingTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 timing tier."""
 
     reqfields = [ 'timing_series' ]
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'neutrino_time', 'p_val' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val' ]
 
-    def __init__(self, neutrino_time=None, p_val=None, timing_series=None, **kwargs):
+    def __init__(self, p_val=None, timing_series=None, **kwargs):
         super().__init__(self.fields,
-                         neutrino_time=self.clean_time_input(neutrino_time),
                          p_val=p_val,
                          timing_series=[self.clean_time_input(t) for t in timing_series],
                          **kwargs)
 
     def is_valid(self):
+        """Check that parameter values are valid for this tier."""
+        for time in self.message_data['timing_series']:
+            if isinstance(time, str):
+                time = fromisoformat(time)
+            time = time.isoformat()
+            if not self.is_test:
+                # time format is corrected at the base class, check if reasonable
+                timeobj = fromisoformat(time)
+                duration = (timeobj - datetime.utcnow()).total_seconds()
+                if (duration <= -172800.0) or (duration > 0.0):
+                    raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
         return True
 
 
@@ -296,6 +332,9 @@ class SNEWSRetractionMessage(SNEWSMessage):
                          **kwargs)
 
     def is_valid(self):
+        """Check that parameter values are valid for this tier."""
+        if not isinstance(self.message_data['retract_latest'], int):
+            raise ValueError(f'{self.__class__.__name__} retract_latest must be a positive integer.')
         return True
 
 
@@ -312,13 +351,17 @@ class SNEWSHeartbeatMessage(SNEWSMessage):
                          **kwargs)
 
     def is_valid(self):
+        """Check that parameter values are valid for this tier."""
+        status = self.message_data['detector_status']
+        if not isinstance(status, str) or status not in ['ON', 'OFF']:
+            raise ValueError(f'{self.__class__.__name__} detector_status must be either "ON" or "OFF".')
         return True
 
 
 class SNEWSMessageBuilder:
     """Builder class that takes a list of message fields and builds all
     appropriate messages for SNEWS 2.0 tiers based on the child classes of
-    SNEWSMessage. The class contains a messages parameter that stores the list
+    SNEWSMessage. The class contains a messages' parameter that stores the list
     of SNEWSMessage child instances.
     """
 
@@ -333,9 +376,11 @@ class SNEWSMessageBuilder:
                  retract_latest=None,
                  retraction_reason=None,
                  detector_status=None,
+                 is_test=False,
                  **kwargs):
 
         self.messages = None
+        self.selected_tiers = []
 
         self._build_messages(env_file=env_file,
                              detector_name=detector_name,
@@ -348,6 +393,7 @@ class SNEWSMessageBuilder:
                              retract_latest=retract_latest,
                              retraction_reason=retraction_reason,
                              detector_status=detector_status,
+                             is_test=is_test,
                              **kwargs)
 
     def __repr__(self):
@@ -374,7 +420,6 @@ class SNEWSMessageBuilder:
                 _repr_str += 30*'-'+'\n'
         return _repr_str
 
-
     def _build_messages(self, **kwargs):
         """Utility function to create messages for all appropriate tiers.
         """
@@ -398,11 +443,15 @@ class SNEWSMessageBuilder:
             hasreqfields = all(_ in nonull_keys for _ in smc.reqfields)
             if hasreqfields:
                 if self.messages is None:
+                    # check is valid at creation
+                    smc(**nonull_kwargs).is_valid()
                     self.messages = [smc(**nonull_kwargs)]
                 else:
                     self.messages.append(smc(**nonull_kwargs))
+                self.selected_tiers.append(smc.__name__)
 
-    def from_json(self, jsonfile, **kwargs):
+    @classmethod
+    def from_json(cls, jsonfile, **kwargs):
         """Build SNEWSMessage instances using a message in JSON format.
 
         Parameters
@@ -412,10 +461,11 @@ class SNEWSMessageBuilder:
         """
         with open(jsonfile, 'r') as infile:
             jdata = json.load(infile)
-            self._build_messages(**jdata, **kwargs) 
+        return cls(**jdata, **kwargs)
 
     def send_messages(self, firedrill_mode=True, env_file=None, verbose=True, auth=True):
-        """Send all messages in the messages list to the SNEWS server."""
+        """Send all messages in the messages list to the SNEWS server.
+            Merges the meta fields accordingly before sending."""
         # all req fields
         fields_set = set({k: v for m in self.messages for k, v in m.message_data.items()})
         messages_to_send = []

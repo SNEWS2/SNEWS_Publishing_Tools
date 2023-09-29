@@ -18,10 +18,12 @@ The user can share as much information as they desire with one simple function c
 sets the "Tier" and any additional information is passed under `meta` field.
 
 The user can use `SNEWSTiersPublisher` to create observation message(s) and send them to snews.
+
 ```python
-from snews_pt.snews_pub import SNEWSTiersPublisher
-messages = SNEWSTiersPublisher(neutrino_time="2022-02-28T04:31:08.678999")
-messages.send_to_snews()
+from snews_pt.messages import SNEWSMessageBuilder
+
+messages = SNEWSMessageBuilder(neutrino_time="2022-02-28T04:31:08.678999")
+messages.send_messages()
 ```
 User can also investigate their messages before sending it to SNEWS. The `SNEWSTiersPublisher` creates an object which contains 
 the generated and formatted messages. It can also tell you what "Tiers" are selected based on the input that is given. 
@@ -92,7 +94,7 @@ Notice that your message can contain fields that correspond to several tiers e.g
 In the example below `SNEWSTierPublisher` creates a message for "CoincidenceTier" because the `neutrino_time` is passed, and it creates 
 another message for the "Significance Tier" because the `p_values` together with the `t_bin_width` is passed. 
 
-Here the `p_val` is the p value of the detection and it is optional. The `detector_name` can be passed manually, however, if the name is initially set, this is also not needed.
+Here the `p_val` is the p value of the detection, and it is optional. The `detector_name` can be passed manually, however, if the name is initially set, this is also not needed.
 
 <img src="../example_publishing.png" alt="Publication example" width="2000"/>
 
