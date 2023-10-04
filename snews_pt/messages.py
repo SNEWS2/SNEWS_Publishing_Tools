@@ -210,9 +210,11 @@ class SNEWSMessage(ABC):
         for k, v in self.message_data.items():
             if k in self.basefields:
                 _repr_str += click.style(f"{k:>15} : {v}\n", fg='bright_red')
+            elif k in self.fields and k not in self.basefields and k not in self.reqfields:
+                _repr_str += click.style(f"{k:>15} : {v}\n", fg='black')
             elif k in self.reqfields:
-                _repr_str += click.style(f"{k:>15} : {v}\n", fg='bright_blue')
-        _repr_str += f'{"-"*len(self.__class__.__name__)}\n'
+                _repr_str += click.style(f"{k:>15} : {v}\n", fg='bright_blue', bold=True)
+        # _repr_str += f'{"-"*len(self.__class__.__name__)}\n'
         for k, v in self.meta.items():
             _repr_str += click.style(f"{k:>15} : {v}\n", fg='bright_cyan')
         return _repr_str
@@ -257,6 +259,14 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
             duration = (dateobj - datetime.utcnow()).total_seconds()
             if (duration <= -172800.0) or (duration > 0.0):
                 raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
+
+            # p_val must be a float between 0 and 1
+            pv = self.message_data['p_val']
+            if isinstance(pv, str):
+                pv = float(pv)
+            if not (0.0 <= pv <= 1.0):
+                raise ValueError(f'{self.__class__.__name__} p_value of the detection must be between 0 and 1.')
+
         return True
 
 
