@@ -34,7 +34,7 @@ try:
                     messages = data[scenario]
                     for msg in messages: # send one by one and sleep in between
                         print(msg, "\n\n")
-                        SNEWSMessageBuilder(**msg, firedrill_mode=fd_mode).send_messages()
+                        SNEWSMessageBuilder(**msg).send_messages(firedrill_mode=fd_mode)
                         time.sleep(1)
                         # clear cache after each scenario
                     with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
