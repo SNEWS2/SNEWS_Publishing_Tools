@@ -115,8 +115,8 @@ class SNEWSMessage(ABC):
         tier = self.__class__.__name__.replace('SNEWS','').replace('Message','')
 
         # Get the detector name from the input.
-        # det = self.get_detector_name(detector_name)
-        det = snews_pt_utils.set_name(detector_name, _return=True)
+        det = self.get_detector_name(detector_name) # just fetches from the env
+        # det = snews_pt_utils.set_name(detector_name, _return=True) # rewrites the env each time
         raw_mt = kwargs.get('machine_time', None)
         mt = self.clean_time_input(raw_mt)
         raw_mt = mt if isinstance(raw_mt, str) else None
