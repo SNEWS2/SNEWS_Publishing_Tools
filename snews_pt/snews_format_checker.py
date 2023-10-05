@@ -68,6 +68,9 @@ class SnewsFormat:
         -------
             True if the message contains ['meta']['is_test'] = True, else False
         """
+        if "is_test" in self.message_keys:
+            return self.message['is_test']
+
         if "meta" in self.message_keys:
             if "is_test" in self.message['meta'].keys():
                 return self.message["meta"]["is_test"]
