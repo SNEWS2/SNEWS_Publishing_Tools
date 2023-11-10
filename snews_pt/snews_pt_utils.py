@@ -27,7 +27,6 @@ def set_env(env_path=None):
     load_dotenv(env)
 
 
-
 def retrieve_detectors(detectors_path=default_detector_file):
     """ Retrieve the name-ID-location of the participating detectors.
 
@@ -77,144 +76,6 @@ def get_detector(detector, detectors_path=default_detector_file):
         except KeyError:
             print(f'{detector} is not a valid detector!')
             return detectors['TEST']
-
-
-def coincidence_tier_data(machine_time=None, neutrino_time=None, p_val=None, meta=None):
-    """ Formats data for CoincidenceTier as dict object
-
-        Parameters
-        ----------
-        machine_time : str
-            The machine time at the time of execution of command
-        neutrino_time : str
-            The neutrino arrival time
-        p_val : float
-            If determined, the p value of the observation
-        meta : dict
-            Any other key-value pair desired to be published.
-
-        Returns
-        -------
-        coincidence_tier_dict : dict
-            dictionary of the complete CoincidenceTier data
-
-    """
-    keys = ['machine_time', 'neutrino_time', 'p_val', 'meta']
-    values = [machine_time, neutrino_time, p_val, meta]
-    zip_iterator = zip(keys, values)
-    coincidence_tier_dict = dict(zip_iterator)
-    return coincidence_tier_dict
-
-
-def sig_tier_data(machine_time=None, neutrino_time=None, p_values=None, t_bin_width=None, meta=None):
-    """ Formats data for SigTier as dict object
-
-        Parameters
-        ----------
-        t_bin_width : float
-        machine_time : str
-            The machine time at the time of execution of command
-        neutrino_time : str
-            The neutrino arrival time
-        p_values : list
-            If determined, the p values of the observation
-        meta : dict
-            Any other key-value pair desired to be published.
-
-        Returns
-        -------
-        sig_tier_dict : dict
-            dictionary of the complete observation data
-
-    """
-    keys = ['machine_time', 'neutrino_time', 'p_values', 't_bin_width', 'meta']
-    values = [machine_time, neutrino_time, p_values, t_bin_width, meta]
-    zip_iterator = zip(keys, values)
-    sig_tier_dict = dict(zip_iterator)
-    return sig_tier_dict
-
-
-def time_tier_data(machine_time=None, neutrino_time=None, p_val=None, timing_series=None, meta=None):
-    """ Formats data for TimingTier as dict object
-
-        Parameters
-        ----------
-
-        machine_time : str
-            The machine time at the time of execution of command
-        neutrino_time : str
-            The neutrino arrival time
-        p_val : int
-            The p value of the observation
-        timing_series : array-like
-            Time series of the detected signal
-        meta : dict
-            Any other key-value pair desired to be published.
-
-        Returns
-        -------
-        data_dict : dict
-            dictionary of the TimingTier data
-
-    """
-    keys = ['machine_time', 'neutrino_time', 'timing_series', 'p_val', 'meta']
-    values = [machine_time, neutrino_time, timing_series, p_val, meta]
-    zip_iterator = zip(keys, values)
-    time_tier_dict = dict(zip_iterator)
-    return time_tier_dict
-
-
-def retraction_data(machine_time=None, retract_latest=0, retraction_reason=None, meta=None):
-    """ Formats data for Retraction as dict object
-
-        Parameters
-        ----------
-        machine_time : str
-            The machine time at the time of execution of command
-        retract_latest: int or str
-            Tells retraction methods to look for N  the latest message sent by a detector.
-        retraction_reason: str
-            Reason for message(s) retraction
-       meta : `dict`
-            Any other key-value pair desired to be published.
-
-        Returns
-        -------
-        retraction_dict : dict
-            dictionary of the retraction data
-
-    """
-    keys = ['machine_time', 'retract_latest', 'retraction_reason', 'meta']
-    values = [machine_time, retract_latest, retraction_reason, meta]
-    zip_iterator = zip(keys, values)
-    retraction_dict = dict(zip_iterator)
-    return retraction_dict
-
-
-def heartbeat_data(machine_time=None, detector_status=None, meta=None):
-    """ Formats data for Heartbeat as dict object
-
-        Parameters
-        ----------
-        machine_time : str
-            The machine time at the time of execution of command
-        detector_status : str
-            ON or OFF
-         meta : dict
-            Any other key-value pair desired to be published.
-
-        Returns
-        -------
-        heartbeat_dict : dict
-            dictionary of the Heartbeat data
-
-    """
-    keys = ['machine_time', 'detector_status', 'meta']
-    values = [machine_time, detector_status, meta]
-
-    zip_iterator = zip(keys, values)
-    heartbeat_dict = dict(zip_iterator)
-    return heartbeat_dict
 
 
 # used in message schema display, keep for now
@@ -292,7 +153,7 @@ def display_gif():
         display(HTML(f'<img src={giphy_snews}>'))
 
 
-def set_name(detector_name='TEST'):
+def set_name(detector_name='TEST', _return=False):
     """ set your detector's name.
     Messages sent with detector_name="TEST" will be ignored at the server
     Alerts can still be subscribed and listened as "TEST"
@@ -307,13 +168,13 @@ def set_name(detector_name='TEST'):
             for i,d in enumerate(detectors):
                 click.secho(f"[{i:2d}] {d}")
             inp = input(click.secho("Please put select your detector's index\n", bold=True))
-            selected_name = detectors[int(inp)]
-            os.environ["DETECTOR_NAME"] = selected_name
+            detector_name = detectors[int(inp)]
+            os.environ["DETECTOR_NAME"] = detector_name
             os.environ["HAS_NAME_CHANGED"] = "1"
             dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
             dotenv.set_key(envpath, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
         else:
-            click.secho(f'You are {os.environ["DETECTOR_NAME"]}')
+            detector_name = os.environ["DETECTOR_NAME"]
     else:
         if not detector_name in detectors:
             raise KeyError(f"{detector_name} is not a valid detector. \nChoose from {detectors}")
@@ -321,6 +182,10 @@ def set_name(detector_name='TEST'):
         os.environ["HAS_NAME_CHANGED"] = "1"
         dotenv.set_key(envpath, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
         dotenv.set_key(envpath, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
+    if _return:
+        return detector_name
+    else:
+        click.secho(f'You are {os.environ["DETECTOR_NAME"]}')
 
 
 def get_name():
@@ -328,6 +193,7 @@ def get_name():
 
     """
     return os.getenv("DETECTOR_NAME")
+
 
 def prettyprint_dictionary(dictionary, indent=0):
     """ tabulate the message in prettier form

@@ -1,7 +1,7 @@
 
 import json, click, time, sys
 from os import path as osp
-from snews_pt.snews_pub import SNEWSTiersPublisher, Publisher
+from snews_pt.messages import SNEWSMessageBuilder, Publisher
 fd_mode = True if sys.argv[1].lower() == "true" else False
 
 with open(osp.join(osp.dirname(__file__), "scenarios.json")) as json_file:
@@ -34,7 +34,7 @@ try:
                     messages = data[scenario]
                     for msg in messages: # send one by one and sleep in between
                         print(msg, "\n\n")
-                        SNEWSTiersPublisher(**msg, firedrill_mode=fd_mode).send_to_snews()
+                        SNEWSMessageBuilder(**msg).send_messages(firedrill_mode=fd_mode)
                         time.sleep(1)
                         # clear cache after each scenario
                     with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:

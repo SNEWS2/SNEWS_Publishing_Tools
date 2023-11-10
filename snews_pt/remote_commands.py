@@ -73,6 +73,8 @@ def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patie
         click.secho(f"\tWaited for {patience} sec and checked from {start_at},"
                     f" couldn't get a confirmation"
                     f"\n\tMaybe increase timeout and try again.", fg='red', bold=True)
+        return False
+    return True
 
 
 def write_hb_logs(detector_name=None, admin_pass=None, firedrill=True):
