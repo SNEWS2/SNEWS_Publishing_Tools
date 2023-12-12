@@ -150,6 +150,7 @@ class SNEWSMessage(ABC):
                 click.secho(f'{f:<20s} : (REQUIRED USER INPUT)', fg='bright_blue')
             else:
                 click.secho(f'{f:<20s} : (USER INPUT)', fg='bright_cyan')
+        click.secho(f'{"**kwargs":<20s} : (GROUPED AS META)', fg='bright_green')
 
     def get_detector_name(self, detector_name):
         """Get formatted detector name.
