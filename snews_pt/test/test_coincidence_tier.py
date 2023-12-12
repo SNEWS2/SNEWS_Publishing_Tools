@@ -14,7 +14,7 @@ def test_coincidence_expected():
     assert coin.messages[0].message_data == {'_id': 'KamLAND_CoincidenceTier_2012-06-09T15:30:00.000501',
                                              'detector_name': 'KamLAND',
                                              'machine_time': '2012-06-09T15:30:00.000501',
-                                             'schema_version': '1.3.0',
+                                             'schema_version': '1.3.1',
                                              'neutrino_time': '2012-06-09T15:31:08.891011',
                                              'is_test': True,
                                              'p_val': None}

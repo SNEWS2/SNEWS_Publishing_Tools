@@ -12,7 +12,7 @@ def test_heartbeat_expected():
     assert len(hb.messages) == 1, f"Expected 1 Heartbeat Message got {len(hb.messages)}!"
 
     assert hb.messages[0].message_data == {'_id': 'XENONnT_Heartbeat_2012-06-09T15:30:00.000501',
-                                           'schema_version': '1.3.0',
+                                           'schema_version': '1.3.1',
                                            'detector_name': 'XENONnT',
                                            'machine_time': '2012-06-09T15:30:00.000501',
                                            'detector_status': 'ON',

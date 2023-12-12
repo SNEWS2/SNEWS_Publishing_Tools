@@ -12,7 +12,7 @@ def test_timing_expected():
     # # Check that message has expected structure.
     assert tims.selected_tiers == ['SNEWSTimingTierMessage']
     assert tims.messages[0].message_data == {'_id': 'XENONnT_TimingTier_2012-06-09T15:30:00.009876',
-                                             'schema_version': '1.3.0',
+                                             'schema_version': '1.3.1',
                                              'detector_name': 'XENONnT',
                                              'machine_time': '2012-06-09T15:30:00.009876',
                                              'p_val': None,

@@ -17,7 +17,7 @@ def test_significance_expected():
     # Check that message has expected structure.
     assert sign.selected_tiers == ['SNEWSCoincidenceTierMessage', 'SNEWSSignificanceTierMessage']
     assert sign.messages[0].message_data == {'_id': 'DS-20K_CoincidenceTier_2012-06-09T15:30:00.000501',
-                                             'schema_version': '1.3.0',
+                                             'schema_version': '1.3.1',
                                              'detector_name': 'DS-20K',
                                              'machine_time': '2012-06-09T15:30:00.000501',
                                              'neutrino_time': '2012-06-09T15:31:08.109876',
@@ -31,7 +31,7 @@ def test_significance_expected():
                                      'firedrill_mode': False}
 
     assert sign.messages[1].message_data == {'_id': 'DS-20K_SignificanceTier_2012-06-09T15:30:00.000501',
-                                             'schema_version': '1.3.0',
+                                             'schema_version': '1.3.1',
                                              'detector_name': 'DS-20K',
                                              'machine_time': '2012-06-09T15:30:00.000501',
                                              'p_values': [0.4, 0.5],
