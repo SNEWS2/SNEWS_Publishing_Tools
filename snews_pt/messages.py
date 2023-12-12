@@ -280,10 +280,6 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
     fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'is_test' ]
 
     def __init__(self, p_values=None, t_bin_width=None, **kwargs):
-        # Type check for proper types.
-        if np.isscalar(p_values):
-            raise RuntimeError(f'{self.__class__.__name__} p_values must be a list.')
-
         super().__init__(self.fields,
                          p_values=p_values,
                          t_bin_width=t_bin_width,
@@ -292,6 +288,9 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
     def is_valid(self):
         """Check that parameter values are valid for this tier."""
         if not self.is_test:
+            # Type check for proper types.
+            if np.isscalar(self.message_data['p_values']):
+                raise RuntimeError(f'{self.__class__.__name__} p_values must be a list.')
             for pv in self.message_data['p_values']:
                 if isinstance(pv, str):
                     pv = float(pv)
@@ -302,6 +301,8 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
                     raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
             elif not isinstance(self.message_data['t_bin_width'], float):
                 raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
+
+
         return True
 
 
