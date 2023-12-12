@@ -21,11 +21,11 @@ def test_significance_expected():
                                              'detector_name': 'DS-20K',
                                              'machine_time': '2012-06-09T15:30:00.000501',
                                              'neutrino_time': '2012-06-09T15:31:08.109876',
-                                             'p_val': None}
+                                             'p_val': None,
+                                             'is_test': True}
 
     assert sign.messages[0].meta == {'p_values': [0.4, 0.5],
                                      't_bin_width': 0.8,
-                                     'is_test': True,
                                      'neutrino_times': ['2012-06-09T15:31:08.109876',
                                                         '2012-06-09T15:33:07.891098'],
                                      'firedrill_mode': False}
@@ -35,13 +35,13 @@ def test_significance_expected():
                                              'detector_name': 'DS-20K',
                                              'machine_time': '2012-06-09T15:30:00.000501',
                                              'p_values': [0.4, 0.5],
-                                             't_bin_width': 0.8}
+                                             't_bin_width': 0.8,
+                                             'is_test': True}
 
     assert sign.messages[1].meta == {'neutrino_time': '2012-06-09T15:31:08.109876',
-                                     'is_test': True,
                                      'neutrino_times': ['2012-06-09T15:31:08.109876',
                                                         '2012-06-09T15:33:07.891098'],
-                                     'firedrill_mode': False}
+                                     'firedrill_mode': False,}
 
     assert sign.messages[0].is_valid() is True, "invalid coincidence tier message in 'test_significance_tier'"
     assert sign.messages[1].is_valid() is True, "invalid significance tier message in 'test_significance_tier'"

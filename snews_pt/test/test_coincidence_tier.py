@@ -16,8 +16,11 @@ def test_coincidence_expected():
                                              'machine_time': '2012-06-09T15:30:00.000501',
                                              'schema_version': '1.3.0',
                                              'neutrino_time': '2012-06-09T15:31:08.891011',
+                                             'is_test': True,
                                              'p_val': None}
-    assert coin.messages[0].meta == {'is_test': True, 'firedrill_mode': False}
+
+    # firedrill_mode is an argument of coinc.send_messages(), so it becomes meta here
+    assert coin.messages[0].meta == {'firedrill_mode': False}
 
     # check if valid snews format
     assert coin.messages[0].is_valid() is True, "Message is not valid"
