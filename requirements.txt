@@ -1,10 +1,10 @@
-click~=8.1.2
+click>=8.1.2
 fixtures==3.0.0
 ipython~=7.32.0
 mock==4.0.3
 nose==1.3.7
 python-dotenv==0.19.2
-setuptools~=62.1.0
+setuptools>=62.1.0
 six==1.14.0
 testrepository==0.0.20
 testresources==2.0.1
@@ -14,11 +14,11 @@ virtualenv==20.13.0
 wheel==0.34.2
 inquirer>=2.8.0
 hop-client==0.8.0
-attrs~=21.4.0
+attrs>=21.4.0
 docutils==0.17.1
 myst-parser==0.16.1
 sphinx_rtd_theme==1.0.0
 sphinx-autoapi==1.8.4
 sphinxcontrib-programoutput==0.17
-pytest~=6.2.5
+pytest>=6.2.5
 numpy>=1.22.3
