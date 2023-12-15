@@ -106,7 +106,8 @@ def message_schema(ctx, requested_tier):
         displays everything
     """
     from .messages import SNEWSHeartbeatMessage, SNEWSTimingTierMessage, SNEWSSignificanceTierMessage, \
-        SNEWSCoincidenceTierMessage, SNEWSRetractionMessage
+        SNEWSCoincidenceTierMessage, SNEWSRetractionMessage, SNEWSMessage
+
     tier_data_pairs = {'CoincidenceTier': SNEWSCoincidenceTierMessage,
                        'SigTier': SNEWSSignificanceTierMessage,
                        'TimeTier': SNEWSTimingTierMessage,
@@ -123,19 +124,22 @@ def message_schema(ctx, requested_tier):
             tier = list(tier_data_pairs.keys())
         else:
             # check for aliases e.g. coinc = coincidence = CoinCideNceTier
-            tier = snews_pt_utils._check_aliases(requested_tier[0])
+            tier = list(snews_pt_utils._check_aliases(requested_tier[0]))
 
+    basefields = SNEWSMessage.basefields
     for t in tier:
         TierMessage = tier_data_pairs[t]
-        click.secho(f'Message schema for {TierMessage.__name__}', bg='white', fg='blue')
-        for f in TierMessage.fields:
-            if f in TierMessage.basefields:
+        fields = TierMessage.fields
+        reqfields = TierMessage.reqfields
+        click.secho(f'Message schema for {t}', bg='white', fg='blue')
+        for f in fields:
+            if f in basefields:
                 click.secho(f'{f:<20s} : (SET AUTOMATICALLY)', fg='bright_red')
-            elif f in TierMessage.reqfields:
+            elif f in reqfields:
                 click.secho(f'{f:<20s} : (REQUIRED USER INPUT)', fg='bright_blue')
             else:
                 click.secho(f'{f:<20s} : (USER INPUT)', fg='bright_cyan')
-        
+        click.secho(f'{"**kwargs":<20s} : (GROUPED AS META)', fg='bright_green')
 
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')

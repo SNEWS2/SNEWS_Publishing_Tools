@@ -129,6 +129,7 @@ class SNEWSMessage(ABC):
             machine_time = raw_mt
             )
 
+        self.is_test = kwargs.get('is_test', False)
         for kw in kwargs:
             if kw in fields:
                 # Append all kwargs matching subclass fields in message_data.
@@ -137,7 +138,6 @@ class SNEWSMessage(ABC):
                 # Append all non-matching kwargs to meta.
                 self.meta[kw] = kwargs[kw]
 
-        self.is_test = kwargs.get('is_test', False)
         # Check that required fields are present and valid.
         self.has_required_fields()
 
@@ -150,6 +150,7 @@ class SNEWSMessage(ABC):
                 click.secho(f'{f:<20s} : (REQUIRED USER INPUT)', fg='bright_blue')
             else:
                 click.secho(f'{f:<20s} : (USER INPUT)', fg='bright_cyan')
+        click.secho(f'{"**kwargs":<20s} : (GROUPED AS META)', fg='bright_green')
 
     def get_detector_name(self, detector_name):
         """Get formatted detector name.
@@ -166,6 +167,8 @@ class SNEWSMessage(ABC):
         """
         if detector_name == 'TEST' or detector_name is None:
             detector_name = snews_pt_utils.get_name()
+        else:
+            detector_name = snews_pt_utils.set_name(detector_name, _return=True)
         return detector_name
 
     def clean_time_input(self, time):
@@ -242,7 +245,7 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 coincidence tier."""
 
     reqfields = [ 'neutrino_time' ]
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val', 'is_test' ]
 
     def __init__(self, neutrino_time=None, p_val=None, **kwargs):
         super().__init__(self.fields,
@@ -274,13 +277,9 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 significance tier."""
 
     reqfields = [ 'p_values', 't_bin_width' ]
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'is_test' ]
 
     def __init__(self, p_values=None, t_bin_width=None, **kwargs):
-        # Type check for proper types.
-        if np.isscalar(p_values):
-            raise RuntimeError(f'{self.__class__.__name__} p_values must be a list.')
-
         super().__init__(self.fields,
                          p_values=p_values,
                          t_bin_width=t_bin_width,
@@ -289,6 +288,9 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
     def is_valid(self):
         """Check that parameter values are valid for this tier."""
         if not self.is_test:
+            # Type check for proper types.
+            if np.isscalar(self.message_data['p_values']):
+                raise RuntimeError(f'{self.__class__.__name__} p_values must be a list.')
             for pv in self.message_data['p_values']:
                 if isinstance(pv, str):
                     pv = float(pv)
@@ -299,6 +301,8 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
                     raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
             elif not isinstance(self.message_data['t_bin_width'], float):
                 raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
+
+
         return True
 
 
@@ -306,7 +310,7 @@ class SNEWSTimingTierMessage(SNEWSMessage):
     """Message for SNEWS 2.0 timing tier."""
 
     reqfields = [ 'timing_series' ]
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val', 'is_test' ]
 
     def __init__(self, p_val=None, timing_series=None, **kwargs):
         super().__init__(self.fields,
@@ -326,6 +330,13 @@ class SNEWSTimingTierMessage(SNEWSMessage):
                 duration = (timeobj - datetime.utcnow()).total_seconds()
                 if (duration <= -172800.0) or (duration > 0.0):
                     raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
+
+                # p_val must be a float between 0 and 1
+                pv = self.message_data['p_val']
+                if isinstance(pv, str):
+                    pv = float(pv)
+                if not (0.0 <= pv <= 1.0):
+                    raise ValueError(f'{self.__class__.__name__} p_value of the detection must be between 0 and 1.')
         return True
 
 
@@ -333,7 +344,7 @@ class SNEWSRetractionMessage(SNEWSMessage):
     """Message for SNEWS 2.0 retractions."""
 
     reqfields = [ 'retract_latest' ]
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'retraction_reason' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'retraction_reason', 'is_test' ]
 
     def __init__(self, retract_latest=None, retraction_reason=None, **kwargs):
         super().__init__(self.fields,
@@ -352,7 +363,7 @@ class SNEWSHeartbeatMessage(SNEWSMessage):
     """Message for SNEWS 2.0 heartbeats."""
 
     reqfields = [ 'detector_status' ]
-    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time' ]
+    fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'is_test' ]
 
     def __init__(self, machine_time=None, detector_status=None, **kwargs):
         super().__init__(self.fields,
@@ -481,12 +492,16 @@ class SNEWSMessageBuilder:
         messages_to_send = []
 
         # append meta fields if the meta field is not in the other messages
+        meta_dict = {}
         for m in self.messages:
             mes = m.message_data
             met = m.meta
             for k, v in met.items():
+                # store meta fields to append later
+                # if the meta field is not in the other messages
                 if k not in fields_set:
-                    mes[k] = v
+                    meta_dict[k] = v
+            mes["meta"] = meta_dict
             messages_to_send.append(mes)
 
         with Publisher(env_path=env_file,

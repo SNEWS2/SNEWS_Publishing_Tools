@@ -122,7 +122,7 @@ class Subscriber:
             click.secho('Done', fg='green')
 
 
-    def subscribe_and_redirect_alert(self, outputfolder=None, auth=True):
+    def subscribe_and_redirect_alert(self, outputfolder=None, auth=True, _display=True, _return='file'):
         """ subscribe generator
         """
         outputfolder = outputfolder or self.default_output
@@ -139,8 +139,12 @@ class Subscriber:
                     message = message.content
                     # Save and display
                     file = save_message(message, outputfolder, return_file=True)
-                    snews_pt_utils.display_gif()
-                    display(message)
-                    yield file
+                    if _display:
+                        snews_pt_utils.display_gif()
+                        display(message)
+                    if _return == 'message':
+                        yield message
+                    else:
+                        yield file
         except KeyboardInterrupt:
             click.secho('Done', fg='green')

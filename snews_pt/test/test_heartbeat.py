@@ -12,11 +12,14 @@ def test_heartbeat_expected():
     assert len(hb.messages) == 1, f"Expected 1 Heartbeat Message got {len(hb.messages)}!"
 
     assert hb.messages[0].message_data == {'_id': 'XENONnT_Heartbeat_2012-06-09T15:30:00.000501',
-                                           'schema_version': '1.3.0',
+                                           'schema_version': '1.3.1',
                                            'detector_name': 'XENONnT',
                                            'machine_time': '2012-06-09T15:30:00.000501',
-                                           'detector_status': 'ON'}
-    assert hb.messages[0].meta == {'is_test': True, 'firedrill_mode': False}
+                                           'detector_status': 'ON',
+                                           'is_test': True}
+
+    # firedrill_mode is an argument of hb.send_messages(), so it becomes meta here
+    assert hb.messages[0].meta == {'firedrill_mode': False}
 
     # # check if valid snews format
     assert hb.messages[0].is_valid() is True, "Message is not valid"

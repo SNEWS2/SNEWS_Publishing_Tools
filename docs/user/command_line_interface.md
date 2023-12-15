@@ -76,15 +76,14 @@ instances where this data has been read but could not be send to server right aw
 ```
 In which case it displays the following
 ```bash
-         >The Message Schema for TimeTier
-         _id                 :(SNEWS SETS)
-         schema_version      :(SNEWS SETS)
-         detector_name       :(FETCHED FROM ENV XENONnT)
-         machine_time        :(User Input)
-         neutrino_time       :(User Input)
-         p_val               :(User Input)
-         timing_series       :(User Input*)
-         **kwargs            :(APPENDED AS 'META') 
+         > Message schema for SNEWSTimingTierMessage                                                                               
+         _id                  : (SET AUTOMATICALLY)
+         schema_version       : (SET AUTOMATICALLY)
+         detector_name        : (SET AUTOMATICALLY)
+         timing_series        : (REQUIRED USER INPUT)
+         machine_time         : (USER INPUT)
+         p_val                : (USER INPUT)
+         is_test              : (USER INPUT)
 ```
 or you can simply call `snews_pt message-schema all`  to display all the message schemes. <br>
 

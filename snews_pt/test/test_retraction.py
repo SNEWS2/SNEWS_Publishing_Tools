@@ -23,12 +23,15 @@ def test_retraction():
                                              is_test=True, firedrill_mode=False)
     assert retraction_message.selected_tiers == ["SNEWSRetractionMessage"]
     assert retraction_message.messages[0].message_data == {'_id': 'KamLAND_Retraction_2012-06-09T15:30:00.000501',
-                                                           'schema_version': '1.3.0',
+                                                           'schema_version': '1.3.1',
                                                            'detector_name': 'KamLAND',
                                                            'machine_time': '2012-06-09T15:30:00.000501',
                                                            'retract_latest': 1,
-                                                           'retraction_reason': None}, "created message data is wrong"
-    assert retraction_message.messages[0].meta == {'is_test': True, 'firedrill_mode': False}, "created meta is wrong"
+                                                           'retraction_reason': None,
+                                                           'is_test': True}, "created message data is wrong"
+
+    # firedrill_mode is an argument of retraction_message.send_messages(), so it becomes meta here
+    assert retraction_message.messages[0].meta == {'firedrill_mode': False}, "created meta is wrong"
     assert retraction_message.messages[0].is_valid() is True, "Invalid retraction message created"
 
     try:

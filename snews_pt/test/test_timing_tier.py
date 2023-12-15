@@ -12,13 +12,14 @@ def test_timing_expected():
     # # Check that message has expected structure.
     assert tims.selected_tiers == ['SNEWSTimingTierMessage']
     assert tims.messages[0].message_data == {'_id': 'XENONnT_TimingTier_2012-06-09T15:30:00.009876',
-                                             'schema_version': '1.3.0',
+                                             'schema_version': '1.3.1',
                                              'detector_name': 'XENONnT',
                                              'machine_time': '2012-06-09T15:30:00.009876',
                                              'p_val': None,
+                                             'is_test': True,
                                              'timing_series': ['2012-06-09T15:31:08.109876',
                                                                '2012-06-09T15:33:07.891011']}
-    assert tims.messages[0].meta == {'is_test': True, 'firedrill_mode': False}
+    assert tims.messages[0].meta == { 'firedrill_mode': False}
 
     assert tims.messages[0].is_valid() is True, "There are invalid messages"
 
