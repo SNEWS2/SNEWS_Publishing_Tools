@@ -9,8 +9,41 @@ import os, json
 from .core.logging import getLogger, log_file
 import warnings
 import click
-
+import numpy as np
 log_default = getLogger(__name__)
+
+def is_valid_iso_utc(text):
+  """
+  Checks if a string is a valid ISO 8601 UTC datetime string,
+  accepting any precision up to 12 digits and an optional Z.
+
+  Args:
+    text: The string to check.
+
+  Returns:
+    True if the string is a valid ISO 8601 UTC datetime string,
+    False otherwise.
+  """
+  pattern = r"^" \
+            r"(?P<year>\d{4})" \
+            r"(?:-(?P<month>\d{2}))" \
+            r"(?:-(?P<day>\d{2}))" \
+            r"(?:[Tt ](?P<hour>\d{2})" \
+            r"(?::(?P<minute>\d{2}))" \
+            r"(?::(?P<second>\d{2}))" \
+            r"(?:\.(?P<precision>\d{1,12})?)?)?" \
+            r"(?:Z)?" \
+            r"$"
+  match = re.match(pattern, text)
+  if not match:
+    return False
+  # Check if mandatory components are present
+  if not all([match.group(comp) for comp in ("year", "month", "day", "hour", "minute", "second")]):
+    return False
+  # Check if precision part is within limits (max 12 digits)
+  if match.group("precision") and len(match.group("precision")) > 12:
+    return False
+  return True
 
 # Check if detector name is in registered list.
 detector_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'auxiliary/detector_properties.json'))
@@ -185,7 +218,7 @@ class SnewsFormat:
 
         # it exists and string, check if ISO format, and reasonable
         try:
-            dateobj = fromisoformat(self.message["neutrino_time"])
+            dateobj = np.datetime64(self.message['neutrino_time'])
             self.log.info(f"\t> neutrino_time is ISO formattable.")
         except Exception as e:
             self.log.error("\t> neutrino_time does not match "
@@ -197,12 +230,16 @@ class SnewsFormat:
             # for tests, exact time is irrelevant
             self.log.info(f"\t> neutrino_time is checked for is_test=True, not checking time interval.")
             return True
+        now_datetime = datetime.utcnow()
+        now_datetime64 = np.datetime64(now_datetime)
+        time_delta = dateobj- now_datetime64
+        total_seconds = time_delta / np.timedelta64(1, 's')
 
-        if (dateobj - datetime.utcnow()).total_seconds() <= -172800.0:
+        if total_seconds <= -172800.0:
             self.log.error(f'\t> neutrino time is more than 48 hrs olds !\n')
             return False
 
-        if (dateobj - datetime.utcnow()).total_seconds() > 0:
+        if total_seconds > 0:
             self.log.error(f'\t> neutrino time comes from the future, please stop breaking causality.')
             return False
         # if all passed, return True
