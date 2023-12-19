@@ -15,18 +15,18 @@ import re
 log_default = getLogger(__name__)
 
 def is_valid_iso_utc(text):
-  """
-  Checks if a string is a valid ISO 8601 UTC datetime string,
-  accepting any precision up to 12 digits and an optional Z.
+    """
+    Checks if a string is a valid ISO 8601 UTC datetime string,
+    accepting any precision up to 12 digits and an optional Z.
 
-  Args:
+    Args:
     text: The string to check.
 
-  Returns:
+    Returns:
     True if the string is a valid ISO 8601 UTC datetime string,
     False otherwise.
-  """
-  pattern = r"^" \
+    """
+    pattern = r"^" \
             r"(?P<year>\d{4})" \
             r"(?:-(?P<month>\d{2}))" \
             r"(?:-(?P<day>\d{2}))" \
@@ -36,16 +36,16 @@ def is_valid_iso_utc(text):
             r"(?:\.(?P<precision>\d{1,12})?)?)?" \
             r"(?:Z)?" \
             r"$"
-  match = re.match(pattern, text)
-  if not match:
-    return False
+    match = re.match(pattern, text)
+    if not match:
+        return False
   # Check if mandatory components are present
-  if not all([match.group(comp) for comp in ("year", "month", "day", "hour", "minute", "second")]):
-    return False
+    if not all([match.group(comp) for comp in ("year", "month", "day", "hour", "minute", "second")]):
+        return False
   # Check if precision part is within limits (max 12 digits)
-  if match.group("precision") and len(match.group("precision")) > 12:
-    return False
-  return True
+    if match.group("precision") and len(match.group("precision")) > 12:
+        return False
+    return True
 
 # Check if detector name is in registered list.
 detector_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'auxiliary/detector_properties.json'))
