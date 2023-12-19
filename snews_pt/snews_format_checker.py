@@ -10,6 +10,8 @@ from .core.logging import getLogger, log_file
 import warnings
 import click
 import numpy as np
+import re
+
 log_default = getLogger(__name__)
 
 def is_valid_iso_utc(text):
