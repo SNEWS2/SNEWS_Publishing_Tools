@@ -315,9 +315,10 @@ class SNEWSTimingTierMessage(SNEWSMessage):
     def __init__(self, p_val=None, timing_series=None, **kwargs):
         super().__init__(self.fields,
                          p_val=p_val,
-                         timing_series=[self.clean_time_input(t) for t in timing_series],
+                         timing_series=timing_series, #[self.clean_time_input(t) for t in timing_series],
                          **kwargs)
 
+    # TODO: the timing series time check should be flexible to allow for floating point seconds from the initial time
     def is_valid(self):
         """Check that parameter values are valid for this tier."""
         for time in self.message_data['timing_series']:
