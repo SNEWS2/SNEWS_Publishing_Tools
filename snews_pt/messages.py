@@ -5,6 +5,7 @@ import os
 import click
 import json
 import numpy as np
+import pandas as pd
 from abc import ABC, abstractmethod
 
 from datetime import datetime
@@ -72,7 +73,7 @@ class Publisher:
         if type(messages) == dict:
             messages = list(messages)
         for message in messages:
-            message["sent_time"] = datetime.utcnow().isoformat()
+            message["sent_time"] = np.datetime_as_string(np.datetime64(datetime.utcnow().isoformat()), unit='ns')
             self.stream.write(JSONBlob(message))
             self.display_message(message)
 
@@ -84,6 +85,29 @@ class Publisher:
             if tier == 'Retraction':
                 click.secho("It's okay, we all make mistakes".upper(), fg='magenta')
             snews_pt_utils.prettyprint_dictionary(message)
+
+
+def clean_time_input(input_datetime):
+    """Get cleaned time string from input.
+
+    Parameters
+    ----------
+    input_datetime : np.datetime64, datetime.datetime, pd.Timestamp or str
+
+    Returns
+    -------
+        Time string in ISO format.
+    """
+    if input_datetime is None:
+        return np.datetime_as_string(np.datetime64(datetime.utcnow().isoformat()), unit='ns')
+
+    if isinstance(input_datetime, (str, np.datetime64, pd.Timestamp, datetime)):
+        # If the input is already a string or NumPy datetime64, return it as is
+        dt = np.datetime64(input_datetime)
+        return np.datetime_as_string(dt, unit='ns')
+    else:
+        raise ValueError(
+            f"Unsupported datetime type: {type(input_datetime)}. Supported types: str, np.datetime64, pd.Timestamp, datetime.datetime")
 
 
 class SNEWSMessage(ABC):
@@ -118,7 +142,7 @@ class SNEWSMessage(ABC):
         det = self.get_detector_name(detector_name) # just fetches from the env
         # det = snews_pt_utils.set_name(detector_name, _return=True) # rewrites the env each time
         raw_mt = kwargs.get('machine_time', None)
-        mt = self.clean_time_input(raw_mt)
+        mt = clean_time_input(raw_mt)
         raw_mt = mt if isinstance(raw_mt, str) else None
 
         # Store basic message ID, detector name, and schema in a dictionary.
@@ -170,27 +194,6 @@ class SNEWSMessage(ABC):
         else:
             detector_name = snews_pt_utils.set_name(detector_name, _return=True)
         return detector_name
-
-    def clean_time_input(self, time):
-        """Get cleaned time string from input.
-
-        Parameters
-        ----------
-        time : datetime or str
-            Input time.
-
-        Returns
-        -------
-        tmfmt : str
-            Time string in ISO format.
-        """
-        if time is None:
-            time = datetime.utcnow()
-
-        if isinstance(time, str):
-            time = fromisoformat(time)
-
-        return time.isoformat()
 
     def has_required_fields(self):
         """Validate the message on construction.
@@ -249,7 +252,7 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
 
     def __init__(self, neutrino_time=None, p_val=None, **kwargs):
         super().__init__(self.fields,
-                         neutrino_time=self.clean_time_input(neutrino_time),
+                         neutrino_time=clean_time_input(neutrino_time),
                          p_val=p_val,
                          **kwargs)
 
@@ -258,8 +261,8 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
             Detector name must be known, neutrino times must make sense, etc. if not test"""
         if not self.is_test:
             # time format is corrected at the base class, check if reasonable
-            dateobj = fromisoformat(self.message_data['neutrino_time'])
-            duration = (dateobj - datetime.utcnow()).total_seconds()
+            dateobj = np.datetime64(self.message_data['neutrino_time'])
+            duration = (dateobj - np.datetime64(datetime.utcnow()))/np.timedelta64(1, 's')
             if (duration <= -172800.0) or (duration > 0.0):
                 raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
 
@@ -302,7 +305,6 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
             elif not isinstance(self.message_data['t_bin_width'], float):
                 raise ValueError(f'{self.__class__.__name__} t_bin_width must be a float.')
 
-
         return True
 
 
@@ -315,19 +317,21 @@ class SNEWSTimingTierMessage(SNEWSMessage):
     def __init__(self, p_val=None, timing_series=None, **kwargs):
         super().__init__(self.fields,
                          p_val=p_val,
-                         timing_series=[self.clean_time_input(t) for t in timing_series],
+                         timing_series=[clean_time_input(t) for t in timing_series],
                          **kwargs)
 
     def is_valid(self):
         """Check that parameter values are valid for this tier."""
         for time in self.message_data['timing_series']:
             if isinstance(time, str):
-                time = fromisoformat(time)
-            time = time.isoformat()
+                time = np.datetime64(time)
+            else:
+                raise ValueError(f'{self.__class__.__name__} timing_series must be a list of strings.')
+
             if not self.is_test:
                 # time format is corrected at the base class, check if reasonable
-                timeobj = fromisoformat(time)
-                duration = (timeobj - datetime.utcnow()).total_seconds()
+                timeobj = np.datetime64(time)
+                duration = (timeobj - np.datetime64(datetime.utcnow())) / np.timedelta64(1, 's')
                 if (duration <= -172800.0) or (duration > 0.0):
                     raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
 
