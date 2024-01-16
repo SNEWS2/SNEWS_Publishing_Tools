@@ -5,7 +5,6 @@ import os
 import click
 import json
 import numpy as np
-import pandas as pd
 from abc import ABC, abstractmethod
 
 from datetime import datetime
@@ -92,7 +91,7 @@ def clean_time_input(input_datetime):
 
     Parameters
     ----------
-    input_datetime : np.datetime64, datetime.datetime, pd.Timestamp or str
+    input_datetime : np.datetime64, datetime.datetime or str
 
     Returns
     -------
@@ -101,7 +100,7 @@ def clean_time_input(input_datetime):
     if input_datetime is None:
         return np.datetime_as_string(np.datetime64(datetime.utcnow().isoformat()), unit='ns')
 
-    if isinstance(input_datetime, (str, np.datetime64, pd.Timestamp, datetime)):
+    if isinstance(input_datetime, (str, np.datetime64, datetime)):
         # If the input is already a string or NumPy datetime64, return it as is
         dt = np.datetime64(input_datetime)
         return np.datetime_as_string(dt, unit='ns')
