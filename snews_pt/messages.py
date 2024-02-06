@@ -314,6 +314,7 @@ class SNEWSTimingTierMessage(SNEWSMessage):
     fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val', 'is_test' ]
 
     def __init__(self, p_val=None, timing_series=None, **kwargs):
+        # TODO: timing series as float additions of nanoseconds to the initial neutrino time
         super().__init__(self.fields,
                          p_val=p_val,
                          timing_series=[clean_time_input(t) for t in timing_series],
