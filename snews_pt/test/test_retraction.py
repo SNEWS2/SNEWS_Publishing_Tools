@@ -22,7 +22,7 @@ def test_retraction():
                                              machine_time='2012-06-09T15:30:00.000501',
                                              is_test=True, firedrill_mode=False)
     assert retraction_message.selected_tiers == ["SNEWSRetractionMessage"]
-    assert retraction_message.messages[0].message_data == {'_id': 'KamLAND_Retraction_2012-06-09T15:30:00.000501',
+    assert retraction_message.messages[0].message_data == {'_id': 'KamLAND_Retraction_2012-06-09T15:30:00.000501000',
                                                            'schema_version': '1.3.1',
                                                            'detector_name': 'KamLAND',
                                                            'machine_time': '2012-06-09T15:30:00.000501',
