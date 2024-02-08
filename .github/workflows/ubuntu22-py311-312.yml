@@ -81,9 +81,6 @@ jobs:
     - name: Check version
       run: snews_pt --version
 
-    - name: Set iup hop auth
-      run: snews_pt hop auth set
-
     - name: Run pytest
       run: |
         pip install pytest
