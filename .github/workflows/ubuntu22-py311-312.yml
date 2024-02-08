@@ -39,9 +39,17 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+    - name: Install hop-client
+      run: |
+        pip install install setuptools wheel
+        wget https://github.com/scimma/hop-client/archive/refs/tags/v0.9.0.tar.gz
+        tar -xzf v0.9.0.tar.gz
+        cd hop-client-0.9.0
+        python setup.py install
+        cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
+
     - name: Install requirements
       run: |
-        cd /home/runner/work/SNEWS_Publishing_Tools/SNEWS_Publishing_Tools
         python -m pip install --upgrade pip
         pip install wheel
         pip install python-dotenv click tabulate
