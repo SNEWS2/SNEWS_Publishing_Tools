@@ -1,5 +1,6 @@
 import os
 import re
+
 from setuptools import find_packages, setup
 
 # read in README
@@ -21,21 +22,20 @@ with open('requirements.txt', 'r') as f:
 
 extras_require = {
     'dev': [
-        'autopep8',
-        'flake8',
-        'mongomock',
-        'pytest >= 5.0, < 5.4',
-        'pytest-console-scripts',
-        'pytest-cov',
-        'pytest-mongodb',
-        'pytest-runner',
-        'twine',
-        'schedule',
+        'pytest~=8.0',
+        'pytest-console-scripts~=1.4',
+        'pytest-cov~-4.1',
+        'pytest-mongodb~=2.4',
+        'pytest-runner~=6.0',
+        'virtualenv~=20.13',
     ],
     'docs': [
-        'sphinx',
-        'sphinx_rtd_theme',
-        'sphinxcontrib-programoutput'
+        'autoapi~=2.0',
+        'myst_parser~=2.0',
+        'sphinx~=7.2',
+        'sphinx-autoapi~=3.0',
+        'sphinx-rtd-theme~=2.0',
+        'sphinxcontrib-programoutput~=0.17',
     ],
 }
 
@@ -60,7 +60,7 @@ setup(
         ],
     },
 
-    python_requires='>=3.7',
+    python_requires='~=3.11',
     install_requires=install_requires,
     extras_require=extras_require,
 
