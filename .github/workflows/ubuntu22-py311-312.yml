@@ -42,7 +42,7 @@ jobs:
     - name: Install hop-client
       run: |
         pip install install setuptools wheel
-        wget https://github.com/scimma/hop-client/archive/refs/tags/v0.9.0.tar.gz
+        wget https://files.pythonhosted.org/packages/64/d1/108cea042128c7ea7790e15e12e3e5ed595bfcf4b051c34fe1064924beba/hop-client-0.9.0.tar.gz
         tar -xzf v0.9.0.tar.gz
         cd hop-client-0.9.0
         python setup.py install
