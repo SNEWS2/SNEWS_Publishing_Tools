@@ -69,6 +69,8 @@ jobs:
         send "$PASSWORD\n"
         expect "Hostname (may be empty):"
         send "kafka.scimma.org\n"
+        expect "Token endpoint (empty if not applicable):"
+        send "\n"
         expect eof
         HOP
         hop auth locate
@@ -78,6 +80,9 @@ jobs:
 
     - name: Check version
       run: snews_pt --version
+
+    - name: Set iup hop auth
+      run: snews_pt hop auth set
 
     - name: Run pytest
       run: |
