@@ -313,33 +313,40 @@ class SNEWSTimingTierMessage(SNEWSMessage):
     fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val', 'is_test' ]
 
     def __init__(self, p_val=None, timing_series=None, **kwargs):
+        # first convert the timing series into relative times
+        times = self.convert_times(timing_series)
         super().__init__(self.fields,
                          p_val=p_val,
-                         timing_series=timing_series,
+                         timing_series=times,
                          **kwargs)
+
+    def convert_times(self, timing_series):
+        if all([isinstance(t, str) for t in timing_series]):
+            # convert to numpy datetime objects
+            times_obj = np.array([np.datetime64(t) for t in timing_series]).astype('datetime64[ns]')
+            times_obj = np.sort(times_obj)
+            relative_times = (times_obj - times_obj[0]).astype('timedelta64[ns]') # make sure they are always ns precision
+            relative_times =  [int(t//np.timedelta64(1, 'ns')) for t in relative_times]
+        elif all([isinstance(t, (int, float)) for t in timing_series]):
+            # if they are relative, expect an initial neutrino time
+            # if "neutrino_time" not in self.meta:
+            #     raise ValueError(f'{self.__class__.__name__} neutrino_time must be provided if timing_series are relative.')
+            # then we assume they are relative times from the first neutrino time with ns precision
+            relative_times = timing_series if isinstance(timing_series, list) else list(timing_series)
+        else:
+            raise ValueError(f'{self.__class__.__name__} timing_series must be a list of isoformat strings or '
+                             f'ns-precision floats from the first neutrino time.')
+        return relative_times
+
 
     def is_valid(self):
         """Check that parameter values are valid for this tier.
             timing series can either be a list of iso-convertible strings or a list of floats."""
-        if all([isinstance(t, str) for t in self.message_data['timing_series']]):
-            # convert to numpy datetime objects
-            times_obj = np.array([np.datetime64(t) for t in self.message_data['timing_series']]).astype('datetime64[ns]')
-            times_obj = np.sort(times_obj)
-            relative_times = (times_obj - times_obj[0]).astype('timedelta64[ns]') # make sure they are always ns precision
-        elif all([isinstance(t, (int, float)) for t in self.message_data['timing_series']]):
-            # if they are relative, expect an initial neutrino time
-            if "neutrino_time" not in self.message_data:
-                raise ValueError(f'{self.__class__.__name__} neutrino_time must be provided if timing_series are relative.')
-            # then we assume they are relative times from the first neutrino time with ns precision
-            relative_times = np.array(self.message_data['timing_series'])
-        else:
-            raise ValueError(f'{self.__class__.__name__} timing_series must be a list of isoformat strings or '
-                             f'ns-precision floats from the first neutrino time.')
 
         if not self.is_test:
             # Check timing validity
             # expect to see a monotonic increase in the relative times
-            is_monotonic = np.all(np.diff(relative_times) >= 0)
+            is_monotonic = np.all(np.diff(self.message_data['timing_series']) >= 0)
             if not is_monotonic:
                 raise ValueError(f'{self.__class__.__name__} timing_series must be in increasing order. '
                                  f'They represent the time after initial neutrino time')
