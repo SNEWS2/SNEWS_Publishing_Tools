@@ -49,7 +49,7 @@ def publish(ctx, file, firedrill):
     click.clear()
     for f in file:
         if f.endswith('.json'):
-            SNEWSMessageBuilder.from_json(jsonfile=f, env_file=ctx.obj['env']).send_messages(firedrill_mode=firedrill)
+            SNEWSMessageBuilder.from_json(jsonfile=f, env_file=ctx.obj['env'], firedrill_mode=firedrill).send_messages()
 
         else:
             # maybe just print instead of raising
@@ -69,8 +69,8 @@ def heartbeat(ctx, status, time, firedrill):
     message = SNEWSMessageBuilder(detector_name=ctx.obj['DETECTOR_NAME'],
                                   machine_time=time,
                                   detector_status=status,
-                                  )
-    message.send_messages(firedrill_mode=firedrill)
+                                  firedrill_mode=firedrill)
+    message.send_messages()
 
 
 @main.command()
