@@ -11,11 +11,11 @@ def test_coincidence_expected():
     assert coin.selected_tiers == ['SNEWSCoincidenceTierMessage']
     assert len(coin.messages) == 1, f"Expected 1 CoincidenceTier Message got {len(coin.messages)}!"
 
-    assert coin.messages[0].message_data == {'_id': 'KamLAND_CoincidenceTier_2012-06-09T15:30:00.000501',
+    assert coin.messages[0].message_data == {'_id': 'KamLAND_CoincidenceTier_2012-06-09T15:30:00.000501000',
                                              'detector_name': 'KamLAND',
-                                             'machine_time': '2012-06-09T15:30:00.000501',
+                                             'machine_time': '2012-06-09T15:30:00.000501000',
                                              'schema_version': '1.3.1',
-                                             'neutrino_time': '2012-06-09T15:31:08.891011',
+                                             'neutrino_time': '2012-06-09T15:31:08.891011000',
                                              'is_test': True,
                                              'p_val': None}
 
