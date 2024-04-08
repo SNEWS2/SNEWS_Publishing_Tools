@@ -140,16 +140,16 @@ class SNEWSMessage(ABC):
         # Get the detector name from the input.
         det = self.get_detector_name(detector_name) # just fetches from the env
         # det = snews_pt_utils.set_name(detector_name, _return=True) # rewrites the env each time
-        raw_mt = kwargs.get('machine_time', None)
+        raw_mt = kwargs.pop('machine_time', None)
         mt = clean_time_input(raw_mt)
-        raw_mt = mt if isinstance(raw_mt, str) else None
+        # raw_mt = mt if isinstance(raw_mt, str) else None
 
         # Store basic message ID, detector name, and schema in a dictionary.
         self.message_data = dict(
             _id = f'{det}_{tier}_{mt}',
             schema_version = __version__,
             detector_name = det,
-            machine_time = raw_mt
+            machine_time = mt
             )
 
         self.is_test = kwargs.get('is_test', False)

@@ -14,7 +14,7 @@ def test_timing_expected():
     assert tims.messages[0].message_data == {'_id': 'XENONnT_TimingTier_2012-06-09T15:30:00.009876000',
                                              'schema_version': '1.3.1',
                                              'detector_name': 'XENONnT',
-                                             'machine_time': '2012-06-09T15:30:00.009876',
+                                             'machine_time': '2012-06-09T15:30:00.009876000',
                                              'p_val': None,
                                              'is_test': True,
                                              'timing_series': ['2012-06-09T15:31:08.109876000',

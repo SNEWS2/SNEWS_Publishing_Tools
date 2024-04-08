@@ -25,7 +25,7 @@ def test_retraction():
     assert retraction_message.messages[0].message_data == {'_id': 'KamLAND_Retraction_2012-06-09T15:30:00.000501000',
                                                            'schema_version': '1.3.1',
                                                            'detector_name': 'KamLAND',
-                                                           'machine_time': '2012-06-09T15:30:00.000501',
+                                                           'machine_time': '2012-06-09T15:30:00.000501000',
                                                            'retract_latest': 1,
                                                            'retraction_reason': None,
                                                            'is_test': True}, "created message data is wrong"
