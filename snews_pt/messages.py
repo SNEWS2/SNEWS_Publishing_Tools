@@ -307,30 +307,34 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
 
 
 class SNEWSTimingTierMessage(SNEWSMessage):
-    """Message for SNEWS 2.0 timing tier."""
+    """ Message for SNEWS 2.0 timing tier.
+        `timing_series` can either be list of string or nanosecond-precision integers
+        representing the time after the initial neutrino time.
+    """
 
-    reqfields = [ 'timing_series' ]
+    reqfields = [ 'timing_series', 'neutrino_time' ]
     fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val', 'is_test' ]
 
-    def __init__(self, p_val=None, timing_series=None, **kwargs):
+    def __init__(self, p_val=None, timing_series=None, neutrino_time=None, **kwargs):
+        initial_nu_time_str = clean_time_input(neutrino_time)
+        initial_nu_time_object = np.datetime64(initial_nu_time_str).astype('datetime64[ns]')
         # first convert the timing series into relative times
-        times = self.convert_times(timing_series)
+        times = self._convert_times(timing_series, initial_neutrino_time=initial_nu_time_object)
         super().__init__(self.fields,
                          p_val=p_val,
                          timing_series=times,
+                         neutrino_time=initial_nu_time_str,
                          **kwargs)
 
-    def convert_times(self, timing_series):
+    def _convert_times(self, timing_series, initial_neutrino_time):
         if all([isinstance(t, str) for t in timing_series]):
             # convert to numpy datetime objects
             times_obj = np.array([np.datetime64(t) for t in timing_series]).astype('datetime64[ns]')
             times_obj = np.sort(times_obj)
-            relative_times = (times_obj - times_obj[0]).astype('timedelta64[ns]') # make sure they are always ns precision
-            relative_times =  [int(t//np.timedelta64(1, 'ns')) for t in relative_times]
+            initial_neutrino_time = times_obj[0] if initial_neutrino_time is None else initial_neutrino_time
+            # make sure they are always ns precision
+            relative_times = (times_obj - initial_neutrino_time).astype('timedelta64[ns]').astype(int).tolist()
         elif all([isinstance(t, (int, float)) for t in timing_series]):
-            # if they are relative, expect an initial neutrino time
-            # if "neutrino_time" not in self.meta:
-            #     raise ValueError(f'{self.__class__.__name__} neutrino_time must be provided if timing_series are relative.')
             # then we assume they are relative times from the first neutrino time with ns precision
             relative_times = timing_series if isinstance(timing_series, list) else list(timing_series)
         else:
