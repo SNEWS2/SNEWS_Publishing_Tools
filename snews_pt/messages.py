@@ -331,7 +331,6 @@ class SNEWSTimingTierMessage(SNEWSMessage):
             # convert to numpy datetime objects
             times_obj = np.array([np.datetime64(t) for t in timing_series]).astype('datetime64[ns]')
             times_obj = np.sort(times_obj)
-            initial_neutrino_time = times_obj[0] if initial_neutrino_time is None else initial_neutrino_time
             # make sure they are always ns precision
             relative_times = (times_obj - initial_neutrino_time).astype('timedelta64[ns]').astype(int).tolist()
         elif all([isinstance(t, (int, float)) for t in timing_series]):
