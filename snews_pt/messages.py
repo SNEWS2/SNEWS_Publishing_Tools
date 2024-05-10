@@ -6,7 +6,6 @@ import click
 import json
 import numpy as np
 from abc import ABC, abstractmethod
-
 from datetime import datetime
 try:
     fromisoformat = datetime.fromisoformat
@@ -308,39 +307,59 @@ class SNEWSSignificanceTierMessage(SNEWSMessage):
 
 
 class SNEWSTimingTierMessage(SNEWSMessage):
-    """Message for SNEWS 2.0 timing tier."""
+    """ Message for SNEWS 2.0 timing tier.
+        `timing_series` can either be list of string or nanosecond-precision integers
+        representing the time after the initial neutrino time.
+    """
 
-    reqfields = [ 'timing_series' ]
+    reqfields = [ 'timing_series', 'neutrino_time' ]
     fields = SNEWSMessage.basefields + reqfields + [ 'machine_time', 'p_val', 'is_test' ]
 
-    def __init__(self, p_val=None, timing_series=None, **kwargs):
-        # TODO: timing series as float additions of nanoseconds to the initial neutrino time
+    def __init__(self, p_val=None, timing_series=None, neutrino_time=None, **kwargs):
+        initial_nu_time_str = clean_time_input(neutrino_time)
+        initial_nu_time_object = np.datetime64(initial_nu_time_str).astype('datetime64[ns]')
+        # first convert the timing series into relative times
+        times = self._convert_times(timing_series, initial_neutrino_time=initial_nu_time_object)
         super().__init__(self.fields,
                          p_val=p_val,
-                         timing_series=[clean_time_input(t) for t in timing_series],
+                         timing_series=times,
+                         neutrino_time=initial_nu_time_str,
                          **kwargs)
 
+    def _convert_times(self, timing_series, initial_neutrino_time):
+        if all([isinstance(t, str) for t in timing_series]):
+            # convert to numpy datetime objects
+            times_obj = np.array([np.datetime64(t) for t in timing_series]).astype('datetime64[ns]')
+            times_obj = np.sort(times_obj)
+            # make sure they are always ns precision
+            relative_times = (times_obj - initial_neutrino_time).astype('timedelta64[ns]').astype(int).tolist()
+        elif all([isinstance(t, (int, float)) for t in timing_series]):
+            # then we assume they are relative times from the first neutrino time with ns precision
+            relative_times = timing_series if isinstance(timing_series, list) else list(timing_series)
+        else:
+            raise ValueError(f'{self.__class__.__name__} timing_series must be a list of isoformat strings or '
+                             f'ns-precision floats from the first neutrino time.')
+        return relative_times
+
+
     def is_valid(self):
-        """Check that parameter values are valid for this tier."""
-        for time in self.message_data['timing_series']:
-            if isinstance(time, str):
-                time = np.datetime64(time)
-            else:
-                raise ValueError(f'{self.__class__.__name__} timing_series must be a list of strings.')
+        """Check that parameter values are valid for this tier.
+            timing series can either be a list of iso-convertible strings or a list of floats."""
 
-            if not self.is_test:
-                # time format is corrected at the base class, check if reasonable
-                timeobj = np.datetime64(time)
-                duration = (timeobj - np.datetime64(datetime.utcnow())) / np.timedelta64(1, 's')
-                if (duration <= -172800.0) or (duration > 0.0):
-                    raise ValueError(f'{self.__class__.__name__} neutrino_time must be within 48 hours of now.')
+        if not self.is_test:
+            # Check timing validity
+            # expect to see a monotonic increase in the relative times
+            is_monotonic = np.all(np.diff(self.message_data['timing_series']) >= 0)
+            if not is_monotonic:
+                raise ValueError(f'{self.__class__.__name__} timing_series must be in increasing order. '
+                                 f'They represent the time after initial neutrino time')
 
-                # p_val must be a float between 0 and 1
-                pv = self.message_data['p_val']
-                if isinstance(pv, str):
-                    pv = float(pv)
-                if not (0.0 <= pv <= 1.0):
-                    raise ValueError(f'{self.__class__.__name__} p_value of the detection must be between 0 and 1.')
+            # p_val must be a float between 0 and 1
+            pv = self.message_data['p_val']
+            if isinstance(pv, str):
+                pv = float(pv)
+            if not (0.0 <= pv <= 1.0):
+                raise ValueError(f'{self.__class__.__name__} p_value of the detection must be between 0 and 1.')
         return True
 
 
