@@ -2,7 +2,7 @@ name: Mac 12 Python 3.11-12
 
 on:
   push:
-    branches: [ smolsky/testing ]
+    branches: [ main ]
 
 jobs:
   build:
