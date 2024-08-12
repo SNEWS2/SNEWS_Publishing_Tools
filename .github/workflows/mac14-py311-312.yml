@@ -3,7 +3,7 @@ name: Mac 14
 
 on:
   push:
-    branches: [ smolsky/testing ]
+    branches: [ main ]
 
 jobs:
   build:
