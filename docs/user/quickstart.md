@@ -1,19 +1,20 @@
 # Quickstart
 
 Install the `snews_pt` package with its dependancies following the [installation guide](./installation.md).
-The `snews_pt` package allows you to interact with the SNEWS server. As a user you can `subscribe` to receive alert messages 
-issued by the server, `publish` the observation messages of your experiment, and send some `commands` to server to e.g. test your connection, request feedback regarding your previous heartbeats.
+The `snews_pt` package allows you to interact with the SNEWS2.0 server. <br> 
 
-There are 2 main data streams that we use, as a SNEWS member, you have a *write-only* access to one of them so you can `publish` 
-your observation messages triggered by your experiment, and you have a *read-only* access to the other so that you can `subscribe` and receive the alerts triggered by the server.
+User can subscribe to the alert messages and publish their observation messages to the server. <br>
+This is done using the scimma's hopskotch client. For more on hopskotch and the available topics, see [here](./hopskotch.md).
 
-There is a third topic used for connection testing. Users also have *read-only* access to this topic. The connection testing is explained in the remote-commands section.
-
-In order to have access to these topics, hop-client credentials are required.
+First you need to generate credentials and join the snews group. 
 
 ## 1) Hop-Credentials
+
+Go to [https://my.hop.scimma.org/hopauth](https://my.hop.scimma.org/hopauth) and generate account and request access to the SNEWS user group. 
+See [this page](https://github.com/scimma/hop-client/wiki/Tutorial:-using-hop-client-with-the-SCiMMA-Hopskotch-server) for help.
+
 ### 1.1) Setup hop-client 
-`hop-client` is installed as a requirement for `snews_pt` test if you have it using your terminal.
+`hop-client` should already be installed as a requirement for `snews_pt` confirm your installation by checking the version
 ```bash
 hop --version
 ```
@@ -25,16 +26,18 @@ pip install -U hop-client
 ----------------------- OR
 conda install -c conda-forge hop-client
 ```
-You will need to request access to the SNEWS user group in SCIMMA Hopskotch via CILogon at https://my.hop.scimma.org/hopauth. 
-For more information, see the [SCiMMA IAM docs](https://hop.scimma.org/IAM/Instructions/JoinInstitute) or the [Hopskotch Authenticator docs](https://github.com/scimma/scimma-admin/blob/master/doc/hopauth_guide.md#hopauth-for-users) for account management help.
 
-Once you are on [hop's page](https://my.hop.scimma.org/hopauth) login with to your account add credentials (the plus icon on the top left) and store your username and password. On your local machine, you need to add this credentials to your `hop-client`.
+Once you are on [hopauth page](https://my.hop.scimma.org/hopauth) login with to your account and add credentials (the plus icon on the top left) and store your username and password.<br> 
+
+On your local machine, you need to add this credentials to your `hop-client`.
 Checkout `hop auth --help` on your terminal for instructions. You can add your username-password using `hop auth add`. Once it is done, your local computer knows about your credentials, and it can interact with the topics that credential has access to.
 
 ### 1.2) Request permissions
 You now have a hop account and newly created credentials, however, you still do not have access to SNEWS topics. For that, you are first required to be added to the 
-SNEWS User group by one of the admins. For that please contact us on SNEWS slack, on the implementation channel. <br>
-Once you have access to SNEWS user group, you can add permissions to the following topics;<br>
+SNEWS User group by one of the admins. For that please contact us on SNEWS slack, on the implementation channel. 
+Different groups and the topics are detailed in [hopskotch page](./hopskotch.md)<br>
+
+Once you have access to certain SNEWS user group, you can add permissions to the following topics;<br>
 (These topics might change during the development)<br>
 - snews.alert
 - snews.alert-firedrill
@@ -42,13 +45,31 @@ Once you have access to SNEWS user group, you can add permissions to the followi
 - snews.experiments-firedrill
 - snews.connection-testing
 
-<img src="../required_permissions.png" alt="Required Permissions" width="2000"/>
-"alert" topics are to be subscribed and "experiments" to be published. Once you have access to these topics, they can be set in `snews_pt` once within the environment file to ease process.
+<img src="../_static/images/required_permissions.png" alt="Required Permissions" width="2000"/>
+
+"alert" topics are to be subscribed and "experiments" topics are to be published. `snews_pt` uses these topics to interact with the server. <br>
+The `snews_pt` package includes the default observation and alert topics for both firedrill and non-firedrill cases. However, different topics can also be specified. See the next section.
 
 ## 2) Configurations
+ 
+The package comes with a default configuration file that contains some useful information. 
+This file can be found under [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/test-config.env) and looks like this;
+```python
+DETECTOR_NAME='TEST'
+HAS_NAME_CHANGED='0'
+...
+HOP_BROKER="kafka.scimma.org"
 
-There are a few simple settings that can be modified depending on your needs like the `detector name` or the 
-`output path` to store the incoming alert messages, or the topic names. These are stored in [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/test-config.env) file. 
+OBSERVATION_TOPIC="kafka://${HOP_BROKER}/snews.experiments-test"
+ALERT_TOPIC="kafka://${HOP_BROKER}/snews.alert-test"
+PRODUCTION_TOPIC=""
+
+FIREDRILL_OBSERVATION_TOPIC="kafka://${HOP_BROKER}/snews.experiments-firedrill"
+FIREDRILL_ALERT_TOPIC="kafka://${HOP_BROKER}/snews.alert-firedrill"
+CONNECTION_TEST_TOPIC="kafka://${HOP_BROKER}/snews.connection-testing"
+```
+The file can fetch the topics and can also be aware of the detector's name thus reducing the manual tasks. 
+As long as you have "TEST" as your detector name, software will raise a warning and remind you to change it. <br>
 
 Once you install the `snews_pt` you can set your experiments name either by changing this file, or running the following command on a python API;
 ```python
@@ -64,9 +85,12 @@ snews_pt set-name
 
 **You only need to this once**. As long as you do not set a valid name, `snews_pt` will keep complaining. Once the name is set, the `HAS_NAME_CHANGED` argument will be changed to 1 to indicate the program not to ask again.
 
+> Warning: If you run tests, each time you use a different detector name, this file will change. Be aware that unless the detector name is not passed explicitly it will fetch it from this file.
+
+
 Similarly, if you wish to use a different topic as the "alert topic" or "observation topic" instead of the default ones. You can change these entries in the environment file.
 
-> Once you set these, you are ready to publish your observations and subscribe to alerts!
+ Once you set these, you are ready to publish your observations and subscribe to alerts!
 
 ## 3) Interact with the Server
 ### 3.1) Test your connection
@@ -78,7 +102,7 @@ snews_pt test-connection --no-firedrill
 ```
 Sometimes the "firedrill" broker is running, if that is the case you can omit `--no-firedrill` flag.
 
-<img src="../test-connection-screenshot.png" alt="test connection" width="2000"/>
+<img src="../_static/images/test-connection-screenshot.png" alt="test connection" width="2000"/>
 
 ### 3.2) Subscribe and Publish
 Here is a quick start for subscribing to alert messages and sending 
