@@ -116,6 +116,8 @@ snews_pt subscribe
 snews_pt publish my_json_message.json
 ```
 
+For more information, see the respective pages for [publish](./publishing_protocols.md) and [subscribe](./subscribing_protocols.md).
+
 ## 4) Further Use  
 
 You can find further documentation regarding the use of `snews_pt` in index. 
