@@ -71,7 +71,7 @@ user$: snews_pt get-feedback --no-firedrill
 
 We have a list of experiment contact people, and only if the e-mail - experiment combination matches the list we have, we send emails to those addresses. 
 
-<img src="../_static/images/example_publishing.png" alt="test connection" width="2000"/>
+[//]: # (<img src="../_static/images/example_publishing.png" alt="test connection" width="2000"/>)
 
 
 
