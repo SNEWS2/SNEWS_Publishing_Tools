@@ -16,6 +16,7 @@ User's Guide
    user/remote_commands
    user/command_line_interface
    user/firedrills
+   user/faq
 
 
 API Reference
