@@ -1,5 +1,5 @@
 # SNEWS Publishing Tool
-<img src="docs/custom_logo.png" alt="snews_logo" width="200"/> 
+<img src="docs/_static/images/custom_logo.png" alt="snews_logo" width="200"/> 
 
 [![Documentation Status](https://readthedocs.org/projects/snews-publishing-tools/badge/?version=latest)](https://snews-publishing-tools.readthedocs.io/en/latest/?badge=latest)
 [![PyPI](https://img.shields.io/pypi/v/snews_pt)](https://pypi.org/project/snews_pt/)
