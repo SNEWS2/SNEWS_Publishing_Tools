@@ -9,9 +9,9 @@ If you have a question that is not answered here, please feel free to open an is
 Easiest is to follow the instructions in the [Quick Start](https://snews-publishing-tools.readthedocs.io/en/latest/user/quickstart.html) guide. <br>
 Once created you can add your credentials from the terminal
     
-    ```bash
-    hop auth add
-    ```
+```bash
+hop auth add
+```
 which will prompt you to enter your username and password. Then your credentials will be stored on your local machine (`hop auth locate`).
 You do not need to do anything else, as snews_pt will automatically use these credentials when you publish or subscribe to the SNEWS servers.
 
