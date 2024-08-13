@@ -69,6 +69,8 @@ jobs:
         expect eof
         HOP
         hop auth locate
+        mkdir -p /Users/runner/.config/hop
+        cp /home/runner/.config/hop/auth.toml /Users/runner/.config/hop/auth.toml
         ls -al /Users/runner/.config/hop/
 
     - name: Install snews-pt
