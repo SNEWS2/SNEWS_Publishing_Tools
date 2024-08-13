@@ -69,7 +69,6 @@ jobs:
         expect eof
         HOP
         hop auth locate
-        mkdir -p /Users/runner/.config/hop
         
     - name: Check hop auth directory and proceed
       run: |

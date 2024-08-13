@@ -73,7 +73,6 @@ jobs:
         expect eof
         HOP
         hop auth locate
-        ls -al /Users/runner/.config/hop/
 
     - name: Install snews-pt
       run:  pip install .
