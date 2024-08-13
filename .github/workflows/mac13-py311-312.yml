@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
 
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: macos-13
@@ -33,6 +37,15 @@ jobs:
     # - name: Install hop-client
     #   run: conda install -c conda-forge hop-client
 
+    - name: Install hop-client
+      run: |
+        pip install setuptools wheel
+        wget https://files.pythonhosted.org/packages/64/d1/108cea042128c7ea7790e15e12e3e5ed595bfcf4b051c34fe1064924beba/hop-client-0.9.0.tar.gz
+        tar -xzf hop-client-0.9.0.tar.gz
+        cd hop-client-0.9.0
+        python setup.py install
+        cd $GITHUB_WORKSPACE
+
     - name: Install requirements
       run: |
         python -m pip install --upgrade pip
@@ -52,6 +65,8 @@ jobs:
         send "$PASSWORD\n"
         expect "Hostname (may be empty):"
         send "kafka.scimma.org\n"
+        expect "Token endpoint (empty if not applicable):"
+        send "\n"
         expect eof
         HOP
         hop auth locate
@@ -65,4 +80,4 @@ jobs:
     - name: Run pytest
       run: |
         pip install pytest
-        pytest
+        pytest snews_pt
