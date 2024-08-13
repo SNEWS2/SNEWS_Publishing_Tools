@@ -71,25 +71,6 @@ jobs:
         expect eof
         HOP
         hop auth locate
-        
-    - name: Check hop auth directory and proceed
-      run: |
-        if [ -d "/home/runner/.config/hop/" ]; then
-          echo "Using /home/runner/.config/hop/"
-          ls /home/runner/.config/hop/
-          export HOP_AUTH_PATH="/home/runner/.config/hop/auth.toml"
-        elif [ -d "/Users/runner/.config/hop/" ]; then
-          echo "Using /Users/runner/.config/hop/"
-          ls /Users/runner/.config/hop/
-          export HOP_AUTH_PATH="/Users/runner/.config/hop/auth.toml"
-        else
-          echo "Neither directory exists. Exiting."
-          exit 1
-        fi
-    
-        # You can now use $HOP_AUTH_PATH for further actions
-        echo "Hop auth path is set to $HOP_AUTH_PATH"
-
 
     - name: Install snews-pt
       run:  pip install .
