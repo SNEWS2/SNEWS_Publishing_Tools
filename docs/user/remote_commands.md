@@ -21,7 +21,7 @@ On CLI
 ```bash
 snews_pt test-connection
 ```
-<img src="../test-connection-screenshot.png" alt="test connection" width="708"/>
+<img src="../_static/images/test-connection-screenshot.png" alt="test connection" width="708"/>
 
 Here `snews_pt` opens the observation stream and submits the following message with the current timestamp
 ```
@@ -71,7 +71,7 @@ user$: snews_pt get-feedback --no-firedrill
 
 We have a list of experiment contact people, and only if the e-mail - experiment combination matches the list we have, we send emails to those addresses. 
 
-<img src="../example_publishing.png" alt="test connection" width="2000"/>
+[//]: # (<img src="../_static/images/example_publishing.png" alt="test connection" width="2000"/>)
 
 
 

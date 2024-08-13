@@ -10,11 +10,13 @@ User's Guide
    index
    user/installation
    user/quickstart
+   user/hopskotch
    user/publishing_protocols
    user/subscribing
    user/remote_commands
    user/command_line_interface
    user/firedrills
+   user/faq
 
 
 API Reference
