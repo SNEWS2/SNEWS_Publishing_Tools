@@ -96,6 +96,6 @@ another message for the "Significance Tier" because the `p_values` together with
 
 Here the `p_val` is the p value of the detection, and it is optional. The `detector_name` can be passed manually, however, if the name is initially set, this is also not needed.
 
-<img src="../example_publishing.png" alt="Publication example" width="2000"/>
+<img src="../_static/images/example_publishing.png" alt="Publication example" width="2000"/>
 
 
