@@ -500,6 +500,13 @@ class SNEWSMessageBuilder:
                     self.messages.append(smc(**nonull_kwargs))
                 self.selected_tiers.append(smc.__name__)
 
+        # add a heartbeat if observation exist but HB doesn't
+        if any(tier in self.selected_tiers for tier in
+               [SNEWSCoincidenceTierMessage.__name__, SNEWSSignificanceTierMessage.__name__, SNEWSTimingTierMessage.__name__]):
+            if SNEWSHeartbeatMessage.__name__ not in self.selected_tiers:
+                self.messages.append(SNEWSHeartbeatMessage(detector_status="ON"))
+                self.selected_tiers.append(SNEWSHeartbeatMessage.__name__)
+
     @classmethod
     def from_json(cls, jsonfile, **kwargs):
         """Build SNEWSMessage instances using a message in JSON format.
