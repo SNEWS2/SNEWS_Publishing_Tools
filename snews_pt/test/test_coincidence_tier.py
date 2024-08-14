@@ -8,8 +8,8 @@ def test_coincidence_expected():
                                neutrino_time='2012-06-09T15:31:08.891011',
                                firedrill_mode=False, is_test=True)
     # Check that message has expected structure.
-    assert coin.selected_tiers == ['SNEWSCoincidenceTierMessage']
-    assert len(coin.messages) == 1, f"Expected 1 CoincidenceTier Message got {len(coin.messages)}!"
+    assert coin.selected_tiers == ['SNEWSCoincidenceTierMessage', 'SNEWSHeartbeatMessage']
+    assert len(coin.messages) == 2, f"Expected 1(+1 HB) CoincidenceTier Message got {len(coin.messages)}!"
 
     assert coin.messages[0].message_data == {'_id': 'KamLAND_CoincidenceTier_2012-06-09T15:30:00.000501000',
                                              'detector_name': 'KamLAND',

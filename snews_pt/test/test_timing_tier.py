@@ -15,7 +15,7 @@ def test_timing_expected():
                                firedrill_mode=False, is_test=True)
 
     # # Check that message has expected structure.
-    assert tims.selected_tiers == ['SNEWSCoincidenceTierMessage', 'SNEWSTimingTierMessage']
+    assert tims.selected_tiers == ['SNEWSCoincidenceTierMessage', 'SNEWSTimingTierMessage', 'SNEWSHeartbeatMessage']
     assert tims.messages[1].message_data == {'_id': 'XENONnT_TimingTier_2012-06-09T15:30:00.009876000',
                                              'schema_version': '1.3.1',
                                              'detector_name': 'XENONnT',
@@ -47,7 +47,7 @@ def test_timing_expected_with_floats():
                                firedrill_mode=False, is_test=True)
 
     # # Check that message has expected structure.
-    assert tims.selected_tiers == ['SNEWSCoincidenceTierMessage', 'SNEWSTimingTierMessage']
+    assert tims.selected_tiers == ['SNEWSCoincidenceTierMessage', 'SNEWSTimingTierMessage', 'SNEWSHeartbeatMessage']
     assert tims.messages[1].message_data == {'_id': 'XENONnT_TimingTier_2012-06-09T15:30:00.009876000',
                                              'schema_version': '1.3.1',
                                              'detector_name': 'XENONnT',

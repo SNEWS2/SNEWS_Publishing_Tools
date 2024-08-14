@@ -15,7 +15,7 @@ def test_significance_expected():
                                is_test=True)
 
     # Check that message has expected structure.
-    assert sign.selected_tiers == ['SNEWSCoincidenceTierMessage', 'SNEWSSignificanceTierMessage']
+    assert sign.selected_tiers == ['SNEWSCoincidenceTierMessage', 'SNEWSSignificanceTierMessage', 'SNEWSHeartbeatMessage']
     assert sign.messages[0].message_data == {'_id': 'DS-20K_CoincidenceTier_2012-06-09T15:30:00.000501000',
                                              'schema_version': '1.3.1',
                                              'detector_name': 'DS-20K',
