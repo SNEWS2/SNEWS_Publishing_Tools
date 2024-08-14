@@ -8,7 +8,7 @@ def test_retraction():
                                firedrill_mode=False, is_test=True)
 
     # Check that message has expected structure.
-    assert coin.selected_tiers == ["SNEWSCoincidenceTierMessage"]
+    assert coin.selected_tiers == ["SNEWSCoincidenceTierMessage", 'SNEWSHeartbeatMessage']
     assert coin.messages[0].is_valid() is True, "Invalid coincidence message created"
     # Try to send message to SNEWS 2.0 server.
     try:
