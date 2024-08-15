@@ -69,6 +69,7 @@ class SnewsFormat:
         self.log = log or log_default
         self.bypass = False # bypass if retraction, or remote command (bypasses all time checks!)
         self.is_test = self.check_if_test() # if True, don't check if times are reasonable (still checks format!)
+        print(type(self.is_test), self.is_test)
 
     def __call__(self, *args, **kwargs):
         msg_as_json = json.dumps(self.message, sort_keys=True, indent=4)

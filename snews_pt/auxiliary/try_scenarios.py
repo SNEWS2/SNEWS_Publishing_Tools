@@ -38,7 +38,6 @@ try:
                         time.sleep(1)
                         # clear cache after each scenario
                     with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
-
                         reset_cache(firedrill=fd_mode, is_test=is_test)
                         print('> Cache cleaned\n')
         except KeyboardInterrupt:
