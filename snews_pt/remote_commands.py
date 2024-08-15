@@ -125,7 +125,8 @@ def reset_cache(detector_name=None, admin_pass=None, firedrill=True, is_test=Tru
     message = {'_id': '0_hard-reset',
                'pass': passw,
                'detector_name':detector_name,
-               'meta':{'is_test':is_test}}
+               'is_test': is_test,
+               'meta':{}}
 
     topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
     pubstream = Stream(until_eos=True, auth=True)
