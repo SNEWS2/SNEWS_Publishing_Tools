@@ -266,6 +266,9 @@ class SNEWSCoincidenceTierMessage(SNEWSMessage):
 
             # p_val must be a float between 0 and 1
             pv = self.message_data['p_val']
+            if pv is None:
+                # it is not a required argument, check only if it is not None
+                return True
             if isinstance(pv, str):
                 pv = float(pv)
             if not (0.0 <= pv <= 1.0):
@@ -356,6 +359,9 @@ class SNEWSTimingTierMessage(SNEWSMessage):
 
             # p_val must be a float between 0 and 1
             pv = self.message_data['p_val']
+            if pv is None:
+                # it is not a required argument, check only if it is not None
+                return True
             if isinstance(pv, str):
                 pv = float(pv)
             if not (0.0 <= pv <= 1.0):
