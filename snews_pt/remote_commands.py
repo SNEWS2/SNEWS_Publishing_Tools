@@ -107,7 +107,7 @@ def write_hb_logs(detector_name=None, admin_pass=None, firedrill=True):
                 fg='blue', bold=True)
 
 
-def reset_cache(detector_name=None, admin_pass=None, firedrill=True):
+def reset_cache(detector_name=None, admin_pass=None, firedrill=True, is_test=True):
     """ If authorized, drop the current cache at the server
 
         Parameters
@@ -125,7 +125,7 @@ def reset_cache(detector_name=None, admin_pass=None, firedrill=True):
     message = {'_id': '0_hard-reset',
                'pass': passw,
                'detector_name':detector_name,
-               'meta':{}}
+               'meta':{'is_test':is_test}}
 
     topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC") if firedrill else os.getenv("OBSERVATION_TOPIC")
     pubstream = Stream(until_eos=True, auth=True)

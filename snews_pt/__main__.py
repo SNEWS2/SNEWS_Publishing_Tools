@@ -144,12 +144,13 @@ def message_schema(ctx, requested_tier):
 
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
-def run_scenarios(firedrill):
+@click.option('--test/--no-test', default=True, show_default='True', help='If False sends them to main topic!')
+def run_scenarios(firedrill, test):
     """
     """
     base = os.path.dirname(os.path.realpath(__file__))
     path = os.path.join(base, 'auxiliary/try_scenarios.py')
-    os.system(f'python3 {path} {firedrill}')
+    os.system(f'python3 {path} {firedrill} {test}')
 
 @main.command()
 @click.option('--name', '-n', default="TEST", show_default='TEST', help='Set the detectors name')
@@ -193,15 +194,17 @@ def write_hb_logs(ctx, firedrill):
 
 @main.command()
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--test/--no-test', default=True, show_default='True', help='If True cleans the test cache')
 @click.pass_context
-def reset_cache(ctx, firedrill):
+def reset_cache(ctx, firedrill, test):
     """ REQUIRES AUTHORIZATION
         If authorized, drop the current cache at the server
     """
     from .remote_commands import reset_cache
     reset_cache(detector_name=ctx.obj['DETECTOR_NAME'],
                 admin_pass=ctx.obj['USER_PASS'],
-                firedrill=firedrill)
+                firedrill=firedrill,
+                is_test=test)
 
 
 @main.command()

@@ -2,7 +2,10 @@
 import json, click, time, sys
 from os import path as osp
 from snews_pt.messages import SNEWSMessageBuilder, Publisher
+from snews_pt.remote_commands import reset_cache
+
 fd_mode = True if sys.argv[1].lower() == "true" else False
+is_test = True if sys.argv[2].lower() == "true" else False
 
 with open(osp.join(osp.dirname(__file__), "scenarios.json")) as json_file:
     data = json.load(json_file)
@@ -24,11 +27,8 @@ try:
                     click.secho("Terminating.")
                     sys.exit()
                 elif scenario=="restart cache":
-                    with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
-                        #passw = os.getenv("ADMIN_PASS", "NO_AUTH") # need a better test-broker / test-cache
-                        pub.send([{'_id': '0_hard-reset_', 'pass': 'very1secret2password', 'detector_name':'XENONnT',
-                                   'meta':{}}])
-                        print('> Cache cleaned\n')
+                    reset_cache(firedrill=fd_mode, is_test=is_test)
+                    print('> Cache cleaned\n')
                 else:
                     click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                     messages = data[scenario]
@@ -38,8 +38,8 @@ try:
                         time.sleep(1)
                         # clear cache after each scenario
                     with Publisher(firedrill_mode=fd_mode, verbose=False) as pub:
-                        pub.send([{'_id': '0_hard-reset_', 'pass':'very1secret2password', 'detector_name':'XENONnT',
-                                   'meta':{}}])
+
+                        reset_cache(firedrill=fd_mode, is_test=is_test)
                         print('> Cache cleaned\n')
         except KeyboardInterrupt:
             break
