@@ -77,8 +77,9 @@ def heartbeat(ctx, status, time, firedrill):
 @click.option('--plugin', '-p', type=str, default="None")
 @click.option('--outputfolder', '-o', type=str, default="None")
 @click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--test/--no-test', default=False, show_default='False', help='If True subscribe to test topic')
 @click.pass_context
-def subscribe(ctx, plugin, outputfolder, firedrill):
+def subscribe(ctx, plugin, outputfolder, firedrill, test):
     """ Subscribe to Alert topic
         Optionally, `plugin` script can be passed
         The message content as a single dictionary will be passed to
@@ -91,10 +92,10 @@ def subscribe(ctx, plugin, outputfolder, firedrill):
     try:
         if plugin != "None":
             print(f"Redirecting output to {plugin}")
-            for saved_json in sub.subscribe_and_redirect_alert(outputfolder=outputfolder):
+            for saved_json in sub.subscribe_and_redirect_alert(outputfolder=outputfolder, is_test=test):
                 os.system(f"python {plugin} {saved_json}")
         else:
-            sub.subscribe(outputfolder=outputfolder)
+            sub.subscribe(outputfolder=outputfolder, is_test=test)
     except KeyboardInterrupt:
         pass
 
