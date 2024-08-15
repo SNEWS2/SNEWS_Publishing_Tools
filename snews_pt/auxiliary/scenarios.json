@@ -4,13 +4,21 @@
       "detector_name": "XENONnT",
       "neutrino_time": "2030-01-01T12:34:45.678999",
       "p_val": 0.98,
-      "is_test": true
+      "is_test": true,
+      "meta":
+      {
+        "is_test": true
+      }
     },
     {
       "detector_name": "DS-20K",
       "neutrino_time": "2030-01-01T12:34:47.678999",
       "p_val": 0.98,
-      "is_test": true
+      "is_test": true,
+      "meta":
+      {
+        "is_test": true
+      }
     }
   ],
   "exact 10s coincidence": [
