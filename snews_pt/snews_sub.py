@@ -83,6 +83,7 @@ class Subscriber:
     def __init__(self, env_path=None, firedrill_mode=True):
         snews_pt_utils.set_env(env_path)
         self.alert_topic = os.getenv("ALERT_TOPIC")
+        self.connection_test_topic = os.getenv("CONNECTION_TEST_TOPIC")
         if firedrill_mode:
             self.alert_topic = os.getenv("FIREDRILL_ALERT_TOPIC")
 
@@ -90,7 +91,7 @@ class Subscriber:
         self.default_output = os.path.join(os.getcwd(), os.getenv("ALERT_OUTPUT"))
 
 
-    def subscribe(self, outputfolder=None, auth=True):
+    def subscribe(self, outputfolder=None, auth=True, is_test=False):
         """ Subscribe and listen to a given topic
 
         Parameters
@@ -100,6 +101,7 @@ class Subscriber:
         auth: A `bool` or :class:`Auth <hop.auth.Auth>` instance. Defaults to
             loading from :meth:`auth.load_auth <hop.auth.load_auth>` if set to
             True. To disable authentication, set to False.
+        is_test: bool if True overwrites the subscribed topic with CONNECTION_TEST_TOPIC
 
         """
         outputfolder = outputfolder or self.default_output
@@ -109,8 +111,9 @@ class Subscriber:
 
         # Initiate hop_stream
         stream = Stream(until_eos=False, auth=auth)
+        TOPIC = self.connection_test_topic if is_test else self.alert_topic
         try:
-            with stream.open(self.alert_topic, "r") as s:
+            with stream.open(TOPIC, "r") as s:
                 for message in s:
                     # Access message dictionary from JSOBlob
                     message = message.content
@@ -122,7 +125,7 @@ class Subscriber:
             click.secho('Done', fg='green')
 
 
-    def subscribe_and_redirect_alert(self, outputfolder=None, auth=True, _display=True, _return='file'):
+    def subscribe_and_redirect_alert(self, outputfolder=None, auth=True, _display=True, _return='file', is_test=False):
         """ subscribe generator
         """
         outputfolder = outputfolder or self.default_output
@@ -130,10 +133,11 @@ class Subscriber:
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
                    click.style(f'{ self.alert_topic}', bg='green'))
 
+        TOPIC = self.connection_test_topic if is_test else self.alert_topic
         # Initiate hop_stream
         stream = Stream(until_eos=False, auth=auth)
         try:
-            with stream.open(self.alert_topic, "r") as s:
+            with stream.open(TOPIC, "r") as s:
                 for message in s:
                     # Access message dictionary from JSONBlobg
                     message = message.content
