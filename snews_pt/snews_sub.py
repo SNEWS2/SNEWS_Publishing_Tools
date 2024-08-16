@@ -119,6 +119,11 @@ class Subscriber:
                 for message in s:
                     # Access message dictionary from JSOBlob
                     message = message.content
+                    try:
+                        if message['_id'] == "0_test-connection":
+                            continue
+                    except:
+                        pass
                     # Save and display
                     save_message(message, outputfolder)
                     snews_pt_utils.display_gif()
@@ -143,6 +148,11 @@ class Subscriber:
                 for message in s:
                     # Access message dictionary from JSONBlobg
                     message = message.content
+                    try:
+                        if message['_id'] == "0_test-connection":
+                            continue
+                    except:
+                        pass
                     # Save and display
                     file = save_message(message, outputfolder, return_file=True)
                     if _display:
