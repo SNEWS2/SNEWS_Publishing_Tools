@@ -4,13 +4,15 @@ Easy handle remote commands
 
 Melih Kara, kara@kit.edu
 """
+import os
 import time
+from datetime import UTC, datetime
 
+import click
 from hop import Stream
-from hop.models import JSONBlob
 from hop.io import StartPosition
-from datetime import datetime
-import os, click
+from hop.models import JSONBlob
+
 
 def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patience=8):
     """ test the server connection

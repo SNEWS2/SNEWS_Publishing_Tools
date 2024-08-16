@@ -1,11 +1,14 @@
 """
 Utility tools for snews_pt
 """
+import json
+import os
+from collections import namedtuple
+
+import click
 import dotenv
 from dotenv import load_dotenv
-from collections import namedtuple
-import os, json, click
-import sys
+
 from .core.logging import getLogger
 
 log = getLogger(__name__)

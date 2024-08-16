@@ -1,22 +1,9 @@
-"""Interface for SNEWS messages.
-"""
-
-import os
-import click
 import json
-import numpy as np
-from abc import ABC, abstractmethod
-from datetime import datetime
-try:
-    fromisoformat = datetime.fromisoformat
-except AttributeError as e:
-    from dateutil.parser import isoparse as fromisoformat
+from datetime import UTC, datetime
+from typing import Union
 
 from hop import Stream
-try:
-    from hop.models import JSONBlob
-except ImportError as e:
-    raise ImportError(f'{e}\nSNEWS Publishing Tools and Coincidence System requires op version >= 0.8.0')
+from hop.models import JSONBlob
 
 from snews_pt import snews_pt_utils
 from snews_pt._version import version as __version__
