@@ -1,10 +1,14 @@
+import json
 import os
 import warnings
 
 import click
 from dotenv import load_dotenv
+from snews import messages
+
 from . import snews_pt_utils
 from ._version import version as __version__
+from .messages import Publisher
 from .snews_sub import Subscriber
 
 envpath = os.path.join(os.path.dirname(__file__), 'auxiliary/test-config.env')
@@ -54,12 +58,20 @@ def publish(ctx, file, firedrill):
     If no file is given it can still submit dummy messages with default values
     """
     click.clear()
+
+    if firedrill:
+        publisher = Publisher(kafka_topic=os.getenv("FIREDRILL_OBSERVATION_TOPIC"))
+    else:
+        publisher = Publisher(kafka_topic=os.getenv("OBSERVATION_TOPIC"))
+
     for f in file:
         if f.endswith('.json'):
-            SNEWSMessageBuilder.from_json(jsonfile=f, env_file=ctx.obj['env']).send_messages(firedrill_mode=firedrill)
+            snews_messages = messages.create_messages(**json.loads(f))
+            for message in snews_messages:
+                publisher.add_message(message)
+            publisher.send()
 
         else:
-            # maybe just print instead of raising
             raise TypeError(f"Expected json file with .json format! Got {f}")
 
 
@@ -88,11 +100,21 @@ def heartbeat(ctx, status, time, firedrill):
         :param time: (optional) Machine time is appended as the time of execution
                      different time can be passed following the iso-format
     """
-    message = SNEWSMessageBuilder(detector_name=ctx.obj['DETECTOR_NAME'],
-                                  machine_time=time,
-                                  detector_status=status,
+
+    if firedrill:
+        publisher = Publisher(kafka_topic=os.getenv("FIREDRILL_OBSERVATION_TOPIC"))
+    else:
+        publisher = Publisher(kafka_topic=os.getenv("OBSERVATION_TOPIC"))
+
+    message = messages.HeartbeatMessage(
+        detector_name=ctx.obj['DETECTOR_NAME'],
+        machine_time=time,
+        detector_status=status,
+        is_firedrill=firedrill,
     )
-    message.send_messages(firedrill_mode=firedrill)
+
+    publisher.add_message(message)
+    publisher.send()
 
 
 @main.command()
@@ -113,7 +135,6 @@ def subscribe(ctx, plugin, outputfolder, firedrill, test):
         dictionary follows the snews_alert message schema
 
     """
-    outputfolder = None if type(outputfolder)==type(None) else outputfolder
     sub = Subscriber(ctx.obj['env'], firedrill_mode=firedrill)
     try:
         if plugin != "None":
@@ -133,37 +154,19 @@ def message_schema(ctx, requested_tier):
     """ Display the message format for `tier` if 'all'
         displays everything
     """
-    from .messages import SNEWSHeartbeatMessage, SNEWSTimingTierMessage, SNEWSSignificanceTierMessage, \
-        SNEWSCoincidenceTierMessage, SNEWSRetractionMessage, SNEWSMessage
 
-    tier_data_pairs = {'CoincidenceTier': SNEWSCoincidenceTierMessage,
-                       'SigTier': SNEWSSignificanceTierMessage,
-                       'TimeTier': SNEWSTimingTierMessage,
-                       'FalseOBS': SNEWSRetractionMessage,
-                       'Heartbeat': SNEWSHeartbeatMessage,}
+    valid_tiers = [m.replace("Message", "") for m in messages.__all__ if m.endswith('Message')]
+    get_all_tiers = requested_tier[0] == 'all'
+    tiers = valid_tiers if get_all_tiers else [t for t in requested_tier if t in valid_tiers]
 
-    if len(requested_tier)>1:
-        tier = []
-        for t in requested_tier:
-            tier.append(snews_pt_utils._check_aliases(t))
-    else:
-        if requested_tier[0].lower()=='all':
-            # display all
-            tier = list(tier_data_pairs.keys())
-        else:
-            # check for aliases e.g. coinc = coincidence = CoinCideNceTier
-            tier = list(snews_pt_utils._check_aliases(requested_tier[0]))
+    for t in tiers:
+        tier_message = getattr(messages, t+'Message')
+        fields = messages.get_fields(tier_message)
+        reqfields = messages.get_fields(tier_message, required=True)
 
-    basefields = SNEWSMessage.basefields
-    for t in tier:
-        TierMessage = tier_data_pairs[t]
-        fields = TierMessage.fields
-        reqfields = TierMessage.reqfields
         click.secho(f'Message schema for {t}', bg='white', fg='blue')
         for f in fields:
-            if f in basefields:
-                click.secho(f'{f:<20s} : (SET AUTOMATICALLY)', fg='bright_red')
-            elif f in reqfields:
+            if f in reqfields:
                 click.secho(f'{f:<20s} : (REQUIRED USER INPUT)', fg='bright_blue')
             else:
                 click.secho(f'{f:<20s} : (USER INPUT)', fg='bright_cyan')
