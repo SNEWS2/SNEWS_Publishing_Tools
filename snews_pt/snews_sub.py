@@ -105,13 +105,15 @@ class Subscriber:
 
         """
         outputfolder = outputfolder or self.default_output
+        TOPIC = self.connection_test_topic if is_test else self.alert_topic
+
         click.echo('You are subscribing to ' +
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
-                   click.style(f'{ self.alert_topic}', bg='green'))
+                   click.style(f'{ TOPIC}', bg='green'))
 
         # Initiate hop_stream
         stream = Stream(until_eos=False, auth=auth)
-        TOPIC = self.connection_test_topic if is_test else self.alert_topic
+
         try:
             with stream.open(TOPIC, "r") as s:
                 for message in s:
@@ -129,11 +131,11 @@ class Subscriber:
         """ subscribe generator
         """
         outputfolder = outputfolder or self.default_output
+        TOPIC = self.connection_test_topic if is_test else self.alert_topic
         click.echo('You are subscribing to ' +
                    click.style(f'ALERT', bg='red', bold=True) + '\nBroker:' +
-                   click.style(f'{ self.alert_topic}', bg='green'))
+                   click.style(f'{ TOPIC}', bg='green'))
 
-        TOPIC = self.connection_test_topic if is_test else self.alert_topic
         # Initiate hop_stream
         stream = Stream(until_eos=False, auth=auth)
         try:
