@@ -7,6 +7,11 @@ from snews_pt.remote_commands import reset_cache
 fd_mode = True if sys.argv[1].lower() == "true" else False
 is_test = True if sys.argv[2].lower() == "true" else False
 
+if not is_test:
+    click.secho("This script is only for testing purposes, and uses past neutrino times.\n"
+                "We are running the scenarios in test mode", fg='red', bold=True)
+    is_test = True
+
 with open(osp.join(osp.dirname(__file__), "scenarios.json")) as json_file:
     data = json.load(json_file)
 
@@ -33,7 +38,6 @@ try:
                     click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                     messages = data[scenario]
                     for msg in messages: # send one by one and sleep in between
-                        msg['is_test'] = is_test
                         print(msg, "\n\n")
                         SNEWSMessageBuilder(**msg).send_messages(firedrill_mode=fd_mode)
                         time.sleep(1)
