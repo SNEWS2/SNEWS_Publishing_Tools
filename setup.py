@@ -59,7 +59,7 @@ setup(
         ],
     },
 
-    python_requires='~=3.11',
+    python_requires='>=3.11,<3.13',
     install_requires=install_requires,
     extras_require=extras_require,
 
