@@ -1,6 +1,196 @@
 CHANGES
 =======
 
+* get rid of format checker
+* less strict requirements
+* scenarios are always test
+* fix testing scenarios
+* bypass testconnection displays
+* fix displayed topic
+* update requirements
+* do we still need mongodb?
+* minor
+* revert scenarios
+* try tmp fix on scenarios
+* revert back debugging
+* debug format checker
+* updates for tests
+* allow CLI too
+* allow for test alert sub
+* pval is not a required arg, don't crash
+* Add logos for dark and light backgrounds
+* clean up
+* Add an FAQ page
+* minor
+* update subscribe
+* updated publish docs
+* add badges
+* remove old image
+* add a badge for arxiv
+* add a link to sub and pub
+* adjust the restructured locs
+* move to a diff dir
+* improve quickstart
+* minor change
+* add hopskotch page to index
+* clean and restructure
+* fix macOS actions
+* looking for hop auth file
+* test location change
+* test location change
+* test location change
+* double check the auth.toml file
+* just test snews pt
+* delete test\_subscribe
+* run actions on pull request
+* update actions
+* update actions
+* Add files via upload
+* Update README.md
+
+v1.3.4
+------
+
+* clean a line
+* add neutrino times for time tier
+* placeholder for prod topic
+* Fix typo on setup.py
+* adjust floating implementation
+* adjust tests
+* revert firedrill fix
+* move firedrill location
+* fix machine time overwrite
+* time tier accepts floats
+* CLI fix for publish and hb
+* Modify github testing workflow configs
+* Upgrade and clean up dependencies
+* add todo for timetier
+* Fix stupid typo in YAML file
+* Modernize readthedocs version
+* Point to documentation requirements
+* Add documentation-specific requirements
+* Add default language
+* update tests
+* remove wrong-semicolon test
+* remove pandas
+* converting to numpy datetimes
+* wrong spacing
+* missing import
+* avoid TimeTier crash
+* avoid TimeTier crash
+* avoid TimeTier crash
+* Fixed iso format issue
+* minor improvement, backw compatible
+* Relaxed the setup tools, ~= -> >=
+* fix tier schema display in CLI
+* pvalues in sigtier validation
+* bump versions in tests
+* print schema also displays kwargs
+* better print tier contents
+* better print tier contents
+* update version
+* update tests
+* time tier pval validation
+* update notebook
+* update examples
+* fix detector name set reintroduce meta field add is\_test to accepted fields
+* don't set the name, just get it
+* legacy. is test no longer under meta key, but CS uses this script to check
+* set name, fetch if name has already been changed
+* check p-value range for coincidence tier + improve md repr
+* adapt to new msg construction
+* Remove Python 3.7 unit tests
+* oopsie fix
+* update notebooks
+* set name echoes only when not returned
+* turn json import into a classmethod
+* numpy requirement
+* clean-up
+* test connection returns bool
+* automated server connection test
+* remove neutrino time from time tier fields
+* fix test script
+* new heartbeat test
+* typo fix
+* fix retraction unit test
+* fix timing unit test
+* fix significance unit test
+* fix coincidence unit test
+* fetch and append machine time
+* return is\_valid true, and keep tiernames
+* convert message schema display
+* rename functions
+* is\_valid method for Time,HB, and retr tiers
+* is\_valid method for Time,HB, and retr tiers
+* check detector name in base, add SigTier is valid
+* is valid method for coinc tier
+* irrelevant fix
+* when sending avoid using other-tier keys in the meta
+* add a publisher
+* times in timing series must be checked
+* markdown representations
+* Refector message builder, enable to/from JSON
+* Test SNEWSMessageBuilder for tier message lists
+* Print schema. Rename validate function
+* Add SNEWSMessage class hierarchy
+* update docstring
+* update docstring
+* update docstring
+* update docstring
+* update docstring
+* update docstring
+* update docstring
+* minor
+* replace images
+* improve docs
+* improve docs
+* improve docs
+* improve docs
+* Add link to contributions page
+* Add BSD 3-clause license
+* Enable message output to JSON
+* add screenshots
+* start changind the docs
+
+v1.3.3
+------
+
+* fix docstring
+* add doc
+* add patience
+* update notebook
+* fix testing
+
+v1.3.2
+------
+
+* Update snews\_sub.py
+* add correct topic
+* add correct topic
+* add write hb logs command
+* raise error if not hop0.8.0
+* add connection topic
+* remove redundant whcih tier
+* remove redundant whcih tier
+* change requirements to hop-client v0.8.0
+* change version for hop-client 0.8.0
+* change messaging to hop-client v0.8.0 syntax only
+* put JSONBlob import in try/except, add hop8 flag
+* replace try/except with if isinstance(JSONBlob)
+* add try, except blocks for hop-0.8.0 messages
+* update requirements for new hop-client version
+* write messages to stream as JSONBlob, hop>=0.6.0
+* fix test-connection
+* testing fixes
+
+v1.3.1
+------
+
+* stamp time before sending
+
+v1.3.0
+------
+
 * stamp time before sending
 * check if detector name valid
 * fix testing

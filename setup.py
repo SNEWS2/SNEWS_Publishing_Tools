@@ -25,7 +25,6 @@ extras_require = {
         'pytest~=8.0',
         'pytest-console-scripts~=1.4',
         'pytest-cov~=4.1',
-        'pytest-mongodb~=2.4',
         'pytest-runner~=6.0',
         'virtualenv~=20.13',
     ],
@@ -60,7 +59,7 @@ setup(
         ],
     },
 
-    python_requires='~=3.11',
+    python_requires='>=3.11,<3.13',
     install_requires=install_requires,
     extras_require=extras_require,
 
