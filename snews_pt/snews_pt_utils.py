@@ -14,6 +14,7 @@ from .core.logging import getLogger
 log = getLogger(__name__)
 default_detector_file = os.path.dirname(__file__) + "/auxiliary/detector_properties.json"
 
+
 def set_env(env_path=None):
     """ Set environment parameters
 

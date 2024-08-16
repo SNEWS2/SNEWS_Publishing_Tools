@@ -19,10 +19,12 @@ if int(os.getenv("HAS_NAME_CHANGED")) == 0:
 
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
-@click.option('--env', type=str,
-    default='/auxiliary/test-config.env',
-    show_default='auxiliary/test-config.env',
-    help='environment file containing the configurations')
+@click.option('--env',
+              type=str,
+              default='/auxiliary/test-config.env',
+              show_default='auxiliary/test-config.env',
+              help='environment file containing the configurations'
+              )
 @click.pass_context
 def main(ctx, env):
     """ User interface for snews_pt tools
@@ -60,10 +62,25 @@ def publish(ctx, file, firedrill):
             # maybe just print instead of raising
             raise TypeError(f"Expected json file with .json format! Got {f}")
 
+
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
-@click.option('--status', '-s', type=str, default='OFF', show_default='OFF', help='Heartbeat at the time of execution')
-@click.option('--time', '-t', type=str, default=None, show_default='None', help='Machine time, format: %Y-%m-%dT%H:%M:%S.%f')
+@click.option('--firedrill/--no-firedrill',
+              default=True,
+              show_default='True',
+              help='Whether to use firedrill brokers or default ones'
+              )
+@click.option('--status', '-s',
+              type=str,
+              default='OFF',
+              show_default='OFF',
+              help='Heartbeat at the time of execution'
+              )
+@click.option('--time', '-t',
+              type=str,
+              default=None,
+              show_default='None',
+              help='Machine time, format: %Y-%m-%dT%H:%M:%S.%f'
+              )
 @click.pass_context
 def heartbeat(ctx, status, time, firedrill):
     """ Send Heartbeats
@@ -81,7 +98,11 @@ def heartbeat(ctx, status, time, firedrill):
 @main.command()
 @click.option('--plugin', '-p', type=str, default="None")
 @click.option('--outputfolder', '-o', type=str, default="None")
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--firedrill/--no-firedrill',
+              default=True,
+              show_default='True',
+              help='Whether to use firedrill brokers or default ones'
+              )
 @click.option('--test/--no-test', default=False, show_default='False', help='If True subscribe to test topic')
 @click.pass_context
 def subscribe(ctx, plugin, outputfolder, firedrill, test):
@@ -103,6 +124,7 @@ def subscribe(ctx, plugin, outputfolder, firedrill, test):
             sub.subscribe(outputfolder=outputfolder, is_test=test)
     except KeyboardInterrupt:
         pass
+
 
 @main.command()
 @click.argument('requested_tier', nargs=-1)
@@ -147,15 +169,21 @@ def message_schema(ctx, requested_tier):
                 click.secho(f'{f:<20s} : (USER INPUT)', fg='bright_cyan')
         click.secho(f'{"**kwargs":<20s} : (GROUPED AS META)', fg='bright_green')
 
+
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
-@click.option('--test/--no-test', default=True, show_default='True', help='If False sends them to main topic!')
+@click.option('--firedrill/--no-firedrill',
+              default=True,
+              show_default='True',
+              help='Whether to use firedrill brokers or default ones'
+              )
+@click.option('--test/--no-test', default=False, show_default='False', help='If True subscribe to test topic')
 def run_scenarios(firedrill, test):
     """
     """
     base = os.path.dirname(os.path.realpath(__file__))
     path = os.path.join(base, 'auxiliary/try_scenarios.py')
     os.system(f'python3 {path} {firedrill} {test}')
+
 
 @main.command()
 @click.option('--name', '-n', default="TEST", show_default='TEST', help='Set the detectors name')
@@ -164,11 +192,17 @@ def set_name(name):
     """
     from .snews_pt_utils import set_name as _set_name
     _set_name(name)
-    click.secho(f"Your detector name is set to be: {os.environ['DETECTOR_NAME']}", fg='green', bold=True)
+    click.secho(f"Your detector name is set to be: {os.environ['DETECTOR_NAME']}",
+                fg='green', bold=True)
 
-###################### Remote Commands
+
+# Remote Commands
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--firedrill/--no-firedrill',
+              default=True,
+              show_default='True',
+              help='Whether to use firedrill brokers or default ones'
+              )
 @click.option('--start_at', '-s', type=str, default="LATEST", help='either LATEST or EARLIEST')
 @click.option('--patience', '-p', type=int, default=8)
 @click.pass_context
@@ -185,7 +219,11 @@ def test_connection(ctx, firedrill, start_at, patience):
 
 
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--firedrill/--no-firedrill',
+              default=True,
+              show_default='True',
+              help='Whether to use firedrill brokers or default ones'
+              )
 @click.pass_context
 def write_hb_logs(ctx, firedrill):
     """ REQUIRES AUTHORIZATION
@@ -197,9 +235,14 @@ def write_hb_logs(ctx, firedrill):
                   admin_pass=ctx.obj['USER_PASS'],
                   firedrill=firedrill)
 
+
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
-@click.option('--test/--no-test', default=True, show_default='True', help='If True cleans the test cache')
+@click.option('--firedrill/--no-firedrill',
+              default=True,
+              show_default='True',
+              help='Whether to use firedrill brokers or default ones'
+              )
+@click.option('--test/--no-test', default=False, show_default='False', help='If True subscribe to test topic')
 @click.pass_context
 def reset_cache(ctx, firedrill, test):
     """ REQUIRES AUTHORIZATION
@@ -213,7 +256,11 @@ def reset_cache(ctx, firedrill, test):
 
 
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--firedrill/--no-firedrill',
+              default=True,
+              show_default='True',
+              help='Whether to use firedrill brokers or default ones'
+              )
 @click.option('--brokername', '-bn', help='Change the broker')
 @click.pass_context
 def change_broker(ctx, firedrill, brokername):
@@ -228,7 +275,11 @@ def change_broker(ctx, firedrill, brokername):
 
 
 @main.command()
-@click.option('--firedrill/--no-firedrill', default=True, show_default='True', help='Whether to use firedrill brokers or default ones')
+@click.option('--firedrill/--no-firedrill',
+              default=True,
+              show_default='True',
+              help='Whether to use firedrill brokers or default ones'
+              )
 @click.pass_context
 def get_feedback(ctx, firedrill):
     """ REQUIRES AUTHORIZATION
@@ -237,6 +288,7 @@ def get_feedback(ctx, firedrill):
     from .remote_commands import get_feedback
     get_feedback(detector_name=ctx.obj['DETECTOR_NAME'],
                  firedrill=firedrill)
+
 
 if __name__ == "__main__":
     main()
