@@ -1,15 +1,20 @@
-""" CLI for snews_pt
-    
-    Notes to dev team
-    https://stackoverflow.com/questions/55099243/python3-dataclass-with-kwargsasterisk
-"""
-
-from . import __version__
-from . import snews_pt_utils
-from .messages import SNEWSMessageBuilder
-from .snews_sub import Subscriber
-import click
 import os
+import warnings
+
+import click
+from dotenv import load_dotenv
+from . import snews_pt_utils
+from ._version import version as __version__
+from .snews_sub import Subscriber
+
+envpath = os.path.join(os.path.dirname(__file__), 'auxiliary/test-config.env')
+load_dotenv(envpath)
+
+if int(os.getenv("HAS_NAME_CHANGED")) == 0:
+    warning_text = click.style('You are using default detector name "TEST"\n'
+                               'Please change this by snews_pt.snews_pt_utils.set_name()',
+                               fg='red')
+    warnings.warn(warning_text, UserWarning)
 
 
 @click.group(invoke_without_command=True)
