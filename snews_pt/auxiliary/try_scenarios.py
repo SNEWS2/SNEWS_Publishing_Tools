@@ -33,6 +33,7 @@ try:
                     click.secho(f"\n>>> Testing {scenario}", fg='yellow', bold=True)
                     messages = data[scenario]
                     for msg in messages: # send one by one and sleep in between
+                        msg['is_test'] = is_test
                         print(msg, "\n\n")
                         SNEWSMessageBuilder(**msg).send_messages(firedrill_mode=fd_mode)
                         time.sleep(1)
