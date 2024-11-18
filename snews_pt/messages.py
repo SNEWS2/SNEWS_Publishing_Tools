@@ -1,9 +1,10 @@
 import json
+import pickle
 from datetime import UTC, datetime
 from typing import Union
 
 from hop import Stream
-from hop.models import JSONBlob
+from hop.models import Blob, JSONBlob
 from snews.models import messages
 from snews.models.timing import PrecisionTimestamp
 
@@ -39,7 +40,7 @@ class Publisher:
             while len(self.message_queue) > 0:
                 message = self.message_queue.pop()
                 message.sent_time_utc = str(PrecisionTimestamp())
-                conn.write(JSONBlob(message.model_dump()))
+                conn.write(Blob(pickle.dumps(message)))
 
 
 def test():
