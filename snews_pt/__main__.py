@@ -8,6 +8,7 @@ from snews import messages
 
 from . import snews_pt_utils
 from ._version import version as __version__
+from .auxiliary.try_scenarios import try_scenarios
 from .messages import Publisher
 from .snews_sub import Subscriber
 
@@ -181,11 +182,11 @@ def message_schema(ctx, requested_tier):
               )
 @click.option('--test/--no-test', default=False, show_default='False', help='If True subscribe to test topic')
 def run_scenarios(firedrill, test):
-    """
-    """
-    base = os.path.dirname(os.path.realpath(__file__))
-    path = os.path.join(base, 'auxiliary/try_scenarios.py')
-    os.system(f'python3 {path} {firedrill} {test}')
+    """ """
+    # base = os.path.dirname(os.path.realpath(__file__))
+    # path = os.path.join(base, 'auxiliary/try_scenarios.py')
+    # os.system(f'python3 {path} {firedrill} {test}')
+    try_scenarios(fd_mode=firedrill, is_test=test)
 
 
 @main.command()
