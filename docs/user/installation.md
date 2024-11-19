@@ -5,9 +5,19 @@
 
 # Installation
 
-You can install SNEWS publishing tools (snews_pt) from [PyPi](https://pypi.org/project/snews-pt/) via pip, 
+You can install SNEWS publishing tools (snews_pt) from [PyPi](https://pypi.org/project/snews-pt/) via pip.  We recommend doing things in a clean virtualenv to minimize conflicts with the rest of your python world.  In the example below, using the environment named "snews2", you can call it whatever.
+
+Be sure you've [added your hop credentials](https://snews-publishing-tools.readthedocs.io/en/latest/user/quickstart.html) first.
+
 ```bash
-pip install -U snews-pt
+# Install in a virtual environment
+virtualenv snews2
+source snews2/bin/activate
+python -m pip install snews_pt
+
+# Test the install
+snews_pt set-name -n [detector]
+snews_pt test-connection --no-firedrill
 ```
  
 or from the source using ssh-key,
