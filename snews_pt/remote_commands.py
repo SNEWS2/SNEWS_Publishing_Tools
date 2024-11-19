@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 import click
 from hop import Stream
 from hop.io import StartPosition
-from hop.models import Blob, JSONBlob
+from hop.models import JSONBlob
 
 
 def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patience=8):
@@ -58,7 +58,7 @@ def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patie
     message_expected["status"] = "received"
 
     with pubstream.open(topic, "w") as ps, substream.open(connection_broker, "r") as ss:
-        ps.write(Blob(message))
+        ps.write(JSONBlob(message))
         # while (datetime.utcnow() - start_time) < timedelta(seconds=wait):
         time.sleep(patience)
         for read in ss:
