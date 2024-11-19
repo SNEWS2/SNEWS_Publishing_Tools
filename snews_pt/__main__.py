@@ -178,6 +178,10 @@ def message_schema(ctx, requested_tier):
     valid_tiers = [
         m.replace("Message", "") for m in messages.__all__ if m.endswith("Message")
     ]
+
+    if len(requested_tier) == 0:
+        requested_tier = ["all"]
+
     get_all_tiers = requested_tier[0] == "all"
     tiers = (
         valid_tiers
@@ -196,7 +200,7 @@ def message_schema(ctx, requested_tier):
                 click.secho(f"{f:<20s} : (REQUIRED USER INPUT)", fg="bright_blue")
             else:
                 click.secho(f"{f:<20s} : (USER INPUT)", fg="bright_cyan")
-        click.secho(f'{"**kwargs":<20s} : (GROUPED AS META)', fg="bright_green")
+        click.secho(f'{"**kwargs":<20s} : (GROUPED AS META)\n', fg="bright_green")
 
 
 @main.command()
