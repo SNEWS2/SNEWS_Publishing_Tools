@@ -17,7 +17,7 @@ source snews2/bin/activate
 
 Install the package from PyPi.
 ```bash
-python -m pip install snews_pt
+pip install -U snews_pt
 ```
 
 or from the source using ssh-key,
