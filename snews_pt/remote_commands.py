@@ -12,6 +12,7 @@ import click
 from hop import Stream
 from hop.io import StartPosition
 from hop.models import JSONBlob
+from snews.models import messages
 
 
 def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patience=8):
@@ -32,14 +33,25 @@ def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patie
 
     """
     detector_name = detector_name or os.getenv("DETECTOR_NAME")
+    if detector_name == "":
+        detector_name = "Test-Detector"
     default_connection_topic = "kafka://kafka.scimma.org/snews.connection-testing"
     connection_broker = os.getenv("CONNECTION_TEST_TOPIC", default_connection_topic)
     stamp_time = datetime.now(UTC).isoformat()
     message = {'_id': '0_test-connection',
                'detector_name': detector_name,
-               'time': stamp_time,
+               'sent_time_utc': stamp_time,
                'status': 'sending',
                'meta':{}}
+
+    message = messages.DetectorMessageBase(
+        id="0_test-connection",
+        detector_name=detector_name,
+        tier=messages.Tier.HEART_BEAT,
+        sent_time_utc=stamp_time,
+        meta={"status": "sending"}
+    )
+
     if firedrill:
         topic = os.getenv("FIREDRILL_OBSERVATION_TOPIC")
     else:
@@ -54,18 +66,19 @@ def test_connection(detector_name=None, firedrill=True, start_at="LATEST", patie
 
     # start_time = datetime.utcnow()
     confirmed = False
-    message_expected = message.copy()
-    message_expected["status"] = "received"
+    message_expected = message.model_copy()
+    message_expected.meta["status"] = "received"
+    message_expected = message_expected.model_dump()
 
     with pubstream.open(topic, "w") as ps, substream.open(connection_broker, "r") as ss:
-        ps.write(JSONBlob(message))
+        ps.write(JSONBlob(message.model_dump_json()))
         # while (datetime.utcnow() - start_time) < timedelta(seconds=wait):
         time.sleep(patience)
         for read in ss:
             read = read.content
             if read == message_expected:
                 read_name = click.style(read['detector_name'], fg='green', bold=True)
-                read_time = click.style(read['time'], fg='green', bold=True)
+                read_time = click.style(read['sent_time_utc'], fg='green', bold=True)
                 click.echo(f"You ({read_name}) have a connection to the server at {read_time}")
                 confirmed=True
                 break
