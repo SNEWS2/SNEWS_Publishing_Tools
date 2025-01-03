@@ -9,17 +9,17 @@ You can install SNEWS publishing tools (snews_pt) from [PyPi](https://pypi.org/p
 
 Be sure you've [added your hop credentials](https://snews-publishing-tools.readthedocs.io/en/latest/user/quickstart.html) first.
 
+Create a virtual environment.
 ```bash
-# Install in a virtual environment
 virtualenv snews2
 source snews2/bin/activate
-python -m pip install snews_pt
-
-# Test the install
-snews_pt set-name -n [detector]
-snews_pt test-connection --no-firedrill
 ```
- 
+
+Install the package from PyPi.
+```bash
+python -m pip install snews_pt
+```
+
 or from the source using ssh-key,
 ```bash
 git clone git@github.com:SNEWS2/SNEWS_Publishing_Tools.git
@@ -33,4 +33,9 @@ git clone https://github.com/SNEWS2/SNEWS_Publishing_Tools.git
 cd SNEWS_Publishing_Tools
 pip install ./ --user
 ```
-.
+
+# Test the install
+```bash
+snews_pt set-name -n [detector]
+snews_pt test-connection --no-firedrill
+```
