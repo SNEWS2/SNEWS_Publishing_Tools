@@ -64,7 +64,6 @@ setup(
     extras_require=extras_require,
 
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Intended Audience :: Science/Research',
