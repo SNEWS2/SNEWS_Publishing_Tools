@@ -1,6 +1,43 @@
 CHANGES
 =======
 
+
+v2.0.0
+------
+
+* Bump major version to 2.0.0
+* Make all pip commands consistent
+* Include the git-specific install in virtual environment instructions
+* Integrate snews-data-formats into test-connection functionality
+* Update installation.md
+* Show all tiers if user doesn't specify one for message-schema command
+* Fix bug where JSON was being sent as a binary Blob
+* Include python 3.12 support in CI workflows
+* Touch up formatting
+* Replace "neutrino\_time" with "neutrino\_time\_utc"
+* Encapsulate try\_scenarios logic into function to be called by \_\_main\_\_
+* Send messages as binary blobs instead of JSON blobs
+* feed topic to submiter
+* Update try\_scenarios to snews-data-formats, main changes
+* Update setuptools version for Python 3.12 compatibility
+* Update requirements.txt to support snews-data-formats
+
+v1.4.0
+------
+
+* Fix arXiv number in README
+* Add tests for new snews-data-formats functionality
+* Integrate snews-data-formats into snews\_pt and refactor code
+* Tidy up formatting
+* Rearrange import statements
+* Move application setup from \_\_init\_\_.py to \_\_main\_\_.py
+* Remove tests that will be removed or rewritten
+* Try Python 3.11 only
+* Delete workflows for old macOS
+* py311 or py312
+* Try upgrading pip
+* Fix typo in pip versioning
+* Simplify hop-client install in macOS buildbot
 * get rid of format checker
 * less strict requirements
 * scenarios are always test

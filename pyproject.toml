@@ -2,3 +2,66 @@
 filterwarnings = [
     "ignore::DeprecationWarning"
 ]
+
+[project]
+name = "snews-pt"
+version = "2.0.0"
+description = "An alert application for observing supernovas"
+authors = [
+    {name = "SNEWS Collaboration", email = "snews2.0@lists.bnl.gov"},
+]
+license = {text = "BSD-3-Clause"}
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "License :: OSI Approved :: BSD License",
+]
+dependencies = [
+    "click (>=8.1.7,<8.2.0)",
+    "hop-client (>=0.10.0,<0.11.0)",
+    "inquirer (>=2.8,<3.0)",
+    "numpy (>=1.26.3,<1.27.0)",
+    "python-dotenv (>=0.21.1,<0.22.0)",
+    "setuptools (>=66.1.0,<66.2.0)",
+    "snews-data-formats (>=1.0.0,<1.1.0)"
+]
+
+[project.urls]
+homepage = "https://snews2.org"
+repository = "https://github.com/SNEWS2/SNEWS_Publishing_Tools"
+documentation = "https://snews-publishing-tools.readthedocs.io"
+
+[project.scripts]
+snews_pt = "snews_pt.__main__:main"
+
+[tool.poetry]
+
+[tool.poetry.group.dev.dependencies]
+ipython = ">=7.32.0,<7.33.0"
+wheel = ">=0.34.2,<0.35.0"
+pytest = ">=8.3.2,<8.4.0"
+pytest-cov = ">=4.1.0,<4.2.0"
+
+
+[tool.poetry.group.docs.dependencies]
+autoapi = ">=2.0,<3.0"
+myst-parser = ">=2.0,<3.0"
+sphinx = ">=7.2,<8.0"
+sphinx-autoapi = ">=3.0,<4.0"
+sphinx-rtd-theme = ">=2.0,<3.0"
+sphinxcontrib-programoutput = ">=0.17,<1.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
