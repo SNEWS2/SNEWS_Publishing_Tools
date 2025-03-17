@@ -71,15 +71,26 @@ def publish(ctx, file, firedrill):
     else:
         publisher = Publisher(kafka_topic=os.getenv("OBSERVATION_TOPIC"))
 
-    for f in file:
-        if f.endswith(".json"):
-            snews_messages = messages.create_messages(**json.loads(f))
-            for message in snews_messages:
-                publisher.add_message(message)
-            publisher.send()
+    for filename in file:
+        if filename.endswith(".json"):
+            try:
+                with open(filename, "r", encoding="utf-8") as json_file:
+                    json_data = json.load(
+                        json_file
+                    )
+                    snews_messages = messages.create_messages(**json_data)
+                    for message in snews_messages:
+                        publisher.add_message(message)
+                    publisher.send()
+            except FileNotFoundError:
+                click.echo(f"Error: File not found: {filename}")
+            except json.JSONDecodeError as e:
+                click.echo(f"Error: Invalid JSON in {filename}: {e}")
+            except Exception as e:
+                click.echo(f"An unexpected error occurred: {e}")
 
         else:
-            raise TypeError(f"Expected json file with .json format! Got {f}")
+            raise TypeError(f"Expected json file with .json format! Got {filename}")
 
 
 @main.command()

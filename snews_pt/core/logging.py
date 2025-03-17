@@ -3,6 +3,7 @@ Modified version of Geoffrey Letner's python 201 logger.
 
 Ref: https://python-tutorial.dev/201/tutorial/logging.html
 """
+
 import os
 import time
 from datetime import date
