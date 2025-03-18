@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: publishing_tools_subscriber
-    command: snews_pt subscribe --outputfolder /app/output --firedrill # -p /app/snews_pt/auxiliary/custom_script.py --firedrill
+    command: snews_pt subscribe --outputfolder /app/output -p /app/snews_pt/auxiliary/custom_script.py --firedrill
     ports:
       - "5002:5000"
     depends_on:
@@ -30,4 +30,4 @@ services:
       - "5003:5000"
     depends_on:
       - coincidence_system
-      - publishing_tools_subscriber
+#      - publishing_tools_subscriber
