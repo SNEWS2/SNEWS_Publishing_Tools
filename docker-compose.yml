@@ -2,8 +2,11 @@
 services:
   coincidence_system:
     build:
-      context: ../SNEWS_Coincidence_System
-      dockerfile: ../SNEWS_Coincidence_System/Dockerfile
+      context: .
+      dockerfile: Dockerfile.coincidence_system
+      args:
+        REPO_URL: https://github.com/SNEWS2/SNEWS_Coincidence_System.git
+        BRANCH: main
     container_name: coincidence_system
     environment:
       - REMOVE_FIGURES_AFTER=7

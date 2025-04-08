@@ -1,0 +1,29 @@
+FROM python:3.11-bullseye
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends git build-essential libpq-dev && rm -rf /var/lib/apt/lists/*
+
+# Clone the repository
+ARG REPO_URL
+ARG BRANCH
+RUN git clone --branch ${BRANCH} ${REPO_URL} .
+
+# Copy hop_creds.csv into the container
+COPY hop_creds.csv /app/hop_creds.csv
+
+# Install Poetry
+RUN pip install --no-cache-dir poetry
+
+# Install dependencies using Poetry
+RUN poetry lock
+RUN poetry install
+#
+## Add hop credentials
+RUN poetry run hop auth add hop_creds.csv
+#
+## Command to run the coincidence system
+CMD ["poetry", "run", "snews_cs", "run-coincidence", "--firedrill"]
+#CMD ["tail", "-f", "/dev/null"]
