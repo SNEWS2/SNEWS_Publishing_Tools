@@ -26,3 +26,8 @@ jobs:
         run: |
           docker compose build --build-arg HOP_USERNAME=${{ secrets.username }} --build-arg HOP_PASSWORD=${{ secrets.password }}
           docker compose up -d --force-recreate
+          echo "Waiting for services to start..."
+          sleep 3
+          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message.json --firedrill
+          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message2.json --firedrill
+          echo "Messages Sent"
