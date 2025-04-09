@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timedelta
 
 
@@ -23,13 +24,19 @@ def write_data(filename, detector_name, current_time):
     # Convert the data to a JSON string
     json_data = json.dumps(data, indent=4)
 
-    # Save the JSON data to two different files
-    with open(filename, 'w') as file1:
-        file1.write(json_data)
-
+    # Save the JSON data to the specified file
+    with open(filename, 'w') as file:
+        file.write(json_data)
 
 
 if __name__ == "__main__":
+    # Get the directory of the current script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    write_data('snews_pt/test/firedrill_combined_message.json', 'XENONnT', datetime.utcnow())
-    write_data('snews_pt/test/firedrill_combined_message2.json', 'JUNO', datetime.utcnow())
+    # Define filenames relative to the script directory
+    file1 = os.path.join(script_dir, 'firedrill_combined_message.json')
+    file2 = os.path.join(script_dir, 'firedrill_combined_message2.json')
+
+    # Write data to the files
+    write_data(file1, 'XENONnT', datetime.utcnow())
+    write_data(file2, 'JUNO', datetime.utcnow())

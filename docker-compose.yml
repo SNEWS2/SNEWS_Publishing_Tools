@@ -7,9 +7,12 @@ services:
       args:
         REPO_URL: https://github.com/SNEWS2/SNEWS_Coincidence_System.git
         BRANCH: main
+        HOP_USERNAME: ${HOP_USERNAME}
+        HOP_PASSWORD: ${HOP_PASSWORD}
     container_name: coincidence_system
     environment:
-      - REMOVE_FIGURES_AFTER=7
+      - HOP_USERNAME=${HOP_USERNAME}
+      - HOP_PASSWORD=${HOP_PASSWORD}
     ports:
       - "5001:5000"
 
@@ -17,10 +20,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        HOP_USERNAME: ${HOP_USERNAME}
+        HOP_PASSWORD: ${HOP_PASSWORD}
     container_name: publishing_tools_subscriber
     command: snews_pt subscribe --outputfolder /app/output -p /app/snews_pt/auxiliary/custom_script.py --firedrill
     ports:
       - "5002:5000"
+    environment:
+      - HOP_USERNAME=${HOP_USERNAME}
+      - HOP_PASSWORD=${HOP_PASSWORD}
     depends_on:
       - coincidence_system
 
@@ -28,9 +37,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        HOP_USERNAME: ${HOP_USERNAME}
+        HOP_PASSWORD: ${HOP_PASSWORD}
     container_name: publishing_tools_publisher
+    command: >
+      sh -c "python /app/snews_pt/test/generate_firedrill_json.py && tail -f /dev/null"
     ports:
       - "5003:5000"
+    environment:
+      - HOP_USERNAME=${HOP_USERNAME}
+      - HOP_PASSWORD=${HOP_PASSWORD}
     depends_on:
       - coincidence_system
 #      - publishing_tools_subscriber

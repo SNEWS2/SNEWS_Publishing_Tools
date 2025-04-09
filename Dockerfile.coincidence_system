@@ -6,13 +6,24 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends git build-essential libpq-dev && rm -rf /var/lib/apt/lists/*
 
+# Accept build arguments
+ARG HOP_USERNAME
+ARG HOP_PASSWORD
+
+# Set environment variables
+ENV HOP_USERNAME=${HOP_USERNAME}
+ENV HOP_PASSWORD=${HOP_PASSWORD}
+
 # Clone the repository
 ARG REPO_URL
 ARG BRANCH
 RUN git clone --branch ${BRANCH} ${REPO_URL} .
 
 # Copy hop_creds.csv into the container
-COPY hop_creds.csv /app/hop_creds.csv
+COPY generate_firedrill_creds.sh /app/generate_firedrill_creds.sh
+RUN chmod +x /app/generate_firedrill_creds.sh
+RUN /app/generate_firedrill_creds.sh
+#COPY hop_creds.csv /app/hop_creds.csv
 
 # Install Poetry
 RUN pip install --no-cache-dir poetry

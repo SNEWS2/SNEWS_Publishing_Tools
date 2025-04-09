@@ -1,12 +1,7 @@
 #!/bin/bash
-set -e
+#set -e
 
-#NEED TO FIND A WAY TO GET HOP CREDS INTO THE CONTAINERS AS A CSV
-# Set the HOP_AUTH_FILE variable
-#export HOP_AUTH_FILE=$(hop auth locate)
-
-# Start docker containers (the docker-compose file will use the exported variables)
-python snews_pt/test/generate_firedrill_json.py
+# Make test messages and start containers
 docker compose up -d --build --force-recreate
 
 echo "Waiting for containers to be ready..."
