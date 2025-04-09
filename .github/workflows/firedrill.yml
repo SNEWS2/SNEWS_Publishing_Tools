@@ -1,0 +1,28 @@
+name: Firedrill Workflow
+
+on:
+  push:
+    branches:
+      - test-framework
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+#
+#      - name: Log in to Docker Hub
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and run Docker Compose
+        env:
+          HOP_USERNAME: ${{ secrets.username }}
+          HOP_PASSWORD: ${{ secrets.password }}
+        run: |
+          docker compose build --build-arg HOP_USERNAME=${{ secrets.username }} --build-arg HOP_PASSWORD=${{ secrets.password }}
+          docker compose up -d --force-recreate
