@@ -31,3 +31,23 @@ jobs:
           docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message.json --firedrill
           docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message2.json --firedrill
           echo "Messages Sent"
+      - name: Verify alert publishing from coincidence_system
+        run: |
+          echo "Checking logs of coincidence_system..."
+          docker logs coincidence_system > coincidence_logs.txt
+          if ! grep -q "An alert was published" coincidence_logs.txt; then
+            echo "Published messages did not run or produce the expected output."
+            cat coincidence_logs.txt
+            exit 1
+          fi
+          echo "Coincidence_system ran successfully and produced the expected output."
+      - name: Verify custom script output
+        run: |
+          echo "Checking logs of publishing_tools_subscriber..."
+          docker logs publishing_tools_subscriber > subscriber_logs.txt
+          if ! grep -q "Here is the alert dictionary I received" subscriber_logs.txt; then
+            echo "Custom script did not run or produce the expected output."
+            cat subscriber_logs.txt
+            exit 1
+          fi
+          echo "Custom script ran successfully and produced the expected output."
