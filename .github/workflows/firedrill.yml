@@ -52,7 +52,8 @@ jobs:
             exit 1
           fi
           echo "Coincidence_system ran successfully and produced the expected output."
-          sleep 10
+          echo "current coincidence docker logs:"
+          docker logs coincidence_system
 
       - name: Verify custom script output
         run: |
@@ -65,37 +66,18 @@ jobs:
             echo "Still waiting for broker log..."
             sleep 2
           done
+          echo "current docker logs:"
+          docker logs publishing_tools_subscriber
           
           echo "Checking logs of publishing_tools_subscriber for alert..."
-          for i in {1..10}; do
+          for i in {1..30}; do
             if docker logs publishing_tools_subscriber 2>&1 | grep -q "Here is the alert dictionary I received"; then
               echo "Custom script ran successfully and produced the expected output."
               exit 0
             fi
-            echo "Still waiting for alert dictionary log..."
+            echo "Still waiting to see the alert in the log..."
             sleep 2
           done
           echo "Custom script did not run or produce the expected output."
           docker logs publishing_tools_subscriber
           exit 1
-
-#      - name: Verify alert publishing from coincidence_system
-#        run: |
-#          echo "Checking logs of coincidence_system..."
-#          docker logs coincidence_system > coincidence_logs.txt
-#          if ! grep -q "An alert was published" coincidence_logs.txt; then
-#            echo "Published messages did not run or produce the expected output."
-#            cat coincidence_logs.txt
-#            exit 1
-#          fi
-#          echo "Coincidence_system ran successfully and produced the expected output."
-#      - name: Verify custom script output
-#        run: |
-#          echo "Checking logs of publishing_tools_subscriber..."
-#          docker logs publishing_tools_subscriber > subscriber_logs.txt
-#          if ! grep -q "Here is the alert dictionary I received" subscriber_logs.txt; then
-#            echo "Custom script did not run or produce the expected output."
-#            cat subscriber_logs.txt
-#            exit 1
-#          fi
-#          echo "Custom script ran successfully and produced the expected output."
