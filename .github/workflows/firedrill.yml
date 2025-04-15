@@ -50,7 +50,7 @@ jobs:
           echo "Publishing messages..."
           docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message.json --firedrill
           docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message2.json --firedrill
-          sleep 5
+          sleep 10
 #          for i in {1..30}; do
 #            if docker logs publishing_tools_subscriber 2>&1 | grep -q "Here is the alert dictionary I received"; then
 #              echo "Subscriber processed the messages."
@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "Checking logs of coincidence_system..."
           docker logs coincidence_system > coincidence_logs.txt
-          if ! grep -q "An alert was published" coincidence_logs.txt; then
+          if ! grep -q "PUBLISHING AN ALERT!!!" coincidence_logs.txt; then
             echo "Published messages did not run or produce the expected output."
             cat coincidence_logs.txt
             exit 1
