@@ -13,18 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-#      - name: Build and run Docker Compose
-#        env:
-#          HOP_USERNAME: ${{ secrets.username }}
-#          HOP_PASSWORD: ${{ secrets.password }}
-#        run: |
-#          docker compose build --build-arg HOP_USERNAME=${{ secrets.username }} --build-arg HOP_PASSWORD=${{ secrets.password }}
-#          docker compose up -d --force-recreate
-#          echo "Waiting for services to start..."
-#          sleep 3
-#          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message.json --firedrill
-#          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message2.json --firedrill
-#          echo "Messages Sent"
       - name: Build and run Docker Compose
         env:
           HOP_USERNAME: ${{ secrets.username }}
@@ -34,6 +22,7 @@ jobs:
           docker compose up -d --force-recreate
           echo "Waiting for services to start..."
           sleep 3
+
       - name: Wait for coincidence_system to initialize
         run: |
           echo "Waiting for coincidence_system to initialize..."
@@ -45,20 +34,13 @@ jobs:
             echo "Still waiting for Coincidence System to initialize..."
             sleep 2
           done
+
       - name: Publish messages
         run: |
           echo "Publishing messages..."
           docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message.json --firedrill
           docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message2.json --firedrill
           sleep 10
-#          for i in {1..30}; do
-#            if docker logs publishing_tools_subscriber 2>&1 | grep -q "Here is the alert dictionary I received"; then
-#              echo "Subscriber processed the messages."
-#              break
-#            fi
-#            echo "Still waiting for subscriber to process messages..."
-#            sleep 2
-#          done
 
       - name: Verify alert publishing from coincidence_system
         run: |
@@ -70,7 +52,7 @@ jobs:
             exit 1
           fi
           echo "Coincidence_system ran successfully and produced the expected output."
-          sleep 5
+          sleep 10
 
       - name: Verify custom script output
         run: |
