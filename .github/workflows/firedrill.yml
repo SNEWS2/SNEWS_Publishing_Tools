@@ -56,7 +56,18 @@ jobs:
 
       - name: Verify custom script output
         run: |
-          echo "Checking logs of publishing_tools_subscriber..."
+          echo "Waiting for to see the right broker (snews.alert-firedrill) in publishing_tools_subscriber logs..."
+          for i in {1..30}; do
+            if docker logs publishing_tools_subscriber 2>&1 | grep -q "Broker:kafka://kafka.scimma.org/snews.alert-firedrill"; then
+              echo "Subscribing to firedrill broker. Proceeding to check for alert log..."
+              break
+            fi
+            echo "Still waiting for broker log..."
+            sleep 2
+          done
+          
+          sleep 2
+          echo "Checking logs of publishing_tools_subscriber for alert..."
           docker logs publishing_tools_subscriber > subscriber_logs.txt
           if ! grep -q "Here is the alert dictionary I received" subscriber_logs.txt; then
             echo "Custom script did not run or produce the expected output."
@@ -64,8 +75,6 @@ jobs:
             exit 1
           fi
           echo "Custom script ran successfully and produced the expected output."
-          
-
 
 #      - name: Verify alert publishing from coincidence_system
 #        run: |
