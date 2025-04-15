@@ -27,6 +27,7 @@ ARG BRANCH
 RUN git clone --branch ${BRANCH} ${REPO_URL} .
 
 RUN echo "HOP_USERNAME=${HOP_USERNAME}"
+RUN echo "HOP_PASSWORD=${HOP_PASSWORD}"
 # Copy hop_creds.csv into the container
 COPY generate_firedrill_creds.sh /app/generate_firedrill_creds.sh
 RUN chmod +x /app/generate_firedrill_creds.sh
