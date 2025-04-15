@@ -23,7 +23,8 @@ services:
         HOP_USERNAME: ${HOP_USERNAME}
         HOP_PASSWORD: ${HOP_PASSWORD}
     container_name: publishing_tools_subscriber
-    command: snews_pt subscribe --outputfolder /app/output -p /app/snews_pt/auxiliary/custom_script.py --firedrill
+#    command: snews_pt subscribe --outputfolder /app/output -p /app/snews_pt/auxiliary/custom_script.py --firedrill
+    command: snews_pt subscribe --outputfolder /app/output -p /app/snews_pt/auxiliary/firedrill_plugin.py --firedrill
     ports:
       - "5002:5000"
     environment:
