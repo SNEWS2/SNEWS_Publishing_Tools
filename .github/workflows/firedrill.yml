@@ -66,15 +66,19 @@ jobs:
             sleep 2
           done
           
-          sleep 2
           echo "Checking logs of publishing_tools_subscriber for alert..."
-          docker logs publishing_tools_subscriber > subscriber_logs.txt
-          if ! grep -q "Here is the alert dictionary I received" subscriber_logs.txt; then
-            echo "Custom script did not run or produce the expected output."
-            cat subscriber_logs.txt
-            exit 1
-          fi
-          echo "Custom script ran successfully and produced the expected output."
+          for i in {1..10}; do
+            docker logs publishing_tools_subscriber > subscriber_logs.txt
+            if grep -q "Here is the alert dictionary I received" subscriber_logs.txt; then
+              echo "Custom script ran successfully and produced the expected output."
+              exit 0
+            fi
+            echo "Still waiting for alert dictionary log..."
+            sleep 2
+          done
+          echo "Custom script did not run or produce the expected output."
+          cat subscriber_logs.txt
+          exit 1
 
 #      - name: Verify alert publishing from coincidence_system
 #        run: |
