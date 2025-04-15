@@ -2,7 +2,9 @@
 #set -e
 
 # Make test messages and start containers
-docker compose up -d --build --force-recreate
+#docker compose up -d --build --force-recreate
+docker compose build --build-arg HOP_USERNAME=${HOP_USERNAME} --build-arg HOP_PASSWORD=${HOP_PASSWORD}
+docker compose up -d --force-recreate
 
 echo "Waiting for containers to be ready..."
 sleep 3

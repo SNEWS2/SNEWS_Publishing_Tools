@@ -11,7 +11,7 @@ RUN apt-get update && \
     sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list && \
     apt-get update --allow-releaseinfo-change && \
     apt-get install -y --no-install-recommends git build-essential libpq-dev && \
-    rm -rf /var/lib/apt/lists/* \
+    rm -rf /var/lib/apt/lists/*
 
 # Accept build arguments
 ARG HOP_USERNAME
@@ -26,8 +26,6 @@ ARG REPO_URL
 ARG BRANCH
 RUN git clone --branch ${BRANCH} ${REPO_URL} .
 
-RUN echo "HOP_USERNAME=${HOP_USERNAME}"
-RUN echo "HOP_PASSWORD=${HOP_PASSWORD}"
 # Copy hop_creds.csv into the container
 COPY generate_firedrill_creds.sh /app/generate_firedrill_creds.sh
 RUN chmod +x /app/generate_firedrill_creds.sh
