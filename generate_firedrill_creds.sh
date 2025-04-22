@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "HOP_USERNAME: $HOP_USERNAME"
-
 # Check if the required environment variables are set
 if [[ -z "$HOP_USERNAME" || -z "$HOP_PASSWORD" ]]; then
   echo "Error: HOP_USERNAME and HOP_PASSWORD environment variables must be set."

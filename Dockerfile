@@ -14,7 +14,9 @@ ARG HOP_PASSWORD
 ENV HOP_USERNAME=${HOP_USERNAME}
 ENV HOP_PASSWORD=${HOP_PASSWORD}
 
-#RUN apt-get update && apt-get install -y --no-install-recommends git build-essential libpq-dev && rm -rf /var/lib/apt/lists/*
+# Set observation and alert topics for github CI firedrill
+RUN sed -i 's/^FIREDRILL_OBSERVATION_TOPIC=.*/FIREDRILL_OBSERVATION_TOPIC=kafka:\/\/$\{HOP_BROKER\}\/snews\.experiments-github/' /app/snews_pt/auxiliary/test-config.env
+RUN sed -i 's/^FIREDRILL_ALERT_TOPIC=.*/FIREDRILL_ALERT_TOPIC=kafka:\/\/$\{HOP_BROKER\}\/snews\.alert-github/' /app/snews_pt/auxiliary/test-config.env
 
 # Upgrade pip
 RUN pip install --upgrade pip

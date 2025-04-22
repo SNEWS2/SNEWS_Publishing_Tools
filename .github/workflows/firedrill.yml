@@ -25,9 +25,9 @@ jobs:
 
       - name: Wait for coincidence_system to initialize
         run: |
-          echo "Waiting for coincidence_system to initialize..."
+          echo "Waiting for coincidence_system to initialize (confirming observation on snews.experiments-github) ..."
           for i in {1..30}; do
-            if docker logs coincidence_system 2>&1 | grep -q "(re)Initializing Coincidence System for kafka://kafka.scimma.org/snews.experiments-firedrill"; then
+            if docker logs coincidence_system 2>&1 | grep -q "(re)Initializing Coincidence System for kafka://kafka.scimma.org/snews.experiments-github"; then
               echo "Coincidence System is ready."
               break
             fi
@@ -57,9 +57,9 @@ jobs:
 
       - name: Verify custom script output
         run: |
-          echo "Waiting for to see the right broker (snews.alert-firedrill) in publishing_tools_subscriber logs..."
+          echo "Waiting for to see the right broker (snews.alert-github) in publishing_tools_subscriber logs..."
           for i in {1..30}; do
-            if docker logs publishing_tools_subscriber 2>&1 | grep -q "Broker:kafka://kafka.scimma.org/snews.alert-firedrill"; then
+            if docker logs publishing_tools_subscriber 2>&1 | grep -q "Broker:kafka://kafka.scimma.org/snews.alert-github"; then
               echo "Subscribing to firedrill broker. Proceeding to check for alert log..."
               break
             fi

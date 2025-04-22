@@ -4,7 +4,6 @@ FROM python:3.11-bullseye
 WORKDIR /app
 
 # Install system dependencies
-# RUN apt-get update && apt-get install -y --no-install-recommends git build-essential libpq-dev && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gnupg apt-transport-https ca-certificates && \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 112695A0E562B32A && \
@@ -26,11 +25,13 @@ ARG REPO_URL
 ARG BRANCH
 RUN git clone --branch ${BRANCH} ${REPO_URL} .
 
-# Copy hop_creds.csv into the container
+RUN sed -i 's/^FIREDRILL_OBSERVATION_TOPIC=.*/FIREDRILL_OBSERVATION_TOPIC=kafka:\/\/$\{HOP_BROKER\}\/snews\.experiments-github/' /app/snews_cs/etc/test-config.env
+RUN sed -i 's/^FIREDRILL_ALERT_TOPIC=.*/FIREDRILL_ALERT_TOPIC=kafka:\/\/$\{HOP_BROKER\}\/snews\.alert-github/' /app/snews_cs/etc/test-config.env
+
+# Copy credentials into the container
 COPY generate_firedrill_creds.sh /app/generate_firedrill_creds.sh
 RUN chmod +x /app/generate_firedrill_creds.sh
 RUN /app/generate_firedrill_creds.sh
-#COPY hop_creds.csv /app/hop_creds.csv
 
 # Install Poetry
 RUN pip install --no-cache-dir poetry
@@ -41,7 +42,6 @@ RUN poetry install
 #
 ## Add hop credentials
 RUN poetry run hop auth add hop_creds.csv
-#
+
 ## Command to run the coincidence system
 CMD ["poetry", "run", "snews_cs", "run-coincidence", "--firedrill"]
-#CMD ["tail", "-f", "/dev/null"]
