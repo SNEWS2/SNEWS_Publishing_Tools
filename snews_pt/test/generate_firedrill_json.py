@@ -7,12 +7,12 @@ def write_data(filename, detector_name, current_time):
     # Create the JSON data with current time values
     data = {
         "detector_name": detector_name,
-        "machine_time": current_time.isoformat(),
-        "neutrino_time_utc": (current_time - timedelta(seconds=7)).isoformat(),
+        "machine_time": str(current_time.isoformat()),
+        "neutrino_time_utc": str((current_time - timedelta(seconds=7)).isoformat()),
         "timing_series": [
-            (current_time - timedelta(seconds=7)).isoformat(),
-            (current_time - timedelta(seconds=6.7)).isoformat(),
-            (current_time - timedelta(seconds=6.3)).isoformat()
+            str((current_time - timedelta(seconds=7)).isoformat()),
+            str((current_time - timedelta(seconds=6.7)).isoformat()),
+            str((current_time - timedelta(seconds=6.3)).isoformat())
         ],
         "detector_status": "ON",
         "p_val": 0.05,
