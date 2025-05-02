@@ -20,6 +20,65 @@ jobs:
           echo "Waiting for services to start..."
           sleep 3
 
+      - name: Wait for postgres to initialize
+        run: |
+          echo "Waiting for snews_pg to initialize ..."
+          for i in {1..30}; do
+            if docker logs snews_pg 2>&1 | grep -q "PostgreSQL init process complete; ready for start up."; then
+              echo "Postgres is ready."
+              break
+            fi
+            echo "Still waiting for Postgres to initialize..."
+            sleep 2
+          done
+
+      - name: Wait for db_pipeline to set up tables and initialize listener
+        run: |
+          echo "Waiting for postgres tables to be set by db_pipeline and listener to initialize..."
+          max_retries=5
+          for attempt in $(seq 1 $max_retries); do
+            if docker logs db_pipeline 2>&1 | grep -q "CREATE TABLE time_tier_archive" && \
+               docker logs db_pipeline 2>&1 | grep -q "(re)Initializing Database Listener System for kafka://kafka.scimma.org/snews.experiments-github"; then
+              echo "Postgres and Database Listener are ready."
+              break
+            fi
+            echo "Attempt $attempt failed. Retrying in 2 seconds..."
+            sleep 2
+            if [ $attempt -eq $max_retries ]; then
+              echo "Postgres and Database Listener did not initialize after $max_retries attempts."
+              exit 1
+            fi
+          done
+
+      - name: confirm tables are present in postgres
+        run: |
+          echo "Confirming tables are present in postgres..."
+          max_retries=5
+          for attempt in $(seq 1 $max_retries); do
+            docker exec snews_pg psql -U user -d snews_pg -c "\dt" > tables.txt
+            tables=("all_mgs" "cached_heartbeats" "coincidence_tier_archive" "retraction_tier_archive" "sig_tier_archive" "time_tier_archive")
+            all_tables_present=true
+            for table in "${tables[@]}"; do
+              if ! grep -q "$table" tables.txt; then
+                echo "Table $table is not present in postgres."
+                all_tables_present=false
+              else
+                echo "Table $table is present in postgres."
+              fi
+            done
+            if [ "$all_tables_present" = true ]; then
+              echo "All tables are present! Moving on..."
+              break
+            fi
+            echo "Attempt $attempt failed. Retrying in 2 seconds..."
+            sleep 2
+            if [ $attempt -eq $max_retries ]; then
+              echo "Some tables are still missing after $max_retries attempts."
+              cat tables.txt
+              exit 1
+            fi
+          done
+
       - name: Wait for coincidence_system to initialize
         run: |
           echo "Waiting for coincidence_system to initialize (confirming observation on snews.experiments-github) ..."
@@ -77,4 +136,46 @@ jobs:
           done
           echo "Custom script did not run or produce the expected output."
           docker logs publishing_tools_subscriber
-          exit 1
+          exit 1 
+
+      - name: Confirm records  written to coincidence_tier_archive table in snews_pg
+        run: |
+          echo "Confirming specific records are written to coincidence_tier_archive table in postgres..."
+          max_retries=5
+          for attempt in $(seq 1 $max_retries); do
+            docker exec snews_pg psql -U user -d snews_pg -c "SELECT * FROM coincidence_tier_archive" -t -A -F"," > records.csv
+            record_count=$(wc -l < records.csv)
+            if [ "$record_count" -eq 2 ]; then
+              echo "Found 2 records in coincidence_tier_archive table. Verifying content..."
+              if grep -q "XENONnT" records.csv && grep -q "JUNO" records.csv; then
+                echo "Records match the expected format and content."
+                break
+              else
+                echo "Records do not match the expected format or content."
+                cat records.csv
+                exit 1
+              fi
+            else
+              echo "Expected 2 records, but found $record_count. Retrying..."
+            fi
+            echo "Attempt $attempt failed. Retrying in 2 seconds..."
+            sleep 2
+            if [ $attempt -eq $max_retries ]; then
+              echo "Failed to find 2 valid records after $max_retries attempts."
+              cat records.csv
+              exit 1
+            fi
+          done
+
+      - name: ensure db_pipeline is still running and there is no "Listener Stopped" or "DONE" in logs
+        run: |
+          echo "Checking logs of db_pipeline..."
+          docker logs db_pipeline > db_pipeline_logs.txt
+          if grep -q "Listener Stopped" db_pipeline_logs.txt || grep -q "DONE" db_pipeline_logs.txt; then
+            echo "db_pipeline has stopped or completed. Exiting with error."
+            cat db_pipeline_logs.txt
+            exit 1
+          fi
+          echo "db_pipeline is still running and has not stopped or completed."
+          echo "current db_pipeline docker logs:"
+          docker logs db_pipeline
