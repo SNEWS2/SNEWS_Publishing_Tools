@@ -1,0 +1,183 @@
+name: Firedrill Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build and run Docker Compose
+        run: |
+          docker compose build --build-arg HOP_USERNAME=${{ secrets.CI_FIREDRILL_USERNAME }} --build-arg HOP_PASSWORD=${{ secrets.CI_FIREDRILL_PASSWORD }}
+          docker compose up -d --force-recreate
+          echo "Waiting for services to start..."
+          sleep 3
+
+      - name: Wait for postgres to initialize
+        run: |
+          echo "Waiting for snews_pg to initialize ..."
+          for i in {1..30}; do
+            if docker logs snews_pg 2>&1 | grep -q "PostgreSQL init process complete; ready for start up."; then
+              echo "Postgres is ready."
+              break
+            fi
+            echo "Still waiting for Postgres to initialize..."
+            sleep 2
+          done
+
+      - name: Wait for db_pipeline to set up tables and initialize listener
+        run: |
+          echo "Waiting for postgres tables to be set by db_pipeline and listener to initialize..."
+          max_retries=5
+          for attempt in $(seq 1 $max_retries); do
+            if docker logs db_pipeline 2>&1 | grep -q "CREATE TABLE time_tier_archive" && \
+               docker logs db_pipeline 2>&1 | grep -q "(re)Initializing Database Listener System for kafka://kafka.scimma.org/snews.experiments-github"; then
+              echo "Postgres and Database Listener are ready."
+              break
+            fi
+            echo "Attempt $attempt failed. Retrying in 2 seconds..."
+            sleep 2
+            if [ $attempt -eq $max_retries ]; then
+              echo "Postgres and Database Listener did not initialize after $max_retries attempts."
+              exit 1
+            fi
+          done
+
+      - name: confirm tables are present in postgres
+        run: |
+          echo "Confirming tables are present in postgres..."
+          max_retries=5
+          for attempt in $(seq 1 $max_retries); do
+            docker exec snews_pg psql -U user -d snews_pg -c "\dt" > tables.txt
+            tables=("all_mgs" "cached_heartbeats" "coincidence_tier_archive" "retraction_tier_archive" "sig_tier_archive" "time_tier_archive")
+            all_tables_present=true
+            for table in "${tables[@]}"; do
+              if ! grep -q "$table" tables.txt; then
+                echo "Table $table is not present in postgres."
+                all_tables_present=false
+              else
+                echo "Table $table is present in postgres."
+              fi
+            done
+            if [ "$all_tables_present" = true ]; then
+              echo "All tables are present! Moving on..."
+              break
+            fi
+            echo "Attempt $attempt failed. Retrying in 2 seconds..."
+            sleep 2
+            if [ $attempt -eq $max_retries ]; then
+              echo "Some tables are still missing after $max_retries attempts."
+              cat tables.txt
+              exit 1
+            fi
+          done
+
+      - name: Wait for coincidence_system to initialize
+        run: |
+          echo "Waiting for coincidence_system to initialize (confirming observation on snews.experiments-github) ..."
+          for i in {1..30}; do
+            if docker logs coincidence_system 2>&1 | grep -q "(re)Initializing Coincidence System for kafka://kafka.scimma.org/snews.experiments-github"; then
+              echo "Coincidence System is ready."
+              break
+            fi
+            echo "Still waiting for Coincidence System to initialize..."
+            sleep 2
+          done
+
+      - name: Publish messages
+        run: |
+          echo "Publishing messages..."
+          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message.json --firedrill
+          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message2.json --firedrill
+          sleep 10
+
+      - name: Verify alert publishing from coincidence_system
+        run: |
+          echo "Checking logs of coincidence_system..."
+          docker logs coincidence_system > coincidence_logs.txt
+          if ! grep -q "PUBLISHING AN ALERT!!!" coincidence_logs.txt; then
+            echo "Published messages did not run or produce the expected output."
+            cat coincidence_logs.txt
+            exit 1
+          fi
+          echo "Coincidence_system ran successfully and produced the expected output."
+          echo "current coincidence docker logs:"
+          docker logs coincidence_system
+
+      - name: Verify custom script output
+        run: |
+          echo "Waiting for to see the right broker (snews.alert-github) in publishing_tools_subscriber logs..."
+          for i in {1..30}; do
+            if docker logs publishing_tools_subscriber 2>&1 | grep -q "Broker:kafka://kafka.scimma.org/snews.alert-github"; then
+              echo "Subscribing to firedrill broker. Proceeding to check for alert log..."
+              break
+            fi
+            echo "Still waiting for broker log..."
+            sleep 2
+          done
+          echo "current docker logs:"
+          docker logs publishing_tools_subscriber
+          
+          echo "Checking logs of publishing_tools_subscriber for alert..."
+          for i in {1..30}; do
+            if docker logs publishing_tools_subscriber 2>&1 | grep -q "Here is the alert dictionary I received"; then
+              echo "Custom script ran successfully and produced the expected output."
+              exit 0
+            fi
+            echo "Still waiting to see the alert in the log..."
+            sleep 2
+          done
+          echo "Custom script did not run or produce the expected output."
+          docker logs publishing_tools_subscriber
+          exit 1 
+
+      - name: Confirm records  written to coincidence_tier_archive table in snews_pg
+        run: |
+          echo "Confirming specific records are written to coincidence_tier_archive table in postgres..."
+          max_retries=5
+          for attempt in $(seq 1 $max_retries); do
+            docker exec snews_pg psql -U user -d snews_pg -c "SELECT * FROM coincidence_tier_archive" -t -A -F"," > records.csv
+            record_count=$(wc -l < records.csv)
+            if [ "$record_count" -eq 2 ]; then
+              echo "Found 2 records in coincidence_tier_archive table. Verifying content..."
+              if grep -q "XENONnT" records.csv && grep -q "JUNO" records.csv; then
+                echo "Records match the expected format and content."
+                break
+              else
+                echo "Records do not match the expected format or content."
+                cat records.csv
+                exit 1
+              fi
+            else
+              echo "Expected 2 records, but found $record_count. Retrying..."
+            fi
+            echo "Attempt $attempt failed. Retrying in 2 seconds..."
+            sleep 2
+            if [ $attempt -eq $max_retries ]; then
+              echo "Failed to find 2 valid records after $max_retries attempts."
+              cat records.csv
+              exit 1
+            fi
+          done
+
+      - name: ensure db_pipeline is still running and there is no "Listener Stopped" or "DONE" in logs
+        run: |
+          echo "Checking logs of db_pipeline..."
+          docker logs db_pipeline > db_pipeline_logs.txt
+          if grep -q "Listener Stopped" db_pipeline_logs.txt || grep -q "DONE" db_pipeline_logs.txt; then
+            echo "db_pipeline has stopped or completed. Exiting with error."
+            cat db_pipeline_logs.txt
+            exit 1
+          fi
+          echo "db_pipeline is still running and has not stopped or completed."
+          echo "current db_pipeline docker logs:"
+          docker logs db_pipeline

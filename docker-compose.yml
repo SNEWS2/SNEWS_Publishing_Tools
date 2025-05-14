@@ -1,0 +1,91 @@
+services:
+  coincidence_system:
+    build:
+      context: .
+      dockerfile: Dockerfile.coincidence_system
+      args:
+        REPO_URL: https://github.com/SNEWS2/SNEWS_Coincidence_System.git
+        BRANCH: main
+        HOP_USERNAME: ${HOP_USERNAME}
+        HOP_PASSWORD: ${HOP_PASSWORD}
+    container_name: coincidence_system
+    environment:
+      - HOP_USERNAME=${HOP_USERNAME}
+      - HOP_PASSWORD=${HOP_PASSWORD}
+    ports:
+      - "5001:5000"
+
+  publishing_tools_subscriber:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HOP_USERNAME: ${HOP_USERNAME}
+        HOP_PASSWORD: ${HOP_PASSWORD}
+    container_name: publishing_tools_subscriber
+    command: snews_pt subscribe --outputfolder /app/output -p /app/snews_pt/auxiliary/firedrill_plugin.py --firedrill
+    ports:
+      - "5002:5000"
+    environment:
+      - HOP_USERNAME=${HOP_USERNAME}
+      - HOP_PASSWORD=${HOP_PASSWORD}
+    depends_on:
+      - coincidence_system
+
+  publishing_tools_publisher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HOP_USERNAME: ${HOP_USERNAME}
+        HOP_PASSWORD: ${HOP_PASSWORD}
+    container_name: publishing_tools_publisher
+    command: >
+      sh -c "python /app/snews_pt/test/generate_firedrill_json.py && tail -f /dev/null"
+    ports:
+      - "5003:5000"
+    environment:
+      - HOP_USERNAME=${HOP_USERNAME}
+      - HOP_PASSWORD=${HOP_PASSWORD}
+    depends_on:
+      - coincidence_system
+      - db_pipeline
+
+  snews_pg:
+    image: postgres:17
+    container_name: snews_pg
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=snews_pg
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db_pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile.snews_db_pipeline
+      args:
+        REPO_URL: https://github.com/SNEWS2/SNEWS_DB_PIPELINE.git
+        BRANCH: main
+        HOP_USERNAME: ${HOP_USERNAME}
+        HOP_PASSWORD: ${HOP_PASSWORD}
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: snews_pg
+    container_name: db_pipeline
+    environment:
+      - HOP_USERNAME=${HOP_USERNAME}
+      - HOP_PASSWORD=${HOP_PASSWORD}
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=snews_pg
+    ports:
+      - "5005:5000"
+    depends_on:
+      - snews_pg

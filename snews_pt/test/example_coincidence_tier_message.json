@@ -2,7 +2,7 @@
         "XENONnT",
     "machine_time": 
         "2022-06-14T14:57:12.238275",
-    "neutrino_time": 
+    "neutrino_time_utc":
         "2022-06-14T14:50:12.345275",
     "p_val":
         0.07,
