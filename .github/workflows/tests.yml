@@ -26,7 +26,7 @@ jobs:
         # Additionally, test one Python version under MacOS and Windows, to detect OS-specific issues
         include:
           - os: macos-latest
-            python-version: ['3.11', '3.12']
+            python-version: '3.12'
 
     # The type of runner that the job will run on.
     runs-on: ${{ matrix.os }}
