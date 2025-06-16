@@ -22,7 +22,7 @@ jobs:
       matrix:
         # Test all supported Python versions under Ubuntu
         os: [ubuntu-latest, macos-latest]
-        python-version: ['3.11', '3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
 
     # The type of runner that the job will run on.
     runs-on: ${{ matrix.os }}
