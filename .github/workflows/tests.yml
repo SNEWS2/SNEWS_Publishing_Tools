@@ -41,7 +41,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
       # Check for Python syntax errors with Lint using flake8. Exit-0 treats all errors as warnings. The GitHub editor is 127 chars.
       - name: Lint with flake8
         run: |
