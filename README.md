@@ -2,6 +2,7 @@
 <img src="docs/_static/images/custom_logo.png" alt="snews_logo" width="200"/> 
 
 [![Documentation Status](https://readthedocs.org/projects/snews-publishing-tools/badge/?version=latest)](https://snews-publishing-tools.readthedocs.io/en/latest/?badge=latest)
+[![tests](https://github.com/SNEWS2/SNEWS_Publishing_Tools/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/SNEWS2/SNEWS_Publishing_Tools/actions/workflows/tests.yml)
 [![PyPI](https://img.shields.io/pypi/v/snews_pt)](https://pypi.org/project/snews_pt/)
 [![arXiv](https://img.shields.io/badge/arXiv-2406.17743-b31b1b.svg)](https://arxiv.org/abs/2406.17743)
 
