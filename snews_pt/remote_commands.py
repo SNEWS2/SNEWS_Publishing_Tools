@@ -7,7 +7,14 @@ Melih Kara, kara@kit.edu
 
 import os
 import time
-from datetime import UTC, datetime
+from datetime import datetime
+
+# Import for Python <3.11.
+try:
+    from datetime import UTC
+except ImportError as e:
+    from datetime import timezone
+    UTC = timezone.utc
 
 import click
 from hop import Stream
