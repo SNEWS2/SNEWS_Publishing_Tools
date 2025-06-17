@@ -1,3 +1,5 @@
+from ._version import __version__
+
 import os
 
 from dotenv import load_dotenv
