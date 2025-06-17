@@ -5,12 +5,11 @@ filterwarnings = [
 
 [project]
 name = "snews-pt"
-version = "2.0.1"
+dynamic = ["version"]
 description = "An alert application for observing supernovas"
-authors = [
-    {name = "SNEWS Collaboration", email = "snews2.0@lists.bnl.gov"},
-]
-license = {text = "BSD-3-Clause"}
+authors = [{name = "SNEWS Collaboration", email = "snews2.0@lists.bnl.gov"}]
+license = "BSD-3-Clause"
+license-files = ["LICEN[CS]E*"]
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 classifiers = [
@@ -44,6 +43,15 @@ documentation = "https://snews-publishing-tools.readthedocs.io"
 
 [project.scripts]
 snews_pt = "snews_pt.__main__:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "snews_pt.__version__"}
+
+[tools.setuptools.packages.find]
+where = ["snews_pt"]
+
+[tools.setuptools.package-data]
+"snews_pt.auxiliary" = [ "*.py", "*.env", "*.json" ]
 
 [tool.poetry]
 
