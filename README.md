@@ -1,5 +1,5 @@
 # SNEWS Publishing Tool
-<img src="docs/_static/images/custom_logo.png" alt="snews_logo" width="200"/> 
+<img src="docs/_static/images/snews_logo_bkg_light.png" alt="snews_logo" width="200"/> 
 
 [![Documentation Status](https://readthedocs.org/projects/snews-publishing-tools/badge/?version=latest)](https://snews-publishing-tools.readthedocs.io/en/latest/?badge=latest)
 [![tests](https://github.com/SNEWS2/SNEWS_Publishing_Tools/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/SNEWS2/SNEWS_Publishing_Tools/actions/workflows/tests.yml)
