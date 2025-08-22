@@ -29,7 +29,7 @@ We recommend that you install SNEWS the publishing tools PyPI package (`snews_pt
 ```
 pip install snews_pt
 ```
-To minimize conflicts with other Python packages, we suggest you set up a dedicated environment using [virtualenv](https://virtualenv.pypa.io/en/latest/), [conda](https://anaconda.org/anaconda/conda), or another tool used to create isolated Python environments.
+To minimize conflicts with other Python packages, we suggest you set up a dedicated environment using [virtualenv](https://virtualenv.pypa.io/en/latest/), [conda](https://anaconda.org/anaconda/conda), or another tool used to create isolated Python environments.  Also, note that the SNEWS software requires Python v3.11 or higher at the moment, so be sure to set up your enviornment with a new enough version.
 
 ## How to Publish and Subscribe
 
