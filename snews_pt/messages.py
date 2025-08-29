@@ -55,7 +55,13 @@ def test():
     )
     print(sn.model_dump())
 
-    sn = messages.TimingTierMessage(detector_name="Super-K", timing_series=[1, 2, 3])
+    sn = messages.TimingTierMessage(
+        detector_name="Super-K",
+        timing_series=[1, 2, 3],
+        neutrino_time_utc=datetime.now(UTC),
+        start_time_utc=datetime.now(UTC),
+        machine_time_utc=datetime.now(UTC),
+    )
     print(sn.model_dump())
 
     sn = messages.RetractionMessage(detector_name="Super-K", retract_latest_n=1)

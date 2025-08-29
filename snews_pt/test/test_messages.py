@@ -27,7 +27,7 @@ def test_publisher_send_message():
     publisher.add_message(
         messages.HeartbeatMessage(
             detector_name="XENONnT",
-            machine_time="2012-06-09T15:30:00.000501",
+            machine_time_utc="2012-06-09T15:30:00.000501",
             detector_status="ON",
             firedrill_mode=False,
             is_test=True,
@@ -50,7 +50,7 @@ def test_messages_main_function():
 def test_heartbeat_message():
     messages.HeartbeatMessage(
         detector_name="XENONnT",
-        machine_time="2012-06-09T15:30:00.000501",
+        machine_time_utc="2012-06-09T15:30:00.000501",
         detector_status="ON",
         firedrill_mode=False,
         is_test=True,
@@ -80,14 +80,11 @@ def test_significance_tier_message():
 def test_timing_tier_message():
     messages.TimingTierMessage(
         detector_name="XENONnT",
-        neutrino_time="2012-06-09T15:31:08.109876",
+        neutrino_time_utc="2012-06-09T15:31:08.109876",
         timing_series=[
-            "2012-06-09T15:31:08.109876",
-            "2012-06-09T15:33:07.891011",
-            "2012-06-09T15:33:07.9910110",
-            "2012-06-09T15:34:07.891011000",
-            "2012-06-09T15:35:17.0",
+            0, 6, 15, 4982
         ],
+        start_time_utc="2012-06-09T15:30:00.009876",
         machine_time_utc="2012-06-09T15:30:00.009876",
         is_firedrill=False,
         is_test=True,
