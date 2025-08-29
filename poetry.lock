@@ -1539,32 +1539,11 @@ files = [
 
 [[package]]
 name = "snews-data-formats"
-version = "1.0.0"
-description = "A unified collection of SNEWS data, models, and schema"
-optional = false
-python-versions = "<3.13,>=3.9"
-groups = ["main"]
-markers = "python_version == \"3.11\""
-files = [
-    {file = "snews_data_formats-1.0.0-py3-none-any.whl", hash = "sha256:fcf057cda7ccd3465d80967082484cf490c33e88e39bce80816b67ff56d83bc3"},
-    {file = "snews_data_formats-1.0.0.tar.gz", hash = "sha256:b4329635b4d9350cc045c324983971a839eeb4828c6e9aaf8ef42bfe8b35c367"},
-]
-
-[package.dependencies]
-numpy = ">=1.26.3,<2.0.0"
-pycountry = ">=22.3.5,<23.0.0"
-pydantic = ">=2.4.2,<3.0.0"
-pydantic-extra-types = ">=2.1.0,<3.0.0"
-single-version = ">=1.6.0,<2.0.0"
-
-[[package]]
-name = "snews-data-formats"
 version = "1.1.1"
 description = "A unified collection of SNEWS data, models, and schema"
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
-markers = "python_version >= \"3.12\""
 files = [
     {file = "snews_data_formats-1.1.1-py3-none-any.whl", hash = "sha256:2f9ea218cb21b06e1cebb7d6d871445ab736af054e1e25956036b9bc262de394"},
     {file = "snews_data_formats-1.1.1.tar.gz", hash = "sha256:64466592891b63c0925ebe556a78b4d948026dd2e4b9dba7177f660c71e2ceec"},
@@ -1919,5 +1898,5 @@ files = [
 
 [metadata]
 lock-version = "2.1"
-python-versions = "^3.11"
-content-hash = "a6937167752292b559fb11edc9ce0fad77a31a505430c6429c5b7ea2e60f23d1"
+python-versions = ">=3.11,<4"
+content-hash = "72a36dc05906ee3764b9715cbfa0748b58552fefa14151f41d345df8c1a5895e"
