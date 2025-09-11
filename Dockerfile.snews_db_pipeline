@@ -29,7 +29,7 @@ ENV POSTGRES_DB=${POSTGRES_DB}
 # Clone the repository
 ARG REPO_URL
 ARG BRANCH
-RUN git clone --branch ${BRANCH} ${REPO_URL} .
+RUN git clone --branch ${BRANCH} ${REPO_URL} . && git pull
 
 RUN sed -i 's/^FIREDRILL_OBSERVATION_TOPIC=.*/FIREDRILL_OBSERVATION_TOPIC="kafka:\/\/$\{HOP_BROKER\}\/snews\.experiments-github"/' /app/snews_db/tests/etc/test-config.env
 RUN sed -i 's|^DATABASE_URL=.*|DATABASE_URL="postgresql://user:password@snews_pg:5432/snews_pg"|' /app/snews_db/tests/etc/test-config.env
@@ -48,7 +48,7 @@ RUN poetry lock
 RUN poetry install
 
 ## Add hop credentials
-RUN poetry run hop auth add hop_creds.csv
+RUN poetry run hop auth add /app/hop_creds.csv
 
 ## Command to run the coincidence system
 CMD ["poetry", "run", "snews_db", "--env", "/app/snews_db/tests/etc/test-config.env", "listen-to-detectors", "--firedrill"]
