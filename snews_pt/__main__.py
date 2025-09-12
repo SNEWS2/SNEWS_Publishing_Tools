@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from snews import messages
 
 from . import snews_pt_utils
-from ._version import version as __version__
 from .auxiliary.try_scenarios import try_scenarios
 from .messages import Publisher
 from .snews_sub import Subscriber
@@ -25,7 +24,7 @@ if int(os.getenv("HAS_NAME_CHANGED")) == 0:
 
 
 @click.group(invoke_without_command=True)
-@click.version_option(__version__)
+@click.version_option()
 @click.option(
     "--env",
     type=str,
