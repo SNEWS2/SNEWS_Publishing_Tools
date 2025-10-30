@@ -72,18 +72,25 @@ instances where this data has been read but could not be send to server right aw
 ## Message Schemas
 `snews_pt message-schema` can tell you the required contents for each tiers. You can display the contents of a single tier by calling e.g.
 ```bash
-(venv) User$: snews_pt message-schema time
+(venv) User$: snews_pt message-schema CoincidenceTier
 ```
 In which case it displays the following
 ```bash
-         > Message schema for SNEWSTimingTierMessage                                                                               
-         _id                  : (SET AUTOMATICALLY)
-         schema_version       : (SET AUTOMATICALLY)
-         detector_name        : (SET AUTOMATICALLY)
-         timing_series        : (REQUIRED USER INPUT)
-         machine_time         : (USER INPUT)
-         p_val                : (USER INPUT)
+         > Message schema for CoincidenceTier
+         id                   : (USER INPUT)
+         uuid                 : (USER INPUT)
+         tier                 : (REQUIRED USER INPUT)
+         sent_time_utc        : (USER INPUT)
+         machine_time_utc     : (USER INPUT)
+         is_pre_sn            : (USER INPUT)
          is_test              : (USER INPUT)
+         is_firedrill         : (USER INPUT)
+         meta                 : (USER INPUT)
+         schema_version       : (USER INPUT)
+         detector_name        : (REQUIRED USER INPUT)
+         p_val                : (USER INPUT)
+         neutrino_time_utc    : (REQUIRED USER INPUT)
+         **kwargs             : (GROUPED AS META)
 ```
 or you can simply call `snews_pt message-schema all`  to display all the message schemes. <br>
 
@@ -96,10 +103,13 @@ The simplest JSON file that you can publish using the CLI would contain the foll
 ```json
 # in my_message.json
 {
-  "neutrino_time" : "2023-06-02T09:48:13.393969"
+    "detector_name":
+        "DUNE",
+    "neutrino_time_utc":
+        "2025-10-30T15:44:12.345275"
 }
 ```
-assuming you set your detector name already. In which case, only the `"neutrino_time"` argument is parsed and `SNEWSTierPublisher` is invoked.
+In which case, only the `"neutrino_time"` argument is parsed and the CoincidenceTierPublisher is invoked.
 
 **Publish using the CLI**
 ```bash
@@ -126,21 +136,30 @@ These are also messages created by `SNEWSTierPublisher` with some specific keys.
 Let's first check what arguments belong to retraction message.
 
 ```bash
-(snews) kara-unix@iap-nb-034:~$ snews_pt message-schema retract
-> The Message Schema for FalseOBS
-_id                 :(SNEWS SETS)
-schema_version      :(SNEWS SETS)
-detector_name       :(FETCHED FROM ENV XENONnT)
-machine_time        :(User Input)
-retract_latest      :(User Input*)
-retraction_reason   :(User Input)
-**kwargs            :(APPENDED AS 'META')  
+$ snews_pt message-schema Retraction
+Message schema for Retraction
+id                   : (USER INPUT)
+uuid                 : (USER INPUT)
+tier                 : (REQUIRED USER INPUT)
+sent_time_utc        : (USER INPUT)
+machine_time_utc     : (USER INPUT)
+is_pre_sn            : (USER INPUT)
+is_test              : (USER INPUT)
+is_firedrill         : (USER INPUT)
+meta                 : (USER INPUT)
+schema_version       : (USER INPUT)
+detector_name        : (REQUIRED USER INPUT)
+retract_message_uuid : (USER INPUT)
+retract_latest_n     : (USER INPUT)
+retraction_reason    : (USER INPUT)
+**kwargs             : (GROUPED AS META)
 ```
-The fields with the asterisk `*` is the keyword that is needed to select this tier. In this case, input should have `retract_latest` key in order to create a retraction message. 
+The fields with REQUIRED USER INPUT are the keywords that are needed to select this tier. In this case, input should have `retract_latest_n` key in order to create a retraction message for the last two messages from the detector named `DUNE` 
 ```json
 # in retract_message.json
 {
-  "retract_latest" : 2
+  "detector_name": "DUNE",
+  "retract_latest_n" : 2
 }
 ```
 
