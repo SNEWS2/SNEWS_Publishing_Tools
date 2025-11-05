@@ -7,6 +7,7 @@ All the commands have their short descriptions accessible via `--help` flag.
 ```
 ```bash
 Usage: snews_pt [OPTIONS] COMMAND [ARGS]...
+
   User interface for snews_pt tools
 
 Options:
@@ -15,17 +16,19 @@ Options:
   --help      Show this message and exit.
 
 Commands:
-  get-feedback    Get an e-mail feedback on your heartbeats
-  heartbeat       Publish heartbeat messages.
-  message-schema  Display the message format for `tier`, default 'all'
-  publish         Publish a message using snews_pub
-  retract         Retract N latest message
-  subscribe       Subscribe to Alert topic 
-  set-name        Set your detectors name
-  reset-cache     Development purposes only, requires admin pass
-  run-scenarios   Test different coincidence scenarios
-  test-connection Test the server connection
-  write-hb-logs   Development purposes only, requires admin pass
+  change-broker    REQUIRES AUTHORIZATION | If authorized, server changes the broker
+  get-feedback     REQUIRES AUTHORIZATION | Get heartbeat feedback by email
+  heartbeat        Send Heartbeats
+  message-schema   Display the message format for each `tier`
+  publish          Publish a message using snews_pub, multiple files are allowed
+  reset-cache      REQUIRES AUTHORIZATION | Drop the current cache at the server
+  run-scenarios    Test different coincidence scenarios
+  set-name         Set your detectors name
+  subscribe        Subscribe to Alert topic
+  test-connection  Test the connection to the server
+  write-hb-logs    REQUIRES AUTHORIZATION | Print the HB logs on the server standard output
+
+  See https://snews-publishing-tools.readthedocs.io/en/latest/ for more details
 ```
 
 The main command `snews_pt` serves an entry point. It is also possible to set an _environment_ by passing it to this with any other command. 

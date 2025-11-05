@@ -23,7 +23,9 @@ if int(os.getenv("HAS_NAME_CHANGED")) == 0:
     warnings.warn(warning_text, UserWarning)
 
 
-@click.group(invoke_without_command=True)
+@click.group(invoke_without_command=True, 
+             context_settings = {'max_content_width': 120},
+             epilog='See https://snews-publishing-tools.readthedocs.io/en/latest/ for more details')
 @click.version_option()
 @click.option(
     "--env",
@@ -117,7 +119,8 @@ def publish(ctx, file, firedrill):
 )
 @click.pass_context
 def heartbeat(ctx, status, time, firedrill):
-    """Send Heartbeats
+    """Publish heartbeat message
+
     :param status: Status of the experiment ON/OFF.
     :param time: (optional) Machine time is appended as the time of execution
                  different time can be passed following the iso-format
@@ -157,6 +160,7 @@ def heartbeat(ctx, status, time, firedrill):
 @click.pass_context
 def subscribe(ctx, plugin, outputfolder, firedrill, test):
     """Subscribe to Alert topic
+
     Optionally, `plugin` script can be passed
     The message content as a single dictionary will be passed to
     this script as a positional argument.
@@ -181,8 +185,9 @@ def subscribe(ctx, plugin, outputfolder, firedrill, test):
 @click.argument("requested_tier", nargs=-1)
 @click.pass_context
 def message_schema(ctx, requested_tier):
-    """Display the message format for `tier` if 'all'
-    displays everything
+    """Display the message format for each `tier`
+
+    If 'all' is passed, displays everything.
     """
 
     valid_tiers = [
@@ -235,7 +240,7 @@ def message_schema(ctx, requested_tier):
     help="If True subscribe to test topic",
 )
 def run_scenarios(firedrill, test):
-    """ """
+    """Test different coincidence scenarios"""
     # base = os.path.dirname(os.path.realpath(__file__))
     # path = os.path.join(base, 'auxiliary/try_scenarios.py')
     # os.system(f'python3 {path} {firedrill} {test}')
@@ -272,7 +277,8 @@ def set_name(name):
 @click.option("--patience", "-p", type=int, default=8)
 @click.pass_context
 def test_connection(ctx, firedrill, start_at, patience):
-    """test the server connection
+    """Test the connection to the server
+
     It should prompt your whether the coincidence script is running in the server
     :param start_at: `str` Where to start looking for the confirmation LATEST or EARLIEST
     :param patience: `int` seconds to wait before the check
@@ -297,8 +303,8 @@ def test_connection(ctx, firedrill, start_at, patience):
 )
 @click.pass_context
 def write_hb_logs(ctx, firedrill):
-    """REQUIRES AUTHORIZATION
-    ask to print the HB logs on the server standard output
+    """REQUIRES AUTHORIZATION | Print the HB logs on the server standard output
+
     later admins can see them remotely
     """
     from .remote_commands import write_hb_logs
@@ -325,8 +331,7 @@ def write_hb_logs(ctx, firedrill):
 )
 @click.pass_context
 def reset_cache(ctx, firedrill, test):
-    """REQUIRES AUTHORIZATION
-    If authorized, drop the current cache at the server
+    """REQUIRES AUTHORIZATION | Drop the current cache at the server
     """
     from .remote_commands import reset_cache
 
@@ -348,8 +353,7 @@ def reset_cache(ctx, firedrill, test):
 @click.option("--brokername", "-bn", help="Change the broker")
 @click.pass_context
 def change_broker(ctx, firedrill, brokername):
-    """REQUIRES AUTHORIZATION
-    If authorized, server changes the broker
+    """REQUIRES AUTHORIZATION | If authorized, server changes the broker
     """
     from .remote_commands import change_broker
 
@@ -370,8 +374,7 @@ def change_broker(ctx, firedrill, brokername):
 )
 @click.pass_context
 def get_feedback(ctx, firedrill):
-    """REQUIRES AUTHORIZATION
-    Get heartbeat feedback by email
+    """REQUIRES AUTHORIZATION | Get heartbeat feedback by email
     """
     from .remote_commands import get_feedback
 
