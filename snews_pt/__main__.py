@@ -192,11 +192,19 @@ def message_schema(ctx, requested_tier):
     if len(requested_tier) == 0:
         requested_tier = ["all"]
 
-    get_all_tiers = requested_tier[0] == "all"
+    get_all_tiers = requested_tier[0] == "all" # it's a bool flag to print all tiers
+    
+    # Check for invalid tiers and echo if any requested tier is not valid
+    if not get_all_tiers:
+        invalid_tiers = [t for t in requested_tier if t not in valid_tiers]
+        if invalid_tiers:
+            click.echo(f"Warning: The following requested tiers are not valid: {', '.join(invalid_tiers)}")
+            click.echo(f"Valid tiers are: {', '.join(valid_tiers)}")
+    
     tiers = (
         valid_tiers
-        if get_all_tiers
-        else [t for t in requested_tier if t in valid_tiers]
+        if get_all_tiers # if True, print all tiers
+        else [t for t in requested_tier if t in valid_tiers] # if False, print only the requested tiers
     )
 
     for t in tiers:
