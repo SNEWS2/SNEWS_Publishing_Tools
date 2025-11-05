@@ -3,6 +3,7 @@ import pickle
 from datetime import UTC, datetime
 from typing import Union
 
+import click
 from hop import Stream
 from hop.models import Blob
 from snews.models import messages
@@ -18,13 +19,16 @@ class Publisher:
 
         pass
 
-    def add_message(self, message: Union[dict, messages.MessageBase]) -> None:
+    def add_message(self, message: Union[dict, messages.MessageBase],
+                    verbose: int = 0) -> None:
         """This method will add a message to the message queue.
 
         Parameters
         ----------
         message: `dict` or snews.messages.MessageBase
             observation message.
+        verbose: `int`
+            verbosity level. 0: no output, 1: print simple feedback, 2: print message details.
         """
 
         msg_props = message if type(message) is dict else message.model_dump()
@@ -32,15 +36,41 @@ class Publisher:
         for snews_message in messages.create_messages(**msg_props):
             self.message_queue.insert(0, snews_message)
 
+            if verbose >= 1:
+                click.secho(f"Added message to queue", fg="green", bold=True)
+                if verbose >= 2:
+                    click.secho('--------------------------------', fg="blue", bold=True)
+                    message_data = snews_message.model_dump()
+                    for key, value in message_data.items():
+                        click.secho(f"  {key}: {value}", fg="cyan")
+                    click.secho('--------------------------------', fg="blue", bold=True)
+
         return
 
-    def send(self) -> None:
+    def send(self, verbose: int = 0) -> None:
+        """This method will send the messages to the Kafka topic.
+
+        Parameters
+        ----------
+        verbose: `int`
+            verbosity level. 0: no output, 1: print simple feedback, 2: print message details.
+        """
         stream = Stream(until_eos=True, auth=self.auth)
         with stream.open(self.kafka_topic, "w") as conn:
             while len(self.message_queue) > 0:
                 message = self.message_queue.pop()
                 message.sent_time_utc = str(PrecisionTimestamp())
                 conn.write(Blob(pickle.dumps(message)))
+                
+                if verbose >= 1:
+                    click.secho(f"Sent message to {self.kafka_topic}", fg="green", bold=True)
+                    if verbose >= 2:
+                        message_data = message.model_dump()
+                        click.secho('--------------------------------', fg="blue", bold=True)
+                        for key, value in message_data.items():
+                            click.secho(f"  {key}: {value}", fg="cyan")
+                        click.secho('--------------------------------', fg="blue", bold=True)
+                
 
 
 def test():
