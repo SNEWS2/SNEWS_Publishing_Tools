@@ -56,21 +56,31 @@ The subscription command can be called without any arguments.
 ---
 ## Sending Heartbeats
 ```bash 
-(venv) User$: snews_pt heartbeat -s ON -t "2023-06-02T09:27:40.882808" --firedrill
-Message Generated for Heartbeat                                                                                         
-----------------------------------------------------------------
-Sending message to Heartbeat on kafka://kafka.scimma.org/snews.experiments-firedrill
-_id                :19_Heartbeat_2023-06-02T09:27:40.882808
-detector_name      :XENONnT
-machine_time       :2023-06-02T09:27:40.882808                                                                          
-detector_status    :ON
-meta               :
-schema_version     :1.3.0
-sent_time          :2023-06-02T09:48:13.393969
+(venv) User$: snews_pt heartbeat -s ON -t "2025-06-02T09:27:40.882808" --firedrill
 ```
 
 Here the machine time refers to the time your experiment reads the data that sets ON or OFF status. There can be 
 instances where this data has been read but could not be send to server right away, therefore, the `sent_time` is stamped at the execution.
+
+The level of verbosity can be controlled with the `--verbose` (or `-v`) flag.
+```bash
+(venv) User$: snews_pt heartbeat -s ON -t "2025-06-02T09:27:40.882808" --firedrill --verbose 2
+Sent message to kafka://kafka.scimma.org/snews.experiments-firedrill
+--------------------------------
+  id: XENONnT_Heartbeat_None
+  uuid: 416dba19-ed18-432e-b731-25d6dd87c8d6
+  tier: Tier.HEART_BEAT
+  sent_time_utc: 2025-11-05T17:20:49.202042000Z
+  machine_time_utc: None
+  is_pre_sn: False
+  is_test: False
+  is_firedrill: True
+  meta: None
+  schema_version: 0.2
+  detector_name: XENONnT
+  detector_status: ON
+--------------------------------
+```
 
 ## Message Schemas
 `snews_pt message-schema` can tell you the required contents for each tiers. You can display the contents of a single tier by calling e.g.
@@ -112,24 +122,31 @@ The simplest JSON file that you can publish using the CLI would contain the foll
         "2025-10-30T15:44:12.345275"
 }
 ```
-In which case, only the `"neutrino_time"` argument is parsed and the CoincidenceTierPublisher is invoked.
+In which case, only the `"neutrino_time_utc"` argument is parsed and the CoincidenceTierPublisher is invoked.
 
 **Publish using the CLI**
 ```bash
 (venv) User$: snews_pt publish my_message.json --firedrill
-
-Message Generated for CoincidenceTier
-----------------------------------------------------------------
-Sending message to CoincidenceTier on kafka://kafka.scimma.org/snews.experiments-firedrill
-_id                :19_CoincidenceTier_2023-06-02T10:04:27.400593
-detector_name      :XENONnT
-machine_time       :2023-06-02T10:04:27.400593
-neutrino_time      :2023-06-02T09:48:13.393969
-p_val              :None
-meta               :
-is_test            :False
-schema_version     :1.3.0
-sent_time          :2023-06-02T10:04:27.461761 
+```
+The level of verbosity can be controlled with the `--verbose` (or `-v`) flag.
+```bash
+(venv) User$: snews_pt publish my_message.json --firedrill --verbose 2
+Sent message to kafka://kafka.scimma.org/snews.experiments-firedrill
+--------------------------------
+  id: DUNE_CoincidenceTier_None
+  uuid: 0a2124c0-5069-4e31-ac03-cb3e8ba45f08
+  tier: Tier.COINCIDENCE_TIER
+  sent_time_utc: 2025-11-05T17:43:04.865601000Z
+  machine_time_utc: None
+  is_pre_sn: False
+  is_test: False
+  is_firedrill: False
+  meta: None
+  schema_version: 0.2
+  detector_name: DUNE
+  p_val: None
+  neutrino_time_utc: 2025-11-05T10:52:13.345275000Z
+--------------------------------
 ```
 
 ## Retraction Messages

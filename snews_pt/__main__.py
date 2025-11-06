@@ -53,9 +53,16 @@ def main(ctx, env):
     show_default="True",
     help="Whether to use firedrill brokers or default ones",
 )
+@click.option(
+    "--verbose",
+    "-v",
+    default=0,
+    show_default="0",
+    help="Verbosity level. 0: no output, 1: print simple feedback, 2: print message details.",
+)
 @click.argument("file", nargs=-1)
 @click.pass_context
-def publish(ctx, file, firedrill):
+def publish(ctx, file, firedrill, verbose):
     """Publish a message using snews_pub, multiple files are allowed
 
     $: snews_pt publish my_json_message.json
@@ -65,7 +72,6 @@ def publish(ctx, file, firedrill):
     The topics are read from the defaults i.e. from auxiliary/test-config.env
     If no file is given it can still submit dummy messages with default values
     """
-    click.clear()
 
     if firedrill:
         publisher = Publisher(kafka_topic=os.getenv("FIREDRILL_OBSERVATION_TOPIC"))
@@ -82,7 +88,7 @@ def publish(ctx, file, firedrill):
                     snews_messages = messages.create_messages(**json_data)
                     for message in snews_messages:
                         publisher.add_message(message)
-                    publisher.send()
+                    publisher.send(verbose=verbose)
             except FileNotFoundError:
                 click.echo(f"Error: File not found: {filename}")
             except json.JSONDecodeError as e:
@@ -117,8 +123,15 @@ def publish(ctx, file, firedrill):
     show_default="None",
     help="Machine time, format: %Y-%m-%dT%H:%M:%S.%f",
 )
+@click.option(
+    "--verbose",
+    "-v",
+    default=0,
+    show_default="0",
+    help="Verbosity level. 0: no output, 1: print simple feedback, 2: print message details.",
+)
 @click.pass_context
-def heartbeat(ctx, status, time, firedrill):
+def heartbeat(ctx, status, time, firedrill, verbose):
     """Publish heartbeat message
 
     :param status: Status of the experiment ON/OFF.
@@ -133,13 +146,13 @@ def heartbeat(ctx, status, time, firedrill):
 
     message = messages.HeartbeatMessage(
         detector_name=ctx.obj["DETECTOR_NAME"],
-        machine_time=time,
+        machine_time_utc=time,
         detector_status=status,
         is_firedrill=firedrill,
     )
 
     publisher.add_message(message)
-    publisher.send()
+    publisher.send(verbose=verbose)
 
 
 @main.command()
