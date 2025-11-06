@@ -46,9 +46,9 @@ We would like to test two main interactions; **subscribing**  & **publishing** t
     ```python
      from snews_pt.messages import SNEWSMessageBuilder
      SNEWSMessageBuilder(detector_name='KamLAND', 
-                         neutrino_time="2022-02-28T04:31:08.678999",
+                         neutrino_time_utc="2022-02-28T04:31:08.678999",
                          p_val=0.000007,
-                         machine_time="2022-02-28T04:31:09.778859", 
+                         machine_time_utc="2022-02-28T04:31:09.778859", 
                          firedrill_mode=True,
                          is_test=True,
                          ).send_messages()

@@ -184,18 +184,22 @@ The fields with REQUIRED USER INPUT are the keywords that are needed to select t
 ```
 
 ```bash
-(venv) User$: snews_pt publish retract_message.json --firedrill
-Message Generated for Retraction
-----------------------------------------------------------------
-Sending message to Retraction on kafka://kafka.scimma.org/snews.experiments-firedrill
-IT'S OKAY, WE ALL MAKE MISTAKES
-_id                :19_Retraction_2023-06-02T10:12:01.001552
-detector_name      :XENONnT
-machine_time       :2023-06-02T10:12:01.001552
-retract_latest     :2
-retraction_reason  :None
-meta               :
-is_test            :False
-schema_version     :1.3.0
-sent_time          :2023-06-02T10:12:01.049846 
+(venv) User$: snews_pt publish retract_message.json --firedrill --verbose 2
+Sent message to kafka://kafka.scimma.org/snews.experiments-test
+--------------------------------
+  id: XENONnT_Retraction_None
+  uuid: ad822786-9644-462a-8740-c7f9884de7ec
+  tier: Tier.RETRACTION
+  sent_time_utc: 2025-11-06T20:20:14.548049000Z
+  machine_time_utc: None
+  is_pre_sn: False
+  is_test: False
+  is_firedrill: False
+  meta: None
+  schema_version: 0.2
+  detector_name: XENONnT
+  retract_message_uuid: None
+  retract_latest_n: 1
+  retraction_reason: None
+--------------------------------
 ```

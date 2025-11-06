@@ -27,11 +27,11 @@ As an example, the following code creates a message for the Coincidence Tier and
 ```python
 from snews_pt.messages import SNEWSMessageBuilder
 
-messages = SNEWSMessageBuilder(neutrino_time="2022-02-28T04:31:08.678999")
+messages = SNEWSMessageBuilder(neutrino_time_utc="2022-02-28T04:31:08.678999")
 messages.send_messages()
 ```
 
-Since in this example, only the `neutrino_time` is passed, the message is created for the Coincidence Tier. This also assumes that the detector name has already been set by `snews_pt.snews_pt_utils.set_name()` function.
+Since in this example, only the `neutrino_time_utc` is passed, the message is created for the Coincidence Tier. This also assumes that the detector name has already been set by `snews_pt.snews_pt_utils.set_name()` function.
 
 The messages are validated upon creation and if the required fields are not passed, or the format is wrong the software raises an error.
 Furthermore, the `messages` objects can be inspected before sending them to the SNEWS server. It contains information about the selected tiers and the generated messages.
@@ -47,7 +47,7 @@ messages.send_messages()
 Where the `myjsonfile.json` contains the following information;
 ```json
 {
-  "neutrino_time" : "2022-02-28T04:31:08.678999"
+  "neutrino_time_utc" : "2022-02-28T04:31:08.678999"
 }
 ```
 
