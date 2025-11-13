@@ -77,7 +77,8 @@ def publish(ctx, file, firedrill, verbose):
         publisher = Publisher(kafka_topic=os.getenv("FIREDRILL_OBSERVATION_TOPIC"))
     else:
         publisher = Publisher(kafka_topic=os.getenv("OBSERVATION_TOPIC"))
-
+    
+    env_detector_name=ctx.obj["DETECTOR_NAME"]
     for filename in file:
         if filename.endswith(".json"):
             try:
@@ -88,6 +89,24 @@ def publish(ctx, file, firedrill, verbose):
                     snews_messages = messages.create_messages(**json_data)
                     for message in snews_messages:
                         publisher.add_message(message)
+                        json_detector_name = message.detector_name
+                        if json_detector_name != env_detector_name:
+                            click.secho(
+                                f"{click.style('Warning:',bg = 'red')} "
+                                f"Detector name in JSON file ({click.style(
+                                    json_detector_name, bold = True)}) "
+                                f"does not match the environment detector name "
+                                f"{click.style(env_detector_name, bold = True)}",
+                                fg="red", color="black"
+                            )
+                            click.secho(
+                                f"{click.style('Warning:',bg = 'red')} "
+                                f"Using environment detector name "
+                                f"{click.style(env_detector_name, bold = True)} "
+                                f"for this message. "
+                                f"To change the detector name, use the `snews_pt set-name` command.",
+                            )
+                        message.detector_name = env_detector_name #force detector name from env
                     publisher.send(verbose=verbose)
             except FileNotFoundError:
                 click.echo(f"Error: File not found: {filename}")
