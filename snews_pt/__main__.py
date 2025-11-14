@@ -54,6 +54,13 @@ def main(ctx, env):
     help="Whether to use firedrill brokers or default ones",
 )
 @click.option(
+    "--force",
+    is_flag=True,
+    default=False,
+    show_default="False",
+    help="Force json file to overwrite env variables",
+)
+@click.option(
     "--verbose",
     "-v",
     default=0,
@@ -62,7 +69,7 @@ def main(ctx, env):
 )
 @click.argument("file", nargs=-1)
 @click.pass_context
-def publish(ctx, file, firedrill, verbose):
+def publish(ctx, file, firedrill, force, verbose):
     """Publish a message using snews_pub, multiple files are allowed
 
     $: snews_pt publish my_json_message.json
@@ -72,6 +79,34 @@ def publish(ctx, file, firedrill, verbose):
     The topics are read from the defaults i.e. from auxiliary/test-config.env
     If no file is given it can still submit dummy messages with default values
     """
+
+    def _check_detector_name(json_detector_name, env_detector_name, force):
+        """Check if detector name in json file matches the environment detector name.
+        Defaults to env name. The json file name can be used with the --force flag
+        """
+
+        if force:
+            click.secho(f"Forcing detector name from json file: "
+                        f"{click.style(json_detector_name, bold = True)}")
+            return json_detector_name
+        
+        if json_detector_name != env_detector_name:
+            click.secho(
+                f"{click.style('Warning:',bg = 'red')} "
+                f"Detector name in JSON file ({click.style(
+                    json_detector_name, bold = True)}) "
+                f"does not match the environment detector name "
+                f"{click.style(env_detector_name, bold = True)}",
+                fg="red", color="black"
+            )
+            click.secho(
+                f"{click.style('Warning:',bg = 'red')} "
+                f"Using environment detector name "
+                f"{click.style(env_detector_name, bold = True)} "
+                f"for this message. "
+                f"To change the detector name, use the `snews_pt set-name` command.",
+            )
+        return env_detector_name
 
     if firedrill:
         publisher = Publisher(kafka_topic=os.getenv("FIREDRILL_OBSERVATION_TOPIC"))
@@ -88,26 +123,12 @@ def publish(ctx, file, firedrill, verbose):
                     )
                     snews_messages = messages.create_messages(**json_data)
                     for message in snews_messages:
+                        _detector_name = _check_detector_name(
+                            message.detector_name, env_detector_name, force)
+                        message.detector_name = _detector_name 
                         publisher.add_message(message)
-                        json_detector_name = message.detector_name
-                        if json_detector_name != env_detector_name:
-                            click.secho(
-                                f"{click.style('Warning:',bg = 'red')} "
-                                f"Detector name in JSON file ({click.style(
-                                    json_detector_name, bold = True)}) "
-                                f"does not match the environment detector name "
-                                f"{click.style(env_detector_name, bold = True)}",
-                                fg="red", color="black"
-                            )
-                            click.secho(
-                                f"{click.style('Warning:',bg = 'red')} "
-                                f"Using environment detector name "
-                                f"{click.style(env_detector_name, bold = True)} "
-                                f"for this message. "
-                                f"To change the detector name, use the `snews_pt set-name` command.",
-                            )
-                        message.detector_name = env_detector_name #force detector name from env
                     publisher.send(verbose=verbose)
+                    
             except FileNotFoundError:
                 click.echo(f"Error: File not found: {filename}")
             except json.JSONDecodeError as e:
