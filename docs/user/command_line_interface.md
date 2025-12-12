@@ -149,6 +149,8 @@ Sent message to kafka://kafka.scimma.org/snews.experiments-firedrill
 --------------------------------
 ```
 
+**Note**: For authentication purposes, the detector name is read from the environment file. If the detector name in the JSON file does not match the detector name in the environment file, a warning is printed and the detector name from the environment file is used.
+
 ## Retraction Messages
 
 It can happen that user publishes a message by accident or with wrong input. In these cases `snews_pt` allows for retraction messages. 
