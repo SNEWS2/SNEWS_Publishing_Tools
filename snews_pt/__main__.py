@@ -23,8 +23,8 @@ if int(os.getenv("HAS_NAME_CHANGED")) == 0:
     warnings.warn(warning_text, UserWarning)
 
 
-@click.group(invoke_without_command=True, 
-             context_settings = {'max_content_width': 120},
+@click.group(invoke_without_command=True,
+             context_settings={'max_content_width': 120},
              epilog='See https://snews-publishing-tools.readthedocs.io/en/latest/ for more details')
 @click.version_option()
 @click.option(
@@ -87,22 +87,21 @@ def publish(ctx, file, firedrill, force, verbose):
 
         if force:
             click.secho(f"Forcing detector name from json file: "
-                        f"{click.style(json_detector_name, bold = True)}")
+                        f"{click.style(json_detector_name, bold=True)}")
             return json_detector_name
-        
+
         if json_detector_name != env_detector_name:
             click.secho(
-                f"{click.style('Warning:',bg = 'red')} "
-                f"Detector name in JSON file ({click.style(
-                    json_detector_name, bold = True)}) "
+                f"{click.style('Warning:', bg='red')} "
+                f"Detector name in JSON file ({click.style(json_detector_name, bold=True)}) "
                 f"does not match the environment detector name "
-                f"{click.style(env_detector_name, bold = True)}",
+                f"{click.style(env_detector_name, bold=True)}",
                 fg="red", color="black"
             )
             click.secho(
-                f"{click.style('Warning:',bg = 'red')} "
+                f"{click.style('Warning:', bg='red')} "
                 f"Using environment detector name "
-                f"{click.style(env_detector_name, bold = True)} "
+                f"{click.style(env_detector_name, bold=True)} "
                 f"for this message. "
                 f"To change the detector name, use the `snews_pt set-name` command.",
             )
@@ -112,8 +111,8 @@ def publish(ctx, file, firedrill, force, verbose):
         publisher = Publisher(kafka_topic=os.getenv("FIREDRILL_OBSERVATION_TOPIC"))
     else:
         publisher = Publisher(kafka_topic=os.getenv("OBSERVATION_TOPIC"))
-    
-    env_detector_name=ctx.obj["DETECTOR_NAME"]
+
+    env_detector_name = ctx.obj["DETECTOR_NAME"]
     for filename in file:
         if filename.endswith(".json"):
             try:
@@ -125,10 +124,10 @@ def publish(ctx, file, firedrill, force, verbose):
                     for message in snews_messages:
                         _detector_name = _check_detector_name(
                             message.detector_name, env_detector_name, force)
-                        message.detector_name = _detector_name 
+                        message.detector_name = _detector_name
                         publisher.add_message(message)
                     publisher.send(verbose=verbose)
-                    
+
             except FileNotFoundError:
                 click.echo(f"Error: File not found: {filename}")
             except json.JSONDecodeError as e:
@@ -250,19 +249,19 @@ def message_schema(ctx, requested_tier):
     if len(requested_tier) == 0:
         requested_tier = ["all"]
 
-    get_all_tiers = requested_tier[0] == "all" # it's a bool flag to print all tiers
-    
+    get_all_tiers = requested_tier[0] == "all"  # it's a bool flag to print all tiers
+
     # Check for invalid tiers and echo if any requested tier is not valid
     if not get_all_tiers:
         invalid_tiers = [t for t in requested_tier if t not in valid_tiers]
         if invalid_tiers:
             click.echo(f"Warning: The following requested tiers are not valid: {', '.join(invalid_tiers)}")
             click.echo(f"Valid tiers are: {', '.join(valid_tiers)}")
-    
+
     tiers = (
         valid_tiers
-        if get_all_tiers # if True, print all tiers
-        else [t for t in requested_tier if t in valid_tiers] # if False, print only the requested tiers
+        if get_all_tiers  # if True, print all tiers
+        else [t for t in requested_tier if t in valid_tiers]  # if False, print only the requested tiers
     )
 
     for t in tiers:
