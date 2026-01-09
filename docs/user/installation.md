@@ -24,14 +24,14 @@ or from the source using ssh-key,
 ```bash
 git clone git@github.com:SNEWS2/SNEWS_Publishing_Tools.git
 cd SNEWS_Publishing_Tools
-pip install ./ --user
+pip install ./
 ```
 
 or using https
 ```bash
 git clone https://github.com/SNEWS2/SNEWS_Publishing_Tools.git
 cd SNEWS_Publishing_Tools
-pip install ./ --user
+pip install ./
 ```
 
 # Test the install

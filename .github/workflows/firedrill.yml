@@ -96,8 +96,8 @@ jobs:
       - name: Publish messages
         run: |
           echo "Publishing messages..."
-          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message.json --firedrill
-          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message2.json --firedrill
+          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message.json --firedrill --force
+          docker exec publishing_tools_publisher snews_pt publish /app/snews_pt/test/firedrill_combined_message2.json --firedrill --force
           sleep 10
 
       - name: Verify alert publishing from coincidence_system

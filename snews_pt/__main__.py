@@ -23,7 +23,9 @@ if int(os.getenv("HAS_NAME_CHANGED")) == 0:
     warnings.warn(warning_text, UserWarning)
 
 
-@click.group(invoke_without_command=True)
+@click.group(invoke_without_command=True,
+             context_settings={'max_content_width': 120},
+             epilog='See https://snews-publishing-tools.readthedocs.io/en/latest/ for more details')
 @click.version_option()
 @click.option(
     "--env",
@@ -51,9 +53,23 @@ def main(ctx, env):
     show_default="True",
     help="Whether to use firedrill brokers or default ones",
 )
+@click.option(
+    "--force",
+    is_flag=True,
+    default=False,
+    show_default="False",
+    help="Force json file to overwrite env variables",
+)
+@click.option(
+    "--verbose",
+    "-v",
+    default=0,
+    show_default="0",
+    help="Verbosity level. 0: no output, 1: print simple feedback, 2: print message details.",
+)
 @click.argument("file", nargs=-1)
 @click.pass_context
-def publish(ctx, file, firedrill):
+def publish(ctx, file, firedrill, force, verbose):
     """Publish a message using snews_pub, multiple files are allowed
 
     $: snews_pt publish my_json_message.json
@@ -63,13 +79,40 @@ def publish(ctx, file, firedrill):
     The topics are read from the defaults i.e. from auxiliary/test-config.env
     If no file is given it can still submit dummy messages with default values
     """
-    click.clear()
+
+    def _check_detector_name(json_detector_name, env_detector_name, force):
+        """Check if detector name in json file matches the environment detector name.
+        Defaults to env name. The json file name can be used with the --force flag
+        """
+
+        if force:
+            click.secho(f"Forcing detector name from json file: "
+                        f"{click.style(json_detector_name, bold=True)}")
+            return json_detector_name
+
+        if json_detector_name != env_detector_name:
+            click.secho(
+                f"{click.style('Warning:', bg='red')} "
+                f"Detector name in JSON file ({click.style(json_detector_name, bold=True)}) "
+                f"does not match the environment detector name "
+                f"{click.style(env_detector_name, bold=True)}",
+                fg="red", color="black"
+            )
+            click.secho(
+                f"{click.style('Warning:', bg='red')} "
+                f"Using environment detector name "
+                f"{click.style(env_detector_name, bold=True)} "
+                f"for this message. "
+                f"To change the detector name, use the `snews_pt set-name` command.",
+            )
+        return env_detector_name
 
     if firedrill:
         publisher = Publisher(kafka_topic=os.getenv("FIREDRILL_OBSERVATION_TOPIC"))
     else:
         publisher = Publisher(kafka_topic=os.getenv("OBSERVATION_TOPIC"))
 
+    env_detector_name = ctx.obj["DETECTOR_NAME"]
     for filename in file:
         if filename.endswith(".json"):
             try:
@@ -79,8 +122,12 @@ def publish(ctx, file, firedrill):
                     )
                     snews_messages = messages.create_messages(**json_data)
                     for message in snews_messages:
+                        _detector_name = _check_detector_name(
+                            message.detector_name, env_detector_name, force)
+                        message.detector_name = _detector_name
                         publisher.add_message(message)
-                    publisher.send()
+                    publisher.send(verbose=verbose)
+
             except FileNotFoundError:
                 click.echo(f"Error: File not found: {filename}")
             except json.JSONDecodeError as e:
@@ -115,9 +162,17 @@ def publish(ctx, file, firedrill):
     show_default="None",
     help="Machine time, format: %Y-%m-%dT%H:%M:%S.%f",
 )
+@click.option(
+    "--verbose",
+    "-v",
+    default=0,
+    show_default="0",
+    help="Verbosity level. 0: no output, 1: print simple feedback, 2: print message details.",
+)
 @click.pass_context
-def heartbeat(ctx, status, time, firedrill):
-    """Send Heartbeats
+def heartbeat(ctx, status, time, firedrill, verbose):
+    """Publish heartbeat message
+
     :param status: Status of the experiment ON/OFF.
     :param time: (optional) Machine time is appended as the time of execution
                  different time can be passed following the iso-format
@@ -130,13 +185,13 @@ def heartbeat(ctx, status, time, firedrill):
 
     message = messages.HeartbeatMessage(
         detector_name=ctx.obj["DETECTOR_NAME"],
-        machine_time=time,
+        machine_time_utc=time,
         detector_status=status,
         is_firedrill=firedrill,
     )
 
     publisher.add_message(message)
-    publisher.send()
+    publisher.send(verbose=verbose)
 
 
 @main.command()
@@ -157,6 +212,7 @@ def heartbeat(ctx, status, time, firedrill):
 @click.pass_context
 def subscribe(ctx, plugin, outputfolder, firedrill, test):
     """Subscribe to Alert topic
+
     Optionally, `plugin` script can be passed
     The message content as a single dictionary will be passed to
     this script as a positional argument.
@@ -181,8 +237,9 @@ def subscribe(ctx, plugin, outputfolder, firedrill, test):
 @click.argument("requested_tier", nargs=-1)
 @click.pass_context
 def message_schema(ctx, requested_tier):
-    """Display the message format for `tier` if 'all'
-    displays everything
+    """Display the message format for each `tier`
+
+    If 'all' is passed, displays everything.
     """
 
     valid_tiers = [
@@ -192,11 +249,19 @@ def message_schema(ctx, requested_tier):
     if len(requested_tier) == 0:
         requested_tier = ["all"]
 
-    get_all_tiers = requested_tier[0] == "all"
+    get_all_tiers = requested_tier[0] == "all"  # it's a bool flag to print all tiers
+
+    # Check for invalid tiers and echo if any requested tier is not valid
+    if not get_all_tiers:
+        invalid_tiers = [t for t in requested_tier if t not in valid_tiers]
+        if invalid_tiers:
+            click.echo(f"Warning: The following requested tiers are not valid: {', '.join(invalid_tiers)}")
+            click.echo(f"Valid tiers are: {', '.join(valid_tiers)}")
+
     tiers = (
         valid_tiers
-        if get_all_tiers
-        else [t for t in requested_tier if t in valid_tiers]
+        if get_all_tiers  # if True, print all tiers
+        else [t for t in requested_tier if t in valid_tiers]  # if False, print only the requested tiers
     )
 
     for t in tiers:
@@ -227,7 +292,7 @@ def message_schema(ctx, requested_tier):
     help="If True subscribe to test topic",
 )
 def run_scenarios(firedrill, test):
-    """ """
+    """Test different coincidence scenarios"""
     # base = os.path.dirname(os.path.realpath(__file__))
     # path = os.path.join(base, 'auxiliary/try_scenarios.py')
     # os.system(f'python3 {path} {firedrill} {test}')
@@ -264,7 +329,8 @@ def set_name(name):
 @click.option("--patience", "-p", type=int, default=8)
 @click.pass_context
 def test_connection(ctx, firedrill, start_at, patience):
-    """test the server connection
+    """Test the connection to the server
+
     It should prompt your whether the coincidence script is running in the server
     :param start_at: `str` Where to start looking for the confirmation LATEST or EARLIEST
     :param patience: `int` seconds to wait before the check
@@ -289,8 +355,8 @@ def test_connection(ctx, firedrill, start_at, patience):
 )
 @click.pass_context
 def write_hb_logs(ctx, firedrill):
-    """REQUIRES AUTHORIZATION
-    ask to print the HB logs on the server standard output
+    """REQUIRES AUTHORIZATION | Print the HB logs on the server standard output
+
     later admins can see them remotely
     """
     from .remote_commands import write_hb_logs
@@ -317,8 +383,7 @@ def write_hb_logs(ctx, firedrill):
 )
 @click.pass_context
 def reset_cache(ctx, firedrill, test):
-    """REQUIRES AUTHORIZATION
-    If authorized, drop the current cache at the server
+    """REQUIRES AUTHORIZATION | Drop the current cache at the server
     """
     from .remote_commands import reset_cache
 
@@ -340,8 +405,7 @@ def reset_cache(ctx, firedrill, test):
 @click.option("--brokername", "-bn", help="Change the broker")
 @click.pass_context
 def change_broker(ctx, firedrill, brokername):
-    """REQUIRES AUTHORIZATION
-    If authorized, server changes the broker
+    """REQUIRES AUTHORIZATION | If authorized, server changes the broker
     """
     from .remote_commands import change_broker
 
@@ -362,8 +426,7 @@ def change_broker(ctx, firedrill, brokername):
 )
 @click.pass_context
 def get_feedback(ctx, firedrill):
-    """REQUIRES AUTHORIZATION
-    Get heartbeat feedback by email
+    """REQUIRES AUTHORIZATION | Get heartbeat feedback by email
     """
     from .remote_commands import get_feedback
 
