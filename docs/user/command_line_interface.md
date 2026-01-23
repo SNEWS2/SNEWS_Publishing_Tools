@@ -54,6 +54,16 @@ The subscription command can be called without any arguments.
 ```
 
 ---
+## Subscribing to the server log stream
+
+The SNEWS coincidence server is configured to send server logs to a kafka topic. If your credentials have sufficient privilege, you may
+view the real-time log stream by subscribing to the snews.operations topic.
+
+```bash
+snews_pt subscribe kafka://kafka.scimma.org/snews.operations
+```
+
+---
 ## Sending Heartbeats
 ```bash 
 (venv) User$: snews_pt heartbeat -s ON -t "2025-06-02T09:27:40.882808" --firedrill
