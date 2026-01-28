@@ -56,11 +56,14 @@ The subscription command can be called without any arguments.
 ---
 ## Subscribing to the server log stream
 
+The SNEWS Publishing Tools package depends on the `hop-client` package to connect to SCiMMA Kafka servers. The 
+`hop-client` package installs a command line tool `hop` which can be used to subscribe to (and stream 
+to stdout) a kafka topic. We will use this tool to stream real-time log entries from the snews_cs server. 
 The SNEWS coincidence server is configured to send server logs to a kafka topic. If your credentials have sufficient privilege, you may
-view the real-time log stream by subscribing to the snews.operations topic.
+view the real-time log stream by subscribing to the snews.operations topic. 
 
 ```bash
-snews_pt subscribe kafka://kafka.scimma.org/snews.operations
+hop subscribe kafka://kafka.scimma.org/snews.operations
 ```
 
 ---
