@@ -5,7 +5,7 @@ filterwarnings = [
 
 [project]
 name = "snews-pt"
-version = "2.1.0"
+version = "2.2.0"
 description = "An alert application for observing supernovas"
 authors = [{name = "SNEWS Collaboration", email = "snews2.0@lists.bnl.gov"}]
 license = "BSD-3-Clause"
