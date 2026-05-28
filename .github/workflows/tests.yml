@@ -57,7 +57,7 @@ jobs:
         if: runner.os == 'Linux'
         
       - name: Install snews-pt
-        run:  pip install .
+        run: pip install ".[dev]"
         
       - shell: bash
         env:
@@ -82,6 +82,4 @@ jobs:
         run: snews_pt --version
 
       - name: Run pytest
-        run: |
-          pip install pytest
-          pytest snews_pt
+        run: pytest snews_pt
