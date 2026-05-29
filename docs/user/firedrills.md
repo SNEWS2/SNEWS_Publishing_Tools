@@ -44,27 +44,39 @@ We would like to test two main interactions; **subscribing**  & **publishing** t
 
 - API:
     ```python
-     from snews_pt.messages import SNEWSMessageBuilder
-     SNEWSMessageBuilder(detector_name='KamLAND', 
-                         neutrino_time_utc="2022-02-28T04:31:08.678999",
-                         p_val=0.000007,
-                         machine_time_utc="2022-02-28T04:31:09.778859", 
-                         firedrill_mode=True,
-                         is_test=True,
-                         ).send_messages()
+    from snews import messages
+    from snews_pt.messages import Publisher
+
+    sn_msg = messages.create_messages(
+        detector_name='LZ', 
+        neutrino_time_utc="2031-04-25T00:20:00.0",
+        p_val=0.000007,
+        machine_time_utc="2031-04-25T00:20:00.0", 
+        firedrill_mode=True,
+        is_test=True,
+        )
+
+    publisher = Publisher(kafka_topic=os.getenv("FIREDRILL_OBSERVATION_TOPIC"))
+    [publisher.add_message(message) for message in sn_msg]
+    publisher.send(verbose = True)
     ```
   or
-  ```python
-  from snews_pt.messages import SNEWSMessageBuilder
-  observation = SNEWSMessageBuilder.from_json('somejsonfile.json', 
-                                              detector_name='XENONnT',
-                                              firedrill_mode=True,
-                                              is_test=True, 
-                                              comment="This is submitted from a json file")
-  observation.send_messages()
+    ```python
+    from snews import messages
+    from snews_pt.messages import Publisher
+    import json
+
+    with open('example.json', "r", encoding="utf-8") as json_file:
+        json_data = json.load(
+            json_file
+        )
+    sn_msg = messages.create_messages(**json_data)
+    [publisher.add_message(message) for message in sn_msg]
+    publisher.send(verbose=True)
+
   ```
-Notice that `SNEWSTiersPublisher` returns an object which actually contains the decided tiers, and formatted messages. 
-One can play with this object before finally `send_to_snews()`.  
+Notice that `Publisher` returns an object which actually contains the decided tiers, and formatted messages. 
+One can play with this object before finally `send()`.  
 
 - CLI
    ```bash
