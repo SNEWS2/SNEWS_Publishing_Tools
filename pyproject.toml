@@ -27,13 +27,25 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
 ]
 dependencies = [
-    "click (>=8.1.7,<8.2.0)",
-    "hop-client (>=0.10.0,<0.11.0)",
+    "click >=8.1.7",
+    "hop-client >=0.12",
     "inquirer (>=2.8,<3.0)",
-    "numpy (>=1.26.3,<1.27.0)",
-    "python-dotenv (>=0.21.1,<0.22.0)",
-    "setuptools (>=66.1.0,<66.2.0)",
+    "python-dotenv >=0.21.1",
     "snews-data-formats (>=1.0.0,<2.0.0)"
+]
+
+[project.optional-dependencies]
+dev = [
+    "ipython>=7.32.0,<7.33.0",
+    "pytest>=8.3.2,<8.4.0",
+    "pytest-cov>=4.1.0,<4.2.0",
+]
+docs = [
+    "myst-parser>=2.0,<3.0",
+    "sphinx>=7.2,<8.0",
+    "sphinx-autoapi>=3.0,<4.0",
+    "sphinx-rtd-theme>=2.0,<3.0",
+    "sphinxcontrib-programoutput>=0.17,<1.0",
 ]
 
 [project.urls]
@@ -43,22 +55,6 @@ documentation = "https://snews-publishing-tools.readthedocs.io"
 
 [project.scripts]
 snews_pt = "snews_pt.__main__:main"
-
-[tool.poetry]
-
-[tool.poetry.group.dev.dependencies]
-ipython = ">=7.32.0,<7.33.0"
-wheel = ">=0.34.2,<0.35.0"
-pytest = ">=8.3.2,<8.4.0"
-pytest-cov = ">=4.1.0,<4.2.0"
-
-[tool.poetry.group.docs.dependencies]
-autoapi = ">=2.0,<3.0"
-myst-parser = ">=2.0,<3.0"
-sphinx = ">=7.2,<8.0"
-sphinx-autoapi = ">=3.0,<4.0"
-sphinx-rtd-theme = ">=2.0,<3.0"
-sphinxcontrib-programoutput = ">=0.17,<1.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
