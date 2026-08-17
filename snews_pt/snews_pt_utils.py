@@ -40,7 +40,6 @@ def resolve_env_path(env_path=None):
 
     """
     if not env_path:
-        print("No valid environment path provided, using default")
         return default_env_path()
 
     env_path = os.path.expanduser(env_path)
