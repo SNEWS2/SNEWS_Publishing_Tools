@@ -18,6 +18,42 @@ default_detector_file = (
 )
 
 
+def default_env_path():
+    """Return the path to the bundled default environment file."""
+    return os.path.join(os.path.dirname(__file__), "auxiliary", "test-config.env")
+
+
+def resolve_env_path(env_path=None):
+    """Resolve an environment file path for loading.
+
+    Parameters
+    ----------
+    env_path : str, optional
+        Path supplied by the user. If omitted, the bundled default is used.
+        Relative paths are resolved against the current working directory.
+        Absolute paths and ``~`` are accepted as-is (after expansion).
+
+    Returns
+    -------
+    str
+        Absolute path to the environment file.
+
+    """
+    if not env_path:
+        print("No valid environment path provided, using default")
+        return default_env_path()
+
+    env_path = os.path.expanduser(env_path)
+
+    # Backward compatibility: "/auxiliary/..." was historically package-relative.
+    if env_path.startswith("/auxiliary/"):
+        legacy_path = os.path.join(os.path.dirname(__file__), env_path.lstrip("/"))
+        if os.path.isfile(legacy_path):
+            return legacy_path
+
+    return os.path.abspath(env_path)
+
+
 def set_env(env_path=None):
     """Set environment parameters
 
@@ -28,10 +64,7 @@ def set_env(env_path=None):
         Use default settings if not given
 
     """
-    dirname = os.path.dirname(__file__)
-    default_env_path = dirname + "/auxiliary/test-config.env"
-    env = env_path or default_env_path
-    load_dotenv(env)
+    load_dotenv(resolve_env_path(env_path), override=True)
 
 
 def retrieve_detectors(detectors_path=default_detector_file):

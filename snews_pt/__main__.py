@@ -29,19 +29,22 @@ if int(os.getenv("HAS_NAME_CHANGED")) == 0:
 @click.version_option()
 @click.option(
     "--env",
-    type=str,
-    default="/auxiliary/test-config.env",
+    type=click.Path(exists=False, dir_okay=False, resolve_path=False),
+    default=None,
     show_default="auxiliary/test-config.env",
-    help="environment file containing the configurations",
+    help="Environment file containing the configurations. "
+         "Relative paths are resolved from the current working directory.",
 )
 @click.pass_context
 def main(ctx, env):
     """User interface for snews_pt tools"""
-    base = os.path.dirname(os.path.realpath(__file__))
-    env_path = base + env
+    env_path = snews_pt_utils.resolve_env_path(env)
+    if not os.path.isfile(env_path):
+        raise click.ClickException(f"Environment file not found: {env_path}")
+
     ctx.ensure_object(dict)
     snews_pt_utils.set_env(env_path)
-    ctx.obj["env"] = env
+    ctx.obj["env"] = env_path
     ctx.obj["DETECTOR_NAME"] = os.getenv("DETECTOR_NAME")
     ctx.obj["USER_PASS"] = os.getenv("ADMIN_PASS", "NO_AUTH")
 
