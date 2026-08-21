@@ -52,11 +52,18 @@ The `snews_pt` package includes the default observation and alert topics for bot
 
 ## 2) Configurations
  
-The package comes with a default configuration file that contains some useful information. 
-This file can be found under [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/test-config.env) and looks like this;
+The package ships with two bundled topic profiles under `snews_pt/auxiliary/`:
+
+- [`dev-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/dev-config.env) — snews-group development topics (default)
+- [`prod-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/prod-config.env) — production topics (`snews2-exp.*` / `snews2.*`)
+
+User settings (`DETECTOR_NAME`, `HAS_NAME_CHANGED`, credentials, etc.) live in `dev-config.env`. The active profile is stored in `BROKER_MODE` and defaults to `dev`.
+
+[`dev-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/dev-config.env) looks like this;
 ```python
 DETECTOR_NAME='TEST'
 HAS_NAME_CHANGED='0'
+BROKER_MODE='dev'
 ...
 HOP_BROKER="kafka.scimma.org"
 
@@ -70,6 +77,13 @@ CONNECTION_TEST_TOPIC="kafka://${HOP_BROKER}/snews.connection-testing"
 ```
 The file can fetch the topics and can also be aware of the detector's name thus reducing the manual tasks. 
 As long as you have "TEST" as your detector name, software will raise a warning and remind you to change it. <br>
+
+Switch between dev and production topics with:
+```bash
+snews_pt set-broker-mode dev
+snews_pt set-broker-mode prod
+```
+See [hopskotch.md](./hopskotch.md) for the difference between development and production topic groups.
 
 Once you install the `snews_pt` you can set your experiments name either by changing this file, or running the following command on a python API;
 ```python
