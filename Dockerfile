@@ -15,8 +15,8 @@ ENV HOP_USERNAME=${HOP_USERNAME}
 ENV HOP_PASSWORD=${HOP_PASSWORD}
 
 # Set observation and alert topics for github CI firedrill
-RUN sed -i 's/^FIREDRILL_OBSERVATION_TOPIC=.*/FIREDRILL_OBSERVATION_TOPIC=kafka:\/\/$\{HOP_BROKER\}\/snews\.experiments-github/' /app/snews_pt/auxiliary/test-config.env
-RUN sed -i 's/^FIREDRILL_ALERT_TOPIC=.*/FIREDRILL_ALERT_TOPIC=kafka:\/\/$\{HOP_BROKER\}\/snews\.alert-github/' /app/snews_pt/auxiliary/test-config.env
+RUN sed -i 's/^FIREDRILL_OBSERVATION_TOPIC=.*/FIREDRILL_OBSERVATION_TOPIC=kafka:\/\/$\{HOP_BROKER\}\/snews\.experiments-github/' /app/snews_pt/auxiliary/dev-config.env
+RUN sed -i 's/^FIREDRILL_ALERT_TOPIC=.*/FIREDRILL_ALERT_TOPIC=kafka:\/\/$\{HOP_BROKER\}\/snews\.alert-github/' /app/snews_pt/auxiliary/dev-config.env
 
 # Install snews_pt
 RUN pip install --upgrade pip \
