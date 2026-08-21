@@ -3,7 +3,6 @@ import os
 import warnings
 
 import click
-from dotenv import load_dotenv
 from snews import messages
 
 from . import snews_pt_utils
@@ -11,10 +10,9 @@ from .auxiliary.try_scenarios import try_scenarios
 from .messages import Publisher
 from .snews_sub import Subscriber
 
-envpath = os.path.join(os.path.dirname(__file__), "auxiliary/test-config.env")
-load_dotenv(envpath)
+snews_pt_utils.set_env()
 
-if int(os.getenv("HAS_NAME_CHANGED")) == 0:
+if int(os.getenv("HAS_NAME_CHANGED", "0")) == 0:
     warning_text = click.style(
         'You are using default detector name "TEST"\n'
         "Please change this by snews_pt.snews_pt_utils.set_name()",
@@ -31,22 +29,39 @@ if int(os.getenv("HAS_NAME_CHANGED")) == 0:
     "--env",
     type=click.Path(exists=False, dir_okay=False, resolve_path=False),
     default=None,
-    show_default="auxiliary/test-config.env",
+    show_default="auxiliary/dev-config.env",
     help="Environment file containing the configurations. "
          "Relative paths are resolved from the current working directory.",
 )
 @click.pass_context
 def main(ctx, env):
     """User interface for snews_pt tools"""
-    env_path = snews_pt_utils.resolve_env_path(env)
-    if not os.path.isfile(env_path):
-        raise click.ClickException(f"Environment file not found: {env_path}")
+    if env:
+        env_path = snews_pt_utils.resolve_env_path(env)
+        if not os.path.isfile(env_path):
+            raise click.ClickException(f"Environment file not found: {env_path}")
+        snews_pt_utils.set_env(env_path)
+    else:
+        if not os.path.isfile(snews_pt_utils.DEV_ENV_PATH):
+            raise click.ClickException(
+                f"Environment file not found: {snews_pt_utils.DEV_ENV_PATH}"
+            )
+        snews_pt_utils.set_env()
+        env_path = snews_pt_utils.default_env_path()
 
     ctx.ensure_object(dict)
-    snews_pt_utils.set_env(env_path)
-    ctx.obj["env"] = env_path
+    ctx.obj["env"] = env_path if env else None
     ctx.obj["DETECTOR_NAME"] = os.getenv("DETECTOR_NAME")
     ctx.obj["USER_PASS"] = os.getenv("ADMIN_PASS", "NO_AUTH")
+
+    if not env and snews_pt_utils.get_broker_mode() == "prod":
+        click.secho(
+            "Production broker mode is active.",
+            fg="yellow",
+            bold=True,
+        )
+        click.secho(f"  Observation: {os.getenv('OBSERVATION_TOPIC')}")
+        click.secho(f"  Alert: {os.getenv('ALERT_TOPIC')}")
 
 
 @main.command()
@@ -79,7 +94,8 @@ def publish(ctx, file, firedrill, force, verbose):
 
     Notes
 
-    The topics are read from the defaults i.e. from auxiliary/test-config.env
+    The topics are read from the defaults i.e. from auxiliary/dev-config.env
+    or auxiliary/prod-config.env depending on BROKER_MODE
     If no file is given it can still submit dummy messages with default values
     """
 
@@ -316,6 +332,16 @@ def set_name(name):
         fg="green",
         bold=True,
     )
+
+
+@main.command()
+@click.argument(
+    "mode",
+    type=click.Choice(snews_pt_utils.BROKER_MODES, case_sensitive=False),
+)
+def set_broker_mode(mode):
+    """Switch between dev and production topic profiles"""
+    snews_pt_utils.set_broker_mode(mode.lower())
 
 
 # Remote Commands
