@@ -315,6 +315,14 @@ def run_scenarios(firedrill, test):
     # base = os.path.dirname(os.path.realpath(__file__))
     # path = os.path.join(base, 'auxiliary/try_scenarios.py')
     # os.system(f'python3 {path} {firedrill} {test}')
+
+    if snews_pt_utils.get_broker_mode() == "prod":
+        click.secho("Can not run test scenarios in production mode.", 
+                    fg="red", bold=True)
+        click.secho("Change to dev broker with `snews_pt set-broker-mode dev`", 
+                    fg="red", bold=True)
+        return None
+    
     try_scenarios(fd_mode=firedrill, is_test=test)
 
 
