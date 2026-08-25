@@ -12,7 +12,7 @@ Usage: snews_pt [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --version   Show the version and exit.
-  --env TEXT  environment file containing the configurations  [default: (auxiliary/dev-config.env)]
+  --env TEXT  environment file containing the configurations  [default: (user-config.env + dev/prod-config.env)]
   --help      Show this message and exit.
 
 Commands:
@@ -34,7 +34,7 @@ Commands:
 
 The main command `snews_pt` serves an entry point. It is also possible to set an _environment_ by passing it to this with any other command. 
 E.g. `snews_pt --env myenvfile.env subscribe` will set the variables in _myenvfile.env_  and subscribe to the _ALERT_TOPIC_ specified in this file. <br>
-By default, it uses the bundled profile selected by `BROKER_MODE` in `auxiliary/dev-config.env`. Use `snews_pt set-broker-mode dev|prod` to switch between development and production topics.
+By default, it loads `user-config.env` plus the topic profile selected by `BROKER_MODE` (`dev-config.env` or `prod-config.env`). Use `snews_pt set-broker-mode dev|prod` to switch between development and production topics. Pass `--env` to use a single custom file instead.
 
 For any command the help can be displayed 
 ```bash

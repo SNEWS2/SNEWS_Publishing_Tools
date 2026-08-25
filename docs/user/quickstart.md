@@ -52,30 +52,33 @@ The `snews_pt` package includes the default observation and alert topics for bot
 
 ## 2) Configurations
  
-The package ships with two bundled topic profiles under `snews_pt/auxiliary/`:
+The package ships with three bundled config files under `snews_pt/auxiliary/`:
 
+- [`user-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/user-config.env) — your settings (`DETECTOR_NAME`, `HAS_NAME_CHANGED`, `BROKER_MODE`, credentials, etc.)
 - [`dev-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/dev-config.env) — snews-group development topics (default)
 - [`prod-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/prod-config.env) — production topics (`snews2-exp.*` / `snews2.*`)
 
-User settings (`DETECTOR_NAME`, `HAS_NAME_CHANGED`, credentials, etc.) live in `dev-config.env`. The active profile is stored in `BROKER_MODE` and defaults to `dev`.
+User settings live in `user-config.env`. Topic profiles are in `dev-config.env` and `prod-config.env`. The active profile is stored in `BROKER_MODE` (in `user-config.env`) and defaults to `dev`.
 
-[`dev-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/dev-config.env) looks like this;
+[`user-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/user-config.env) looks like this;
 ```python
 DETECTOR_NAME='TEST'
 HAS_NAME_CHANGED='0'
 BROKER_MODE='dev'
+ADMIN_PASS='...'
+ALERT_OUTPUT="SNEWS_ALERTS/"
 ...
+```
+
+[`dev-config.env`](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/dev-config.env) holds the development topics;
+```python
 HOP_BROKER="kafka.scimma.org"
 
 OBSERVATION_TOPIC="kafka://${HOP_BROKER}/snews.experiments-test"
 ALERT_TOPIC="kafka://${HOP_BROKER}/snews.alert-test"
-PRODUCTION_TOPIC=""
-
-FIREDRILL_OBSERVATION_TOPIC="kafka://${HOP_BROKER}/snews.experiments-firedrill"
-FIREDRILL_ALERT_TOPIC="kafka://${HOP_BROKER}/snews.alert-firedrill"
-CONNECTION_TEST_TOPIC="kafka://${HOP_BROKER}/snews.connection-testing"
+...
 ```
-The file can fetch the topics and can also be aware of the detector's name thus reducing the manual tasks. 
+The config can fetch the topics and can also be aware of the detector's name thus reducing the manual tasks. 
 As long as you have "TEST" as your detector name, software will raise a warning and remind you to change it. <br>
 
 Switch between dev and production topics with:
@@ -85,7 +88,7 @@ snews_pt set-broker-mode prod
 ```
 See [hopskotch.md](./hopskotch.md) for the difference between development and production topic groups.
 
-Once you install the `snews_pt` you can set your experiments name either by changing this file, or running the following command on a python API;
+Once you install the `snews_pt` you can set your experiments name either by running the following command on a python API:
 ```python
 import snews_pt
 snews_pt.snews_pt_utils.set_name()
