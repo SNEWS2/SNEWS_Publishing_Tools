@@ -29,8 +29,9 @@ if int(os.getenv("HAS_NAME_CHANGED", "0")) == 0:
     "--env",
     type=click.Path(exists=False, dir_okay=False, resolve_path=False),
     default=None,
-    show_default="auxiliary/dev-config.env",
-    help="Environment file containing the configurations. "
+    show_default="bundled user-config.env + dev/prod-config.env",
+    help="Custom environment file. When omitted, loads user-config.env "
+         "plus the active topic profile (dev-config.env or prod-config.env). "
          "Relative paths are resolved from the current working directory.",
 )
 @click.pass_context
@@ -42,12 +43,15 @@ def main(ctx, env):
             raise click.ClickException(f"Environment file not found: {env_path}")
         snews_pt_utils.set_env(env_path)
     else:
-        if not os.path.isfile(snews_pt_utils.DEV_ENV_PATH):
+        if not os.path.isfile(snews_pt_utils.USER_ENV_PATH):
             raise click.ClickException(
-                f"Environment file not found: {snews_pt_utils.DEV_ENV_PATH}"
+                f"Environment file not found: {snews_pt_utils.USER_ENV_PATH}"
             )
+        topic_path = snews_pt_utils.default_env_path()
+        if not os.path.isfile(topic_path):
+            raise click.ClickException(f"Environment file not found: {topic_path}")
         snews_pt_utils.set_env()
-        env_path = snews_pt_utils.default_env_path()
+        env_path = topic_path
 
     ctx.ensure_object(dict)
     ctx.obj["env"] = env_path if env else None
@@ -94,8 +98,8 @@ def publish(ctx, file, firedrill, force, verbose):
 
     Notes
 
-    The topics are read from the defaults i.e. from auxiliary/dev-config.env
-    or auxiliary/prod-config.env depending on BROKER_MODE
+    The topics are read from auxiliary/dev-config.env or auxiliary/prod-config.env
+    depending on BROKER_MODE in user-config.env
     If no file is given it can still submit dummy messages with default values
     """
 

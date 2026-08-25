@@ -18,6 +18,7 @@ default_detector_file = (
 )
 
 AUX_DIR = os.path.join(os.path.dirname(__file__), "auxiliary")
+USER_ENV_PATH = os.path.join(AUX_DIR, "user-config.env")
 DEV_ENV_PATH = os.path.join(AUX_DIR, "dev-config.env")
 PROD_ENV_PATH = os.path.join(AUX_DIR, "prod-config.env")
 BROKER_MODES = ("dev", "prod")
@@ -25,7 +26,7 @@ BROKER_MODES = ("dev", "prod")
 
 def get_broker_mode():
     """Return the persisted broker profile (dev or prod)."""
-    values = dotenv.dotenv_values(DEV_ENV_PATH)
+    values = dotenv.dotenv_values(USER_ENV_PATH)
     mode = (values.get("BROKER_MODE") or "dev").strip("'\"")
     if mode not in BROKER_MODES:
         return "dev"
@@ -33,17 +34,17 @@ def get_broker_mode():
 
 
 def default_env_path():
-    """Return the path to the active bundled environment file."""
+    """Return the path to the active bundled topic environment file."""
     if get_broker_mode() == "prod":
         return PROD_ENV_PATH
     return DEV_ENV_PATH
 
 
 def _load_broker_profile():
-    """Load user settings from dev-config.env and topic vars for the active mode."""
-    load_dotenv(DEV_ENV_PATH, override=True)
-    if get_broker_mode() == "prod":
-        load_dotenv(PROD_ENV_PATH, override=True)
+    """Load user settings, then topic vars for the active broker mode."""
+    load_dotenv(USER_ENV_PATH, override=True)
+    topic_path = PROD_ENV_PATH if get_broker_mode() == "prod" else DEV_ENV_PATH
+    load_dotenv(topic_path, override=True)
 
 
 def resolve_env_path(env_path=None):
@@ -108,7 +109,7 @@ def set_broker_mode(mode, _return=False):
         raise ValueError(f"broker mode must be one of {BROKER_MODES}, got {mode!r}")
 
     set_env()
-    dotenv.set_key(DEV_ENV_PATH, "BROKER_MODE", mode)
+    dotenv.set_key(USER_ENV_PATH, "BROKER_MODE", mode)
     set_env()
 
     if _return:
@@ -181,7 +182,7 @@ def set_name(detector_name="TEST", _return=False):
 
     """
 
-    load_dotenv(DEV_ENV_PATH)
+    load_dotenv(USER_ENV_PATH)
     detectors = list(retrieve_detectors().keys())
     if detector_name == "TEST":
         if int(os.getenv("HAS_NAME_CHANGED")) == 0:
@@ -193,8 +194,8 @@ def set_name(detector_name="TEST", _return=False):
             detector_name = detectors[int(inp)]
             os.environ["DETECTOR_NAME"] = detector_name
             os.environ["HAS_NAME_CHANGED"] = "1"
-            dotenv.set_key(DEV_ENV_PATH, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
-            dotenv.set_key(DEV_ENV_PATH, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
+            dotenv.set_key(USER_ENV_PATH, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
+            dotenv.set_key(USER_ENV_PATH, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
         else:
             detector_name = os.environ["DETECTOR_NAME"]
     else:
@@ -204,8 +205,8 @@ def set_name(detector_name="TEST", _return=False):
             )
         os.environ["DETECTOR_NAME"] = detector_name
         os.environ["HAS_NAME_CHANGED"] = "1"
-        dotenv.set_key(DEV_ENV_PATH, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
-        dotenv.set_key(DEV_ENV_PATH, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
+        dotenv.set_key(USER_ENV_PATH, "DETECTOR_NAME", os.environ["DETECTOR_NAME"])
+        dotenv.set_key(USER_ENV_PATH, "HAS_NAME_CHANGED", os.environ["HAS_NAME_CHANGED"])
     if _return:
         return detector_name
     else:
