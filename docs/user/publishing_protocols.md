@@ -74,7 +74,7 @@ Where the `myjsonfile.json` contains the following information;
 The `send()` method sends all of the created messages to the server and can give feedback with the argument `verbose=True`.
 
 The `firedrill_mode` is set as part of each message and is used to select the firedrill topic from the environment (configuration) file,
-`env_file` is the path to the environment file (by default uses [auxiliary/test-config.env](https://github.com/SNEWS2/SNEWS_Publishing_Tools/blob/main/snews_pt/auxiliary/test-config.env)).
+`env_file` is the path to the environment file (by default loads `user-config.env` plus the active topic profile from `dev-config.env` or `prod-config.env` based on `BROKER_MODE`).
 
 
 The same functionalities can be achieved using the command line interface. The following command sends the message in the file `myjsonfile.json` to the SNEWS server.

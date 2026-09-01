@@ -1,6 +1,5 @@
 import os
 
-from dotenv import load_dotenv
+from . import snews_pt_utils
 
-envpath = os.path.join(os.path.dirname(__file__), "auxiliary/test-config.env")
-load_dotenv(envpath)
+snews_pt_utils.set_env()

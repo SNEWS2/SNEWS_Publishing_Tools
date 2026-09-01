@@ -3,7 +3,6 @@ import os
 import warnings
 
 import click
-from dotenv import load_dotenv
 from snews import messages
 
 from . import snews_pt_utils
@@ -11,10 +10,9 @@ from .auxiliary.try_scenarios import try_scenarios
 from .messages import Publisher
 from .snews_sub import Subscriber
 
-envpath = os.path.join(os.path.dirname(__file__), "auxiliary/test-config.env")
-load_dotenv(envpath)
+snews_pt_utils.set_env()
 
-if int(os.getenv("HAS_NAME_CHANGED")) == 0:
+if int(os.getenv("HAS_NAME_CHANGED", "0")) == 0:
     warning_text = click.style(
         'You are using default detector name "TEST"\n'
         "Please change this by snews_pt.snews_pt_utils.set_name()",
@@ -29,21 +27,45 @@ if int(os.getenv("HAS_NAME_CHANGED")) == 0:
 @click.version_option()
 @click.option(
     "--env",
-    type=str,
-    default="/auxiliary/test-config.env",
-    show_default="auxiliary/test-config.env",
-    help="environment file containing the configurations",
+    type=click.Path(exists=False, dir_okay=False, resolve_path=False),
+    default=None,
+    show_default="bundled user-config.env + dev/prod-config.env",
+    help="Custom environment file. When omitted, loads user-config.env "
+         "plus the active topic profile (dev-config.env or prod-config.env). "
+         "Relative paths are resolved from the current working directory.",
 )
 @click.pass_context
 def main(ctx, env):
     """User interface for snews_pt tools"""
-    base = os.path.dirname(os.path.realpath(__file__))
-    env_path = base + env
+    if env:
+        env_path = snews_pt_utils.resolve_env_path(env)
+        if not os.path.isfile(env_path):
+            raise click.ClickException(f"Environment file not found: {env_path}")
+        snews_pt_utils.set_env(env_path)
+    else:
+        if not os.path.isfile(snews_pt_utils.USER_ENV_PATH):
+            raise click.ClickException(
+                f"Environment file not found: {snews_pt_utils.USER_ENV_PATH}"
+            )
+        topic_path = snews_pt_utils.default_env_path()
+        if not os.path.isfile(topic_path):
+            raise click.ClickException(f"Environment file not found: {topic_path}")
+        snews_pt_utils.set_env()
+        env_path = topic_path
+
     ctx.ensure_object(dict)
-    snews_pt_utils.set_env(env_path)
-    ctx.obj["env"] = env
+    ctx.obj["env"] = env_path if env else None
     ctx.obj["DETECTOR_NAME"] = os.getenv("DETECTOR_NAME")
     ctx.obj["USER_PASS"] = os.getenv("ADMIN_PASS", "NO_AUTH")
+
+    if not env and snews_pt_utils.get_broker_mode() == "prod":
+        click.secho(
+            "Production broker mode is active.",
+            fg="yellow",
+            bold=True,
+        )
+        click.secho(f"  Observation: {os.getenv('OBSERVATION_TOPIC')}")
+        click.secho(f"  Alert: {os.getenv('ALERT_TOPIC')}")
 
 
 @main.command()
@@ -76,7 +98,8 @@ def publish(ctx, file, firedrill, force, verbose):
 
     Notes
 
-    The topics are read from the defaults i.e. from auxiliary/test-config.env
+    The topics are read from auxiliary/dev-config.env or auxiliary/prod-config.env
+    depending on BROKER_MODE in user-config.env
     If no file is given it can still submit dummy messages with default values
     """
 
@@ -296,6 +319,14 @@ def run_scenarios(firedrill, test):
     # base = os.path.dirname(os.path.realpath(__file__))
     # path = os.path.join(base, 'auxiliary/try_scenarios.py')
     # os.system(f'python3 {path} {firedrill} {test}')
+
+    if snews_pt_utils.get_broker_mode() == "prod":
+        click.secho("Can not run test scenarios in production mode.", 
+                    fg="red", bold=True)
+        click.secho("Change to dev broker with `snews_pt set-broker-mode dev`", 
+                    fg="red", bold=True)
+        return None
+    
     try_scenarios(fd_mode=firedrill, is_test=test)
 
 
@@ -313,6 +344,16 @@ def set_name(name):
         fg="green",
         bold=True,
     )
+
+
+@main.command()
+@click.argument(
+    "mode",
+    type=click.Choice(snews_pt_utils.BROKER_MODES, case_sensitive=False),
+)
+def set_broker_mode(mode):
+    """Switch between dev and production topic profiles"""
+    snews_pt_utils.set_broker_mode(mode.lower())
 
 
 # Remote Commands
