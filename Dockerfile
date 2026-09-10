@@ -1,10 +1,12 @@
-FROM python:3.11-bullseye
+# Dockerfile for SNEWS_Coincidence_System
+FROM python:3.11-bookworm
 
 WORKDIR /app
 
-COPY . .
+## Copy the project files
+COPY . /app
 
-SHELL ["/bin/bash", "-c"]
+RUN apt-get update && apt-get install -y --no-install-recommends git build-essential libpq-dev && rm -rf /var/lib/apt/lists/*
 
 # Accept build arguments
 ARG HOP_USERNAME
